@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=5;</script>
+<script>var UIV=7;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -17,6 +17,7 @@ input,select{width:100%;font:inherit;padding:11px 12px;border:1px solid #b9c5d1;
 .bt{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:7px}
 .bt button{font:inherit;font-size:13px;padding:8px 2px;border:1px solid #b9c5d1;background:#fff;border-radius:6px}
 .bt button.on.L{background:#1565c0;color:#fff;border-color:#1565c0}.bt button.on.N{background:#c62828;color:#fff;border-color:#c62828}.bt button.on.V{background:#2e7d32;color:#fff;border-color:#2e7d32}
+.sm{font:inherit;font-size:12px;padding:4px 8px;border:1px solid #b9c5d1;background:#f4f7fa;border-radius:14px;margin:3px 3px 0 0}
 .tag{display:inline-block;font-size:11.5px;border-radius:10px;padding:1px 7px;margin:3px 3px 0 0;background:#e8edf2;color:#333}.tag.d{background:#444;color:#fff}
 .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 9px}.stats div{background:#fff;border-radius:8px;padding:7px;text-align:center;font-size:12px;box-shadow:0 1px 2px #0001}.stats b{display:block;font-size:18px;color:#1f4e78}
 .login{max-width:420px;margin:30px auto;padding:0 14px}.login input{margin:6px 0}
@@ -36,6 +37,7 @@ input,select{width:100%;font:inherit;padding:11px 12px;border:1px solid #b9c5d1;
 <div class="sb"><input id="q" autocomplete="off" placeholder="🔍 नाम / पिता-पति / EPIC / क्रम / मकान नं.">
 <div class="two"><select id="w"></select><select id="by"><option value="">सब</option><option value="M">सिर्फ़ पुरुष</option><option value="F">सिर्फ़ महिला</option></select></div>
 <select id="rt" style="margin-top:6px"></select>
+<div class="two" style="margin-top:6px"><select id="fmn"></select><select id="fsb"></select></div>
 <div class="chips" id="chips"></div></div>
 <main><div class="stats" id="stats"></div><div id="res"></div></main>
 <div id="foot"><span id="fs"></span><span><button id="fy">अभी सिंक</button> <button id="fo">⚙</button></span></div>
@@ -53,8 +55,8 @@ async function dec(blob,key){
  var k=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(blob.salt),iterations:100000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
  var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(blob.iv)},k,b64(blob.ct));
  return JSON.parse(await new Response(new Blob([pt]).stream().pipeThrough(new DecompressionStream('gzip'))).text())}
-var VIEW=false,KEY='',ID='',NAME='',D=null,IX=[],ST=g('bh_st',{}),DV=0,EXP=0,FIL='',LIM=100,syncing=false,tm,stm,lastErr='';
-function wipe(msg){['bh_code','bh_name','bh_blob','bh_st','bh_q','bh_since','bh_ui','bh_uiv','bh_sync'].forEach(function(k){LS.removeItem(k)});ST={};showLogin(msg||'')}
+var VIEW=false,KEY='',ID='',NAME='',D=null,IX=[],ST=g('bh_st',{}),PH=g('bh_ph',{}),FAM={},MYS={},SC=g('bh_sc',''),SCW=null,DV=0,EXP=0,FIL='',LIM=100,syncing=false,tm,stm,lastErr='';
+function wipe(msg){['bh_code','bh_name','bh_blob','bh_st','bh_q','bh_ph','bh_pq','bh_my','bh_av','bh_sc','bh_since','bh_ui','bh_uiv','bh_sync'].forEach(function(k){LS.removeItem(k)});ST={};showLogin(msg||'')}
 function showLogin(msg){$('app').classList.add('hid');$('lg').classList.remove('hid');$('le').textContent=msg||'';LS.setItem('bh_boot','1')}
 async function loadBlob(){var st=g('bh_blob',null),bu=null;try{var r=await fetch('data.enc.json');if(r.ok)bu=await r.json()}catch(e){}
  var b=(st&&(!bu||st.ver>=bu.ver))?st:bu;
@@ -67,48 +69,58 @@ async function start(code,name,fresh){
  if(fresh&&API){var h=null;try{h=await post({a:'hello',id:ID})}catch(e){}
   if(!h){showLogin('पहली बार लॉगिन के लिए नेट चाहिए — नेट चालू करके फिर दबाएँ');return}
   if(h.revoked){showLogin('यह कोड गलत है या बंद है');return}
-  if(h.bound){showLogin('यह ID किसी दूसरे फ़ोन में चालू है — मास्टर से बात करें');return}}
+  if(h.bound){showLogin('यह ID किसी दूसरे फ़ोन में चालू है — मास्टर से बात करें');return}
+  setSc(h.sc)}
  try{var b=await loadBlob();EXP=b.exp||0;
   if(EXP&&Date.now()>EXP){wipe('चुनाव की अवधि समाप्त — ऐप बंद है');return}
   D=await dec(b,KEY);DV=b.ver}catch(e){showLogin(/नेट/.test(e.message)?e.message:/दूसरे फ़ोन/.test(e.message)?'यह ID किसी दूसरे फ़ोन में चालू है':(/बंद/.test(e.message)?'यह कोड बंद है':'कोड गलत है'));return}
  sv('bh_code',p);sv('bh_name',NAME);init();if(fresh)sv('bh_blob',b);schedule(300)}
 function init(){
+ MYS={};g('bh_my',[]).forEach(function(x){MYS[x[0]+'-'+x[1]]=1});
+ PH=g('bh_ph',{});FAM={};D.v.forEach(function(v){if(v[10]===2)return;var f=v[0]+'|'+String(v[2]).split(' ')[0];FAM[f]=(FAM[f]||0)+1});
+ var mm={},sb={};Object.keys(D.s||{}).forEach(function(k){var x=D.s[k];if(x[2])mm[x[2]]=1;if(x[1])sb[x[1]]=1});
+ $('fmn').innerHTML='<option value="">सारे मेन (मुखिया)</option>'+Object.keys(mm).sort().map(function(x){return '<option>'+esc(x)+'</option>'}).join('');
+ $('fsb').innerHTML='<option value="">सारे सब-मुखिया</option>'+Object.keys(sb).sort().map(function(x){return '<option>'+esc(x)+'</option>'}).join('');
  IX=D.v.map(function(v){var sd=(D.s||{})[v[0]+'-'+v[1]];return norm([v[3],v[4],v[5],v[6],v[9],sd?sd[4]:''].join(' '))});
- var ws=[],seen={};D.v.forEach(function(v){if(!seen[v[0]]){seen[v[0]]=1;ws.push(v[0])}});ws.sort(function(a,b){return a-b});
+ setSc(SC);if(SC==='M'&&!FIL)FIL='M';var ws=[],seen={};D.v.forEach(function(v){if(!seen[v[0]]&&vis(v)){seen[v[0]]=1;ws.push(v[0])}});ws.sort(function(a,b){return a-b});
  $('w').innerHTML='<option value="">सारे वार्ड</option>'+ws.map(function(w){var b=(D.w[w]||[])[0];return '<option value="'+w+'">वार्ड '+w+(b?' (बूथ '+esc(b)+')':'')+'</option>'}).join('');
  var rs={};Object.keys(D.s||{}).forEach(function(k){var r=D.s[k][8];if(r)rs[r]=1});$('rt').innerHTML='<option value="">सारे रूट / गाँव</option>'+Object.keys(rs).sort().map(function(r){return '<option>'+esc(r)+'</option>'}).join('');
  $('hd').textContent=D.vill||CFG.TITLE;$('lg').classList.add('hid');$('app').classList.remove('hid');
  chips();run();stat();LS.setItem('bh_boot','1')}
 var CH=[['','सब'],['R','बचे हुए'],['L','🚗 लाए'],['V','🗳 वोट डाला']];
-function chips(){$('chips').innerHTML=CH.map(function(c){return '<span class="chip'+(FIL===c[0]?' on':'')+'" data-f="'+c[0]+'">'+c[1]+'</span>'}).join('')}
+function chips(){var n=Object.keys(MYS).length,L=n?[['M','🙋 मेरे लोग ('+n+')']].concat(CH):CH;if(!n&&FIL==='M')FIL='';$('chips').innerHTML=L.map(function(c){return '<span class="chip'+(FIL===c[0]?' on':'')+'" data-f="'+c[0]+'">'+c[1]+'</span>'}).join('')}
 function key(v){return v[0]+'-'+v[1]}
+function setSc(s){SC=String(s||'');sv('bh_sc',SC);SCW=null;var m=SC.match(/^W:(.*)$/);if(m){SCW={};m[1].split(/[ ,]+/).forEach(function(x){if(x)SCW[+x]=1})}}
+function vis(v){if(SC==='M')return !!MYS[key(v)];if(SCW)return !!SCW[v[0]];return true}
 function stOf(v){var e=ST[key(v)];return e?e[0]:''}
-function fok(v){var s=stOf(v);if(v[10]===2)return !FIL;return !FIL||(FIL==='R'?s!=='V':s===FIL)}
-function wok(v){var w=$('w').value,r=$('rt').value;return (!w||v[0]==+w)&&(!r||((D.s||{})[key(v)]||[])[8]===r)}
+function fok(v){var s=stOf(v);if(FIL==='M')return !!MYS[key(v)];if(v[10]===2)return !FIL;return !FIL||(FIL==='R'?s!=='V':s===FIL)}
+function wok(v){if(!vis(v))return false;var w=$('w').value,r=$('rt').value,mn=$('fmn').value,sb=$('fsb').value,sd=(D.s||{})[key(v)]||[];return (!w||v[0]==+w)&&(!r||sd[8]===r)&&(!mn||sd[2]===mn)&&(!sb||sd[1]===sb)}
 function gok(v){var x=$('by').value;return !x||(x==='M'?v[8]==='पुरुष':v[8]==='महिला')}
 function find(q){q=q.trim();var o=[],m;
- if(!q){if($('w').value||FIL){D.v.forEach(function(v){if(wok(v)&&gok(v)&&fok(v))o.push(v)})}return o}
+ if(!q){if($('w').value||FIL||$('rt').value||$('fmn').value||$('fsb').value){D.v.forEach(function(v){if(wok(v)&&gok(v)&&fok(v))o.push(v)})}return o}
  if((m=q.match(/^(मकान|house|h)\s*:?\s*(\S+)$/i))){D.v.forEach(function(v){if(String(v[2]).split(' ')[0]===m[2]&&wok(v)&&gok(v)&&fok(v))o.push(v)});return o}
  if(/^\d+$/.test(q)){D.v.forEach(function(v){if((v[1]==+q||String(v[2]).split(' ')[0]===q)&&wok(v)&&gok(v)&&fok(v))o.push(v)});return o}
  var t=norm(q).split(' ').filter(Boolean);if(t.length===1&&t[0].length<2)return o;
  for(var i=0;i<D.v.length;i++){var v=D.v[i];if(!wok(v)||!gok(v)||!fok(v))continue;var s=IX[i],ok=true;for(var j=0;j<t.length;j++)if(s.indexOf(t[j])<0){ok=false;break}if(ok)o.push(v)}return o}
 var LB={L:'🚗 लाया',N:'❌ नहीं',V:'🗳 वोट डाला'};
-function row(v){var e=ST[key(v)],s=e?e[0]:'',b=(D.w[v[0]]||[])[0],sd=(D.s||{})[key(v)]||[],ph=String(sd[4]||'').replace(/[^0-9+]/g,'');
+function row(v){var e=ST[key(v)],s=e?e[0]:'',b=(D.w[v[0]]||[])[0],sd=(D.s||{})[key(v)]||[],pp=PH[key(v)],ph=String((pp&&pp[0])||sd[4]||'').replace(/[^0-9+]/g,''),fm=FAM[v[0]+'|'+String(v[2]).split(' ')[0]]||1;
  return '<div class="card" data-k="'+key(v)+'"><div class="n">'+esc(v[3])+(v[4]&&v[4]!==v[3]?' <span class="muted">('+esc(v[4])+')</span>':'')+'</div>'+
  '<div class="m">पिता/पति: '+esc(v[5])+' · वार्ड '+v[0]+' · क्रम '+v[1]+' · मकान '+esc(v[2])+' · '+esc(v[8])+' '+esc(v[7])+(b?' · बूथ '+esc(b):'')+'</div>'+
  ((sd[6]||sd[8]||sd[5])?'<div class="m">'+(sd[6]?'पर्ची '+esc(sd[6]):'')+(sd[8]?' · '+esc(sd[8]):'')+(sd[5]?' · अभी: '+esc(sd[5]):'')+'</div>':'')+
- ((sd[3]||sd[2]||sd[1])?'<div class="m">'+(sd[3]?'जाति: '+esc(sd[3]):'')+(sd[1]?' · सब: '+esc(sd[1]):'')+(sd[2]?' · मेन: '+esc(sd[2]):'')+'</div>':'')+(ph?'<div class="m"><a href="tel:'+ph+'">📞 '+esc(ph)+'</a></div>':'')+(sd[9]?'<div class="m">📝 '+esc(sd[9])+'</div>':'')+
+ ((sd[3]||sd[2]||sd[1])?'<div class="m">'+(sd[3]?'जाति: '+esc(sd[3]):'')+(sd[1]?' · सब: '+esc(sd[1]):'')+(sd[2]?' · मेन: '+esc(sd[2]):'')+'</div>':'')+'<div class="m">'+(ph?'<a href="tel:'+ph+'">📞 '+esc(ph)+'</a> ':(VIEW?'':'<button class="sm" data-ph="1">📞 नंबर जोड़ें</button> '))+(fm>1?'<button class="sm" data-fam="'+v[0]+'|'+esc(String(v[2]).split(' ')[0])+'">👨‍👩‍👧 परिवार: '+fm+' सदस्य</button>':'')+'</div>'+(sd[9]?'<div class="m">📝 '+esc(sd[9])+'</div>':'')+
  (v[10]===2?'<span class="tag d">सूची से हटाया गया</span>':'')+(e&&e[0]?'<span class="tag">'+LB[e[0]]+(e[2]?' · '+esc(e[2]==='MASTER'?'मास्टर':e[2]):'')+(e[1]?' · '+new Date(e[1]).toTimeString().slice(0,5):'')+'</span>':'')+
  (VIEW?'':'<div class="bt">'+['L','N','V'].map(function(x){return '<button data-s="'+x+'" class="'+x+(s===x?' on':'')+'">'+LB[x]+'</button>'}).join('')+'<button data-s="C">↺ हटाएँ</button></div>')+'</div>'}
 function run(){var r=find($('q').value);
  if(!r.length){$('res').innerHTML=$('q').value.trim()?'<p class="muted">कोई नहीं मिला</p>':'<div class="card"><p class="muted">ऊपर नाम, पिता/पति, EPIC, क्रम या मकान नंबर लिखें।<br>जैसे: <b>रामलाल</b> · <b>राम सिंह</b> · <b>मकान 58</b><br>वार्ड चुनें तो उसके सब मतदाता दिखेंगे।</p></div>';return}
  $('res').innerHTML='<p class="muted">'+r.length+' मिले'+(r.length>LIM?' (पहले '+LIM+' दिखाए — और लिखकर छोटा करें)':'')+'</p>'+r.slice(0,LIM).map(row).join('')}
-function stat(){var a=0,l=0,vv=0;D.v.forEach(function(v){if(v[10]===2)return;a++;var s=stOf(v);if(s==='L')l++;if(s==='V')vv++});
+function stat(){var a=0,l=0,vv=0;D.v.forEach(function(v){if(v[10]===2||!vis(v))return;a++;var s=stOf(v);if(s==='L')l++;if(s==='V')vv++});
  $('stats').innerHTML='<div><b>'+a+'</b>कुल मतदाता</div><div><b>'+l+'</b>लाए गए</div><div><b>'+vv+'</b>वोट डाला</div>';
  $('hs').textContent=ID+' · '+NAME+(VIEW?' · सिर्फ़ देखने के लिए':'')+' · डेटा '+(D.gen||'');foot()}
-function pend(){return g('bh_q',[]).length}
+function pend(){return g('bh_q',[]).length+g('bh_pq',[]).length}
 function foot(){var p=pend(),ls=g('bh_sync',0);$('fs').textContent=(p?p+' एंट्री भेजनी बाकी · ':'सब भेजा जा चुका · ')+(ls?'आख़िरी सिंक '+new Date(ls).toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'}):'अभी सिंक नहीं हुआ');
  $('badge').textContent=syncing?'⏳ सिंक…':(!API?'⚪ सिर्फ़ फ़ोन':(navigator.onLine===false?'🔴 ऑफलाइन':(p?'🟡 '+p+' बाकी':(lastErr?'🟠 सर्वर नहीं मिला':'🟢 सिंक'))))}
+function addPhone(k){if(VIEW)return;var n=prompt('मोबाइल नंबर लिखें (10 अंक):','');if(n===null)return;n=String(n).replace(/[^0-9]/g,'');if(n.length===12&&n.indexOf('91')===0)n=n.slice(2);if(n.length!==10){alert('10 अंक का नंबर लिखें');return}
+ var a=k.split('-'),ts=Date.now()+(+g('bh_off',0)||0),q=g('bh_pq',[]);PH[k]=[n,ts,ID];q.push([+a[0],+a[1],n,ts]);sv('bh_pq',q);sv('bh_ph',PH);run();schedule(1500)}
 function mark(k,s){if(VIEW)return;var a=k.split('-');var q=g('bh_q',[]),ts=Date.now()+(+g('bh_off',0)||0);
  if(ST[k]&&ST[k][0]==='V'&&(s==='L'||s==='N')){alert('इसका वोट डाला जा चुका है — बदलने के लिए पहले ↺ हटाएँ दबाएँ');return}
  if(s==='C'){delete ST[k];s=''}else ST[k]=[s,ts,ID];
@@ -119,12 +131,15 @@ async function post(o){o.dev=DEV();var c=new AbortController(),t=setTimeout(func
 function schedule(ms){clearTimeout(stm);stm=setTimeout(sync,ms)}
 async function sync(){if(syncing||!API||!D)return;if(navigator.onLine===false){foot();return}
  syncing=true;foot();
- try{var q=g('bh_q',[]),n=q.length,r=await post({a:'sync',id:ID,name:NAME,key:'',since:g('bh_since',0),ents:q,dv:DV,uv:UIV});
+ try{var q=g('bh_q',[]),n=q.length,pq=g('bh_pq',[]),pn=pq.length,r=await post({a:'sync',id:ID,name:NAME,key:'',since:g('bh_since',0),ents:q,phs:pq,av:g('bh_av','-'),dv:DV,uv:UIV});
   if(!r||!r.ok)throw new Error(r&&r.err||'bad');
   if(r.revoked){syncing=false;wipe('यह सेवा बंद कर दी गई है');return}
   if(r.bound){syncing=false;wipe('यह ID किसी दूसरे फ़ोन में चालू है — मास्टर से बात करें');return}
-  if((r.ep||0)!==(+g('bh_ep',0)||0)){ST={};sv('bh_st',ST);sv('bh_q',[]);sv('bh_since',0);sv('bh_ep',r.ep||0)}
-  sv('bh_q',g('bh_q',[]).slice(n));
+  if((r.ep||0)!==(+g('bh_ep',0)||0)){ST={};sv('bh_st',ST);sv('bh_q',[]);PH={};sv('bh_ph',PH);sv('bh_pq',[]);sv('bh_since',0);sv('bh_ep',r.ep||0)}
+  sv('bh_q',g('bh_q',[]).slice(n));sv('bh_pq',g('bh_pq',[]).slice(pn));
+  if(r.sc!=null&&String(r.sc)!==SC){setSc(r.sc);init()}
+  if(r.my){sv('bh_my',r.my);sv('bh_av',r.av);MYS={};r.my.forEach(function(x){MYS[x[0]+'-'+x[1]]=1});chips()}
+  (r.phs||[]).sort(function(x,y){return x[3]-y[3]}).forEach(function(e){var k=e[0]+'-'+e[1],o=PH[k];if(o&&e[3]<o[1])return;if(e[2])PH[k]=[e[2],e[3],e[4]];else delete PH[k]});sv('bh_ph',PH);
   if(r.now)sv('bh_off',r.now-Date.now());
   (r.ents||[]).sort(function(x,y){return x[3]-y[3]}).forEach(function(e){var k=e[0]+'-'+e[1],o=ST[k];if(o&&e[3]<o[1])return;if(o&&o[0]==='V'&&(e[2]==='L'||e[2]==='N')&&e[4]!=='MASTER')return;if(e[2])ST[k]=[e[2],e[3],e[4]];else delete ST[k]});
   sv('bh_st',ST);sv('bh_since',Math.max(0,(r.now||0)-3000));sv('bh_sync',Date.now());lastErr='';
@@ -138,9 +153,11 @@ async function getData(){try{var r=await post({a:'data',id:ID});if(!r||!r.ok||!r
 async function getUi(){try{var r=await post({a:'ui',id:ID});if(r&&r.ok&&r.html&&r.uv){sv0('bh_ui',r.html);sv0('bh_uiv',r.uv)}}catch(e){}}
 function sv0(k,v){try{LS.setItem(k,String(v))}catch(e){}}
 $('lb').onclick=function(){start($('lc').value,$('ln').value,true)};
-$('q').addEventListener('input',function(){clearTimeout(tm);tm=setTimeout(run,120)});$('w').onchange=run;$('rt').onchange=run;$('by').onchange=run;
+$('q').addEventListener('input',function(){clearTimeout(tm);tm=setTimeout(run,120)});$('w').onchange=run;$('rt').onchange=run;$('fmn').onchange=run;$('fsb').onchange=run;$('by').onchange=run;
 $('chips').addEventListener('click',function(e){var t=e.target.closest('.chip');if(t){FIL=t.getAttribute('data-f');chips();run()}});
-$('res').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var c=b.closest('.card');if(c)mark(c.getAttribute('data-k'),b.getAttribute('data-s'))});
+$('res').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var c=b.closest('.card');
+ if(b.getAttribute('data-fam')){var fp=b.getAttribute('data-fam').split('|');$('w').value=fp[0];$('rt').value='';$('fmn').value='';$('fsb').value='';FIL='';chips();$('q').value='मकान '+fp[1];run();window.scrollTo(0,0);return}
+ if(b.getAttribute('data-ph')){addPhone(c.getAttribute('data-k'));return}if(c)mark(c.getAttribute('data-k'),b.getAttribute('data-s'))});
 $('fy').onclick=function(){lastErr='';sync()};
 function bio(){return window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.NativeBiometric}
 function lockOn(){return g('bh_lock',true)}
