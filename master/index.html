@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="भामटसर मास्टर"><meta name="theme-color" content="#1f3a8a"><title>भामटसर — मास्टर</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#eef2f6;color:#14202b;font:15px system-ui,"Noto Sans Devanagari",sans-serif}
+header{background:#1f4e78;color:#fff;padding:10px 16px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:5;gap:10px;flex-wrap:wrap}
+nav{display:flex;gap:6px}nav button{background:#ffffff22;border:0;color:#fff;border-radius:6px;padding:7px 12px;font:inherit;cursor:pointer}nav button.on{background:#fff;color:#1f4e78}
+main{max-width:1150px;margin:0 auto;padding:12px}
+.card{background:#fff;border-radius:8px;padding:12px 14px;margin-bottom:12px;box-shadow:0 1px 2px #0001}
+input,button,select{font:inherit;padding:8px 10px;border:1px solid #b9c5d1;border-radius:6px}button.p{background:#1f4e78;color:#fff;border-color:#1f4e78;cursor:pointer}button.g{background:#fff;color:#1f4e78;cursor:pointer}button.d{background:#c62828;color:#fff;border-color:#c62828;cursor:pointer}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-bottom:12px}.k{background:#fff;border-radius:8px;padding:10px;text-align:center;box-shadow:0 1px 2px #0001}.k b{display:block;font-size:26px;color:#1f4e78}
+table{border-collapse:collapse;width:100%;font-size:14px}th,td{border-bottom:1px solid #e4e9ef;padding:6px 8px;text-align:left}th{background:#f3f6f9;position:sticky;top:0}
+.bar{background:#e4e9ef;border-radius:4px;height:10px;min-width:80px}.bar i{display:block;height:100%;background:#2e7d32;border-radius:4px}
+.r{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.muted{color:#5a6673;font-size:13px}.hid{display:none!important}.code{font:600 20px monospace;background:#fff8e1;border:1px dashed #c9a227;padding:6px 12px;border-radius:6px}
+.pill{display:inline-block;border-radius:10px;padding:1px 8px;font-size:12px;background:#e8edf2}.ok{background:#d8f0dc}.no{background:#f7d4d4}
+</style></head><body>
+<header><b>भामटसर — मास्टर</b><nav><button data-t="a" class="on">गिनती</button><button data-t="b">लोग (ID बनाएँ)</button><button data-t="c">रिपोर्ट (हर 2 घंटे)</button><button data-t="d">बचे हुए</button><button data-t="e">छपाई / PDF</button></nav><span id="st" class="muted" style="color:#dbe7f2"></span></header>
+<main>
+<div class="card hid" id="cf"><div class="r"><b>पहली बार:</b><input id="mkey" class="hid" placeholder="ऐप कोड (KEY)" style="width:130px" autocapitalize="characters"><input id="mc" type="password" placeholder="मास्टर कोड"><button class="p" id="go">खोलें</button></div><div class="muted" style="margin-top:6px">मास्टर कोड इस कंप्यूटर में ही रहता है।</div></div>
+<div id="tA"><div class="grid" id="kp"></div><div class="card"><b>वार्ड के हिसाब से</b><table id="tw"></table></div><div class="card"><b>किसने कितना किया</b><table id="tu"></table></div></div>
+<div id="tB" class="hid"><div class="card"><div class="r"><b>नया आदमी जोड़ें</b>
+<select id="rl"><option value="B">बूथ एजेंट (B)</option><option value="D">ड्राइवर (D)</option><option value="V">वॉलंटियर (V)</option><option value="W">वार्ड प्रभारी (W)</option><option value="S">सिर्फ़ देखने वाला (S) — बदल नहीं सकता</option></select>
+<input id="nm" placeholder="नाम"><button class="p" id="mk">ID बनाओ</button></div><div id="newid" class="hid" style="margin-top:10px"><div class="muted">इसे उस आदमी को भेजें:</div><div class="r"><span class="code" id="nc"></span><button class="g" id="cp">कॉपी</button><a id="wa" target="_blank"><button class="g">WhatsApp पर भेजें</button></a></div></div></div>
+<div class="card"><div class="r"><b>सब लोग</b><span class="muted">बंद करने पर उसका कोड तुरंत बेकार (नेट मिलते ही फ़ोन से डेटा हट जाएगा)</span></div><table id="tl"></table></div>
+<div class="card"><div class="r"><b>पूरी सेवा बंद/चालू (चुनाव के बाद)</b><button class="d" id="rv"></button></div></div></div>
+<div id="tC" class="hid"><div class="card"><div class="r"><b>हर 2 घंटे की रिपोर्ट</b><button class="g" id="sn">अभी की रिपोर्ट बनाओ</button><button class="g" id="rc">CSV</button></div><svg id="ch" viewBox="0 0 700 200" style="width:100%;max-height:220px;margin-top:8px"></svg><table id="tp"></table></div></div>
+<div id="tD" class="hid"><div class="card"><div class="r"><b>अभी तक वोट नहीं डाला</b> <select id="sw"></select><select id="sf"><option value="R">सब बचे हुए</option><option value="L">लाए पर वोट नहीं</option><option value="N">"नहीं" वाले</option><option value="Z">कोई एंट्री नहीं</option></select><button class="g" id="csv">CSV उतारें</button><span id="cnt" class="muted"></span></div>
+<div style="max-height:520px;overflow:auto;margin-top:8px"><table id="tr"></table></div></div></div>
+<div id="tE" class="hid">
+<div class="card hid" id="mp"><b>मैनुअल पर्ची</b><div class="muted" style="margin:4px 0 8px">मकान नंबर डालें → उस घर के सदस्य दिखेंगे → जिनकी पर्ची चाहिए उन्हें चुनकर "टोकरी में जोड़ें"। कई घर जोड़कर एक साथ छाप सकते हैं।</div>
+<div class="r" style="margin-bottom:8px"><input id="mh" placeholder="मकान नंबर" style="width:120px"><select id="mw"></select><button class="p" id="mf">खोजें</button></div>
+<div id="mr"></div><div class="r hid" id="mact" style="margin:8px 0"><button class="g" id="ma">सब चुनें</button><button class="p" id="mad">टोकरी में जोड़ें</button></div>
+<div><b>टोकरी: <span id="mbn">0</span> पर्ची</b></div><div id="mb" style="margin:6px 0"></div>
+<div class="r"><button class="p" id="mpr">📄 टोकरी की पर्चियाँ — PDF बनाओ</button><button class="g" id="mcl">टोकरी खाली करें</button></div></div><div class="card"><b>बूथ पर्ची (भामटसर आउटपुट फ़ोल्डर वाली) और दूसरी PDF</b><div class="muted" style="margin:4px 0 8px">दबाने पर नई टैब में खुलेगी — वहाँ से छापें या सेव करें। (सिर्फ़ Mac ऐप में उपलब्ध)</div><div class="r" id="pl"></div></div>
+<div class="card"><b>अभी बनाएँ और छापें</b><div class="muted" style="margin:4px 0 8px">सबसे ताज़ा डेटा और टिक के साथ। खुलने वाली विंडो में "प्रिंट" → "PDF के रूप में सेव करें"।</div>
+<div class="r" style="margin-bottom:8px"><select id="pt"><option value="drv">ड्राइवर सूची (रूट के हिसाब से, टिक खाने के साथ)</option><option value="dslip">ड्राइवर पर्ची (रूट के हिसाब से — वही बूथ वाली पर्ची)</option><option value="man">मैनुअल पर्ची (मकान नंबर डालो, सदस्य चुनो)</option><option value="wd">वार्ड सूची (वार्ड के हिसाब से)</option></select>
+<select id="pw"></select><select id="pr"></select><label class="muted"><input type="checkbox" id="pn" style="padding:0"> सिर्फ़ वोट न डालने वाले</label><input id="pc" type="number" value="40" min="1" max="400" style="width:80px" title="खाली पर्ची की संख्या"><button class="p" id="pg">📄 PDF बनाओ</button></div>
+<div class="muted" id="ph"></div></div></div>
+</main>
+<script>
+var CFG={API:"https://script.google.com/macros/s/AKfycbxDaREP7E-M1CaJry93rjoQltZzfvu-zXSAtA_zbPLBCbUQH8gJuWlwI6qBiIRE1jIy/exec",KEY:""},BLOB=null,APPHTML="",UIV_E=0,PUB=false,IPH=!BLOB;
+var $=function(i){return document.getElementById(i)},D=null,ROWS={},USERS=[],REPS=[],REV=false,MC='',tmr;
+function esc(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function g(k,d){try{var v=localStorage.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}}function sv(k,v){try{localStorage.setItem(k,JSON.stringify(v))}catch(e){}}
+function b64(b){var s=atob(b),a=new Uint8Array(s.length);for(var i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a}
+async function dec(blob,key){var km=await crypto.subtle.importKey('raw',new TextEncoder().encode(key),'PBKDF2',false,['deriveKey']);
+ var k=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(blob.salt),iterations:100000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
+ var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(blob.iv)},k,b64(blob.ct));
+ return JSON.parse(await new Response(new Blob([pt]).stream().pipeThrough(new DecompressionStream('gzip'))).text())}
+async function post(o){var c=new AbortController(),t=setTimeout(function(){c.abort()},25000);o.mc=MC;
+ try{var r=await fetch(CFG.API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(o),signal:c.signal});return await r.json()}finally{clearTimeout(t)}}
+document.querySelectorAll('nav button').forEach(function(b){b.onclick=function(){document.querySelectorAll('nav button').forEach(function(x){x.classList.toggle('on',x===b)});['A','B','C','D','E'].forEach(function(t){$('t'+t).classList.toggle('hid',t.toLowerCase()!==b.getAttribute('data-t'))})}});
+async function loadD(){if(BLOB){D=await dec(BLOB,CFG.KEY);return true}
+ var kb=g('m_blob',null),ky=g('m_key','');if(kb&&ky){try{D=await dec(kb,ky);return true}catch(e){return false}}return false}
+async function boot(){var ok=await loadD();MC=g('m_mc','');
+ if(ok){$('sw').innerHTML='<option value="">सारे वार्ड</option>'+Object.keys(D.w).sort(function(a,b){return a-b}).map(function(w){return '<option value="'+w+'">वार्ड '+w+'</option>'}).join('');
+  var c=g('m_cache',null);if(c){ROWS=c.rows;USERS=c.users;REPS=c.reps;REV=c.rev;draw();$('st').textContent='पुराना डेटा (आख़िरी: '+new Date(c.t).toLocaleTimeString('hi-IN')+')'}}
+ if(!MC||!ok){$('cf').classList.remove('hid');if(IPH)$('mkey').classList.remove('hid')}else{pull();}
+ clearInterval(tmr);tmr=setInterval(pull,30000)}
+async function fetchBlob(){var a=await post({a:'admin',op:'getdata'});if(!a.ok)throw new Error(a.err||'डेटा नहीं मिला');return JSON.parse(a.blob)}
+$('go').onclick=async function(){MC=$('mc').value.trim();if(IPH){var K=$('mkey').value.trim().toUpperCase();$('st').textContent='डेटा आ रहा है…';
+  try{var b=await fetchBlob();D=await dec(b,K);sv('m_blob',b);sv('m_key',K);sv('m_ver',b.ver)}catch(e){$('st').textContent='गलत मास्टर कोड / KEY या नेट नहीं: '+(e.message||'');return}}
+ sv('m_mc',MC);$('cf').classList.add('hid');if(IPH){await boot();fillPrint();$('pt').onchange()}else pull()};
+async function pull(){if(!D)return;if(!MC||navigator.onLine===false){if(MC)$('st').textContent='ऑफलाइन — पुराना डेटा'; return}
+ try{var r=await (await fetch(CFG.API+'?a=master&mc='+encodeURIComponent(MC))).json();
+  if(!r.ok){$('st').textContent=r.err||'मना किया';if(/galat/.test(r.err||'')){$('cf').classList.remove('hid')}return}
+  ROWS={};r.rows.forEach(function(x){ROWS[x[0]+'-'+x[1]]=x});USERS=r.users;REPS=r.reports;REV=r.revoked;
+  sv('m_cache',{rows:ROWS,users:USERS,reps:REPS,rev:REV,t:Date.now()});if(IPH&&r.dv&&r.dv!==g('m_ver',0)){try{var nb=await fetchBlob();D=await dec(nb,g('m_key',''));sv('m_blob',nb);sv('m_ver',nb.ver)}catch(e){}}publish(r);$('st').textContent='ताज़ा: '+new Date().toLocaleTimeString('hi-IN');draw()}
+ catch(e){$('st').textContent='सर्वर नहीं मिला — पुराना डेटा'}}
+function sOf2(v){return (D.s||{})[v[0]+'-'+v[1]]||[]}
+async function publish(r){if(PUB||IPH)return;PUB=true;var msg=[];
+ try{if(r.dv!==BLOB.ver){var a=await post({a:'admin',op:'putdata',blob:JSON.stringify(BLOB),dv:BLOB.ver,exp:BLOB.exp||0});if(a.ok)msg.push('नया डेटा सर्वर पर भेजा')}
+  if((r.uv||0)<UIV_E){var b=await post({a:'admin',op:'putui',html:APPHTML,uv:UIV_E});if(b.ok)msg.push('ऐप की नई स्क्रीन भेजी')}}catch(e){PUB=false}
+ if(msg.length)$('st').textContent=msg.join(' · ')}
+function stOf(v){var e=ROWS[v[0]+'-'+v[1]];return e?e[2]:''}
+function draw(){if(!D)return;var A=0,L=0,V=0,N=0,byW={},byU={};
+ D.v.forEach(function(v){if(v[10]===2)return;A++;var e=ROWS[v[0]+'-'+v[1]],s=e?e[2]:'',w=byW[v[0]]=byW[v[0]]||{a:0,l:0,v:0};w.a++;
+  if(s==='L'){L++;w.l++}if(s==='V'){V++;w.v++}if(s==='N')N++;
+  if(e&&e[2]){var u=byU[e[4]]=byU[e[4]]||{n:e[5],l:0,v:0,x:0};if(s==='L')u.l++;else if(s==='V')u.v++;else u.x++}});
+ $('kp').innerHTML=[['कुल मतदाता',A],['लाए गए',L],['वोट डाला',V],['"नहीं" वाले',N],['वोट %',A?(V*100/A).toFixed(1)+'%':'-']].map(function(k){return '<div class="k"><b>'+k[1]+'</b>'+k[0]+'</div>'}).join('');
+ $('tw').innerHTML='<tr><th>वार्ड</th><th>बूथ</th><th>कुल</th><th>लाए</th><th>वोट</th><th>वोट %</th><th></th></tr>'+Object.keys(byW).sort(function(a,b){return a-b}).map(function(w){var x=byW[w],p=x.a?x.v*100/x.a:0;
+  return '<tr><td>'+w+'</td><td>'+esc((D.w[w]||[])[0]||'')+'</td><td>'+x.a+'</td><td>'+x.l+'</td><td>'+x.v+'</td><td>'+p.toFixed(1)+'%</td><td><div class="bar"><i style="width:'+p+'%"></i></div></td></tr>'}).join('');
+ $('tu').innerHTML='<tr><th>आईडी</th><th>नाम</th><th>लाए</th><th>वोट डलवाए</th><th>अन्य</th></tr>'+(Object.keys(byU).sort().map(function(k){var u=byU[k];return '<tr><td>'+esc(k)+'</td><td>'+esc(u.n)+'</td><td>'+u.l+'</td><td>'+u.v+'</td><td>'+u.x+'</td></tr>'}).join('')||'<tr><td>अभी कोई एंट्री नहीं</td></tr>');
+ users();reports();list()}
+function users(){$('tl').innerHTML='<tr><th>आईडी</th><th>नाम</th><th>काम</th><th>लॉगिन कोड</th><th>स्थिति</th><th></th></tr>'+(USERS.map(function(u){var on=/^(y|yes|1|true)$/i.test(String(u[3]));
+  return '<tr><td>'+esc(u[0])+'</td><td>'+esc(u[1])+'</td><td>'+esc(u[2])+'</td><td><b>'+esc(CFG.KEY+'-'+u[0])+'</b></td><td><span class="pill '+(on?'ok':'no')+'">'+(on?'चालू':'बंद')+'</span></td><td><button class="g" data-id="'+esc(u[0])+'" data-on="'+(on?0:1)+'">'+(on?'बंद करें':'चालू करें')+'</button></td></tr>'}).join('')||'<tr><td colspan="6">अभी कोई नहीं — ऊपर से जोड़ें</td></tr>');
+ $('rv').textContent=REV?'सेवा बंद है — चालू करें':'पूरी सेवा बंद करें (सब फ़ोन से डेटा हटेगा)';$('rv').className=REV?'g':'d'}
+$('tl').onclick=async function(e){var b=e.target.closest('button');if(!b)return;var r=await post({a:'admin',op:'setActive',id:b.getAttribute('data-id'),active:b.getAttribute('data-on')==='1'});if(r.ok)pull();else alert(r.err||'नहीं हुआ')};
+$('mk').onclick=async function(){var n=$('nm').value.trim();if(!n){alert('नाम लिखें');return}if(navigator.onLine===false){alert('नेट चालू होने पर ही ID बनेगी');return}
+ var r=await post({a:'admin',op:'newUser',role:$('rl').value,name:n});if(!r.ok){alert(r.err||'नहीं हुआ');return}
+ var code=CFG.KEY+'-'+r.id;$('nc').textContent=code;$('newid').classList.remove('hid');$('nm').value='';
+ $('wa').href='https://wa.me/?text='+encodeURIComponent('भामटसर सहायक ऐप का लॉगिन कोड: '+code+'\nऐप खोलकर यह कोड और अपना नाम डालें।');pull()};
+$('cp').onclick=function(){navigator.clipboard&&navigator.clipboard.writeText($('nc').textContent)};
+$('rv').onclick=async function(){var on=!REV;if(!confirm(on?'सब फ़ोन से डेटा हट जाएगा। पक्का बंद करें?':'सेवा फिर चालू करें?'))return;var r=await post({a:'admin',op:'revoke',on:on});if(r.ok)pull()};
+$('sn').onclick=async function(){var r=await post({a:'admin',op:'snapshot'});if(r.ok)pull();else alert(r.err||'नहीं हुआ')};
+function reports(){var T=0;D.v.forEach(function(v){if(v[10]!==2)T++});
+ $('tp').innerHTML='<tr><th>समय</th><th>लाए</th><th>वोट डाला</th><th>"नहीं"</th><th>वोट %</th></tr>'+REPS.slice().reverse().map(function(r){return '<tr><td>'+esc(r[1])+'</td><td>'+r[2]+'</td><td>'+r[3]+'</td><td>'+r[4]+'</td><td>'+(T?(r[3]*100/T).toFixed(1):'-')+'%</td></tr>'}).join('')||'<tr><td>अभी कोई रिपोर्ट नहीं</td></tr>';
+ var s=$('ch');if(REPS.length<2){s.innerHTML='<text x="10" y="30" fill="#5a6673">2 रिपोर्ट के बाद ग्राफ़ दिखेगा</text>';return}
+ var mx=Math.max.apply(null,REPS.map(function(r){return Math.max(r[2],r[3])}))||1,n=REPS.length,X=function(i){return 40+i*(640/(n-1))},Y=function(v){return 180-v*160/mx};
+ var line=function(ix,col){return '<polyline fill="none" stroke="'+col+'" stroke-width="2.5" points="'+REPS.map(function(r,i){return X(i)+','+Y(r[ix])}).join(' ')+'"/>'};
+ s.innerHTML='<line x1="40" y1="180" x2="690" y2="180" stroke="#b9c5d1"/>'+line(2,'#1565c0')+line(3,'#2e7d32')+'<text x="44" y="14" fill="#1565c0" font-size="12">● लाए</text><text x="100" y="14" fill="#2e7d32" font-size="12">● वोट डाला</text><text x="4" y="24" font-size="11" fill="#5a6673">'+mx+'</text>'}
+$('rc').onclick=function(){dl('report.csv','समय,लाए,वोट,नहीं\n'+REPS.map(function(r){return [r[1],r[2],r[3],r[4]].join(',')}).join('\n'))};
+function pick(){var w=$('sw').value,f=$('sf').value;return D.v.filter(function(v){if(v[10]===2)return false;if(w&&v[0]!=+w)return false;var s=stOf(v);return f==='R'?s!=='V':f==='L'?s==='L':f==='N'?s==='N':!s})}
+function list(){var r=pick();$('cnt').textContent=r.length+' लोग';
+ $('tr').innerHTML='<tr><th>वार्ड</th><th>क्रम</th><th>मकान</th><th>नाम</th><th>पिता/पति</th><th>उम्र</th><th>मोबाइल</th><th>रूट</th><th>स्थिति</th></tr>'+r.slice(0,800).map(function(v){var s=stOf(v);
+  return '<tr><td>'+v[0]+'</td><td>'+v[1]+'</td><td>'+esc(v[2])+'</td><td>'+esc(v[3])+'</td><td>'+esc(v[5])+'</td><td>'+esc(v[7])+'</td><td>'+esc((sOf2(v)[4])||'')+'</td><td>'+esc((sOf2(v)[8])||'')+'</td><td>'+({L:'🚗 लाया',N:'❌ नहीं',V:'🗳 वोट डाला'}[s]||'—')+'</td></tr>'}).join('')+(r.length>800?'<tr><td colspan="9" class="muted">पहले 800 दिखाए — पूरी सूची CSV में</td></tr>':'')}
+$('sw').onchange=list;$('sf').onchange=list;
+function dl(n,t){var a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['﻿'+t],{type:'text/csv'}));a.download=n;a.click()}
+$('csv').onclick=function(){var q=function(x){x=String(x==null?'':x);return /[",\n]/.test(x)?'"'+x.replace(/"/g,'""')+'"':x};
+ dl('bachhe_hue_matdata.csv','ward,serial,house,name,relative,age,status\n'+pick().map(function(v){return [v[0],v[1],v[2],v[3],v[5],v[7],stOf(v)].map(q).join(',')}).join('\n'))};
+
+var PDFS=[['Booth147_Summary_Counting_Slips.pdf','बूथ 147 — पर्ची (नाम वाली)'],['Booth148_Summary_Counting_Slips.pdf','बूथ 148 — पर्ची (नाम वाली)'],['Booth149_Summary_Counting_Slips.pdf','बूथ 149 — पर्ची (नाम वाली)'],['Booth150_Summary_Counting_Slips.pdf','बूथ 150 — पर्ची (नाम वाली)'],['Booth151_Summary_Counting_Slips.pdf','बूथ 151 — पर्ची (नाम वाली)'],['Booth147_BLANK_Manual_Slips_12perA4.pdf','बूथ 147 — खाली पर्ची'],['Booth148_BLANK_Manual_Slips_12perA4.pdf','बूथ 148 — खाली पर्ची'],['Booth149_BLANK_Manual_Slips_12perA4.pdf','बूथ 149 — खाली पर्ची'],['Booth150_BLANK_Manual_Slips_12perA4.pdf','बूथ 150 — खाली पर्ची'],['Booth151_BLANK_Manual_Slips_12perA4.pdf','बूथ 151 — खाली पर्ची'],['Dhani_Route_Sub_Main_List.pdf','ढाणी रूट — सब/मेन सूची'],['Sub_Main_Cast_Route_List.pdf','सब/मेन/जाति/रूट सूची'],['Mukhiya_Subwise_All.pdf','मुखिया — सब-वार सब'],['Mukhiya_Page_Index.pdf','मुखिया पेज इंडेक्स']];
+if(IPH){$('pl').innerHTML='<div class="muted">तैयार PDF सिर्फ़ Mac ऐप में हैं। यहाँ iPhone पर पर्ची बनाने के लिए ऊपर वाले विकल्प (ड्राइवर पर्ची / मैनुअल पर्ची) चुनें — खुली हुई पेज पर Share → Print → PDF सेव करें।</div>'}else if(location.protocol==='file:'){$('pl').innerHTML='<div class="muted">PDF खोलने के लिए HTML फ़ाइल नहीं, Mac का <b>Bhamatsar_Master ऐप</b> डबल-क्लिक करके खोलें।</div>'}else $('pl').innerHTML=PDFS.map(function(p){return '<a href="pdf/'+p[0]+'" target="_blank"><button class="g">📄 '+p[1]+'</button></a>'}).join('');
+function sOf(v){return (D.s||{})[v[0]+'-'+v[1]]||[]}
+function hno(v){var m=String(v[2]).match(/\d+/);return m?+m[0]:1e9}
+function fillPrint(){if(!D)return;$('mw').innerHTML='<option value="">सारे वार्ड</option>'+Object.keys(D.w).sort(function(a,b){return a-b}).map(function(w){return '<option value="'+w+'">वार्ड '+w+'</option>'}).join('');var rs={};Object.keys(D.s||{}).forEach(function(k){if(D.s[k][8])rs[D.s[k][8]]=1});
+ $('pw').innerHTML='<option value="">सारे वार्ड</option>'+Object.keys(D.w).sort(function(a,b){return a-b}).map(function(w){return '<option value="'+w+'">वार्ड '+w+'</option>'}).join('');
+ $('pr').innerHTML='<option value="">सारे रूट</option>'+Object.keys(rs).sort().map(function(r){return '<option>'+esc(r)+'</option>'}).join('')}
+/*SLIPCARD*/function slipCard(x,r){var b=D.w[x[0]]||[],m=String(x[8])==='महिला';r=r||sOf(x)[8]||'';return '<div class="pc"><div class="h">ग्राम पंचायत निर्वाचन · ग्राम पंचायत '+esc(D.vill||'भामटसर')+' · मतदान 16.11.2026 (सोमवार)'+(r?'<span style="float:right">रूट '+esc(r)+'</span>':'')+'</div><div><b>वार्ड नं०: '+x[0]+' &nbsp; बूथ नं०: '+esc(b[0]||'')+'</b></div><div><b>क्रम संख्या: '+x[1]+' &nbsp; EPIC: '+esc(x[9]||'')+'</b></div><div class="n">मतदाता का नाम : '+esc(x[3])+'</div><div class="e">Name: '+esc(x[4]||'')+'</div><div>पिता / पति का नाम : '+esc(x[5])+(x[6]?' ('+esc(x[6])+')':'')+'</div><div>मकान नं०: '+esc(x[2])+' &nbsp; लिंग: '+(m?'F / स्त्री':'M / पुरुष')+' &nbsp; आयु: '+esc(x[7])+'</div>'+(x[11]?'<div>गाँव / मोहल्ला: '+esc(x[11])+'</div>':'')+'<div><b>मतदान केंद्र: '+esc(b[1]||'')+'</b></div></div>'}
+function printDoc(title,body){var doc='<!doctype html><html lang="hi"><head><meta charset="utf-8"><title>'+esc(title)+'</title><style>@page{size:A4;margin:10mm}body{font:12px "Noto Sans Devanagari",system-ui,sans-serif;margin:0}h2{margin:0 0 4px;font-size:15px}.m{margin:0 0 8px;font-size:12px}table{border-collapse:collapse;width:100%}th,td{border:1px solid #777;padding:3px 5px;font-size:11.5px;text-align:left;vertical-align:top}th{background:#eee}tr{page-break-inside:avoid}.bx{display:inline-block;width:13px;height:13px;border:1.3px solid #000;vertical-align:middle}.ln{border-bottom:1px dotted #444;display:inline-block;min-width:90px}.pb{page-break-after:always}.pg{display:grid;grid-template-columns:1fr 1fr;gap:4mm 6mm;page-break-after:always}.pg:last-child{page-break-after:auto}.pc{box-sizing:border-box;border:1px solid #000;padding:2mm 3mm;height:39mm;overflow:hidden;font-size:10.5px;line-height:1.32;page-break-inside:avoid}.pc .h{font-size:8.5px;color:#1f3a8a;border-bottom:1px solid #1f3a8a;margin-bottom:1mm}.pc .n{font-size:15px;font-weight:700}.pc .e{font-style:italic;font-size:12px}.rt{grid-column:1/3;font-weight:700;font-size:13px;border-bottom:2px solid #000}</style></head><body>'+body+'</body></html>';
+ if(location.protocol==='http:'){var st=$('st');if(st)st.textContent='PDF बन रही है… (कुछ सेकंड)';
+  fetch('/savepdf',{method:'POST',body:JSON.stringify({name:title,fn:/मैनुअल/.test(title)?'Manual_Parchi':/ड्राइवर पर्ची/.test(title)?'Driver_Parchi':/ड्राइवर/.test(title)?'Driver_List':/वार्ड/.test(title)?'Ward_List':'Bhamatsar',html:doc})}).then(function(r){if(!r.ok)throw new Error('x');var nm=r.headers.get('X-Saved-Name')||'parchi.pdf';return r.blob().then(function(b){var a=document.createElement('a');a.href=URL.createObjectURL(b);a.download=nm;document.body.appendChild(a);a.click();a.remove();if(st)st.textContent='PDF सेव हो गई: '+nm+' (Downloads में, और Documents/Bhamatsar_PDF में)';alert('PDF सेव हो गई ✔\n'+nm+'\n\nDownloads और Documents/Bhamatsar_PDF दोनों में है।')})}).catch(function(){if(st)st.textContent='';fbPrint(doc)});return}
+ fbPrint(doc)}
+function fbPrint(doc){var w=window.open('','_blank');if(!w){alert('PDF नहीं बन सकी और पॉप-अप भी रुका है');return}w.document.write(doc);w.document.close();w.focus();setTimeout(function(){w.print()},500)}
+function pickPrint(){var w=$('pw').value,r=$('pr').value,n=$('pn').checked;return D.v.filter(function(v){if(v[10]===2)return false;if(w&&v[0]!=+w)return false;if(r&&sOf(v)[8]!==r)return false;if(n&&stOf(v)==='V')return false;return true})}
+
+var BK=[];
+function hn(s){return String(s).replace(/\s+/g,'').toLowerCase()}
+function vOf(k){return D.v.filter(function(v){return v[0]+'-'+v[1]===k})[0]}
+function renderBk(){$('mbn').textContent=BK.length;$('mb').innerHTML=BK.map(function(k){var v=vOf(k);return v?'<div class="r" style="justify-content:space-between;border-bottom:1px solid #ddd;padding:2px 0"><span>वार्ड '+v[0]+' · मकान '+esc(v[2])+' · क्रम '+v[1]+' · '+esc(v[3])+' ('+esc(v[7])+')</span><button class="g" data-k="'+k+'">✕</button></div>':''}).join('')}
+$('mf').onclick=function(){var h=hn($('mh').value),w=$('mw').value;if(!h){alert('मकान नंबर डालें');return}
+ var L=D.v.filter(function(v){return v[10]!==2&&hn(v[2])===h&&(!w||v[0]==+w)}).sort(function(a,b){return a[0]-b[0]||a[1]-b[1]});
+ $('mr').innerHTML=L.length?L.map(function(v){return '<label style="display:block;padding:3px 0"><input type="checkbox" class="mc" value="'+v[0]+'-'+v[1]+'" style="width:auto"> वार्ड '+v[0]+' · क्रम '+v[1]+' · <b>'+esc(v[3])+'</b> · पिता/पति: '+esc(v[5])+' · उम्र '+esc(v[7])+' · '+esc(v[8])+'</label>'}).join(''):'<div class="muted">इस मकान नंबर पर कोई सदस्य नहीं मिला</div>';$('mact').classList.toggle('hid',!L.length)};
+$('ma').onclick=function(){var c=document.querySelectorAll('#mr .mc'),all=Array.prototype.every.call(c,function(x){return x.checked});Array.prototype.forEach.call(c,function(x){x.checked=!all})};
+$('mad').onclick=function(){var n=0;Array.prototype.forEach.call(document.querySelectorAll('#mr .mc:checked'),function(x){if(BK.indexOf(x.value)<0){BK.push(x.value);n++}x.checked=false});if(!n)alert('पहले सदस्य चुनें');renderBk()};
+$('mb').onclick=function(e){var k=e.target.getAttribute&&e.target.getAttribute('data-k');if(k){BK=BK.filter(function(x){return x!==k});renderBk()}};
+$('mcl').onclick=function(){BK=[];renderBk()};
+$('mh').onkeydown=function(e){if(e.key==='Enter')$('mf').click()};
+$('mpr').onclick=function(){var L=BK.map(vOf).filter(Boolean);if(!L.length){alert('टोकरी खाली है');return}var pg='';for(var i=0;i<L.length;i+=12)pg+='<div class="pg">'+L.slice(i,i+12).map(function(x){return slipCard(x)}).join('')+'</div>';printDoc('मैनुअल पर्ची',pg)};
+$('pt').onchange=function(){var m=$('pt').value==='man';$('mp').classList.toggle('hid',!m);$('pg').style.display=m?'none':'';var t=$('pt').value;$('pc').style.display=t==='blank'?'':'none';$('pr').style.display=(t==='drv'||t==='dslip')?'':'none';$('pn').parentNode.style.display=t==='blank'?'none':''};
+$('pg').onclick=function(){var t=$('pt').value,v=D.v,R=pickPrint(),V0=D.vill||'भामटसर',bd='';
+ if(t==='blank'){var c=Math.min(400,+$('pc').value||40),sl='';for(var i=0;i<c;i++)sl+='<div class="sl"><b>'+esc(V0)+' — मतदान पर्ची</b><br>नाम: <span class="ln" style="min-width:230px"></span><br>पिता/पति: <span class="ln" style="min-width:200px"></span><br>वार्ड ___ &nbsp; क्रम ___ &nbsp; मकान ____ &nbsp; बूथ ____<br>पर्ची नं.: <span class="ln"></span></div>';
+  printDoc('खाली पर्ची','<div class="g">'+sl+'</div>');return}
+ if(!R.length){alert('इस चुनाव में कोई मतदाता नहीं');return}
+ if(t==='dslip'){if(R.length>800&&!confirm(R.length+' पर्चियाँ — बहुत लंबा होगा। जारी रखें?'))return;
+  R.sort(function(a,b){return String(sOf(a)[8]).localeCompare(String(sOf(b)[8]))||a[0]-b[0]||hno(a)-hno(b)||a[1]-b[1]});
+  var by={},od=[];R.forEach(function(x){var r=sOf(x)[8]||'—';if(!by[r]){by[r]=[];od.push(r)}by[r].push(x)});
+
+  bd=od.map(function(r){var L=by[r],pg='';for(var i=0;i<L.length;i+=12){pg+='<div class="pg">'+(i===0?'<div class="rt">रूट '+esc(r)+' — '+L.length+' पर्चियाँ &nbsp; ड्राइवर: <span class="ln"></span> &nbsp; गाड़ी नं.: <span class="ln"></span></div>':'')+L.slice(i,i+12).map(function(x){return slipCard(x,r)}).join('')+'</div>'}return pg}).join('');
+  printDoc('ड्राइवर पर्ची',bd);return}
+ R.sort(function(a,b){return (t==='drv'?String(sOf(a)[8]).localeCompare(String(sOf(b)[8])):a[0]-b[0])||hno(a)-hno(b)||a[0]-b[0]||a[1]-b[1]});
+ var head=(t==='drv'?'ड्राइवर सूची':'वार्ड सूची')+' — '+esc(V0)+($('pw').value?' · वार्ड '+$('pw').value:'')+($('pr').value?' · '+esc($('pr').value):'');
+ bd='<h2>'+head+'</h2><div class="m">कुल '+R.length+' लोग'+(t==='drv'?' &nbsp; ड्राइवर: <span class="ln"></span> &nbsp; गाड़ी नं.: <span class="ln"></span> &nbsp; मोबाइल: <span class="ln"></span>':'')+'</div><table><tr><th>पर्ची</th><th>वार्ड</th><th>मकान</th><th>क्रम</th><th>नाम</th><th>पिता/पति</th><th>उम्र</th><th>मोबाइल</th><th>लाया</th><th>वोट</th></tr>'+
+  R.map(function(x){var s=sOf(x),st=stOf(x);return '<tr><td>'+esc(s[6]||'')+'</td><td>'+x[0]+'</td><td>'+esc(x[2])+'</td><td>'+x[1]+'</td><td>'+esc(x[3])+'</td><td>'+esc(x[5])+'</td><td>'+esc(x[7])+'</td><td>'+esc(s[4]||'')+'</td><td><span class="bx"></span>'+(st==='L'?' ✓':'')+'</td><td><span class="bx"></span>'+(st==='V'?' ✓':'')+'</td></tr>'}).join('')+'</table>';
+ printDoc(head,bd)};
+window.addEventListener('online',pull);boot().then(function(){fillPrint();$('pt').onchange()});
+</script></body></html>
