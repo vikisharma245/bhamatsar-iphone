@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=8;</script>
+<script>var UIV=9;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -31,8 +31,9 @@ input,select{width:100%;font:inherit;padding:11px 12px;border:1px solid #b9c5d1;
 <input id="lc" placeholder="लॉगिन कोड" autocapitalize="characters" autocomplete="off"><input id="ln" placeholder="आपका नाम" autocomplete="off">
 <div id="le" class="err"></div><button class="btn" id="lb">अंदर जाएँ</button></div>
 <div id="lk" class="login hid"><h2 style="color:#1f4e78;margin:0 0 8px">भामटसर सहायक</h2><div class="muted" style="margin:0 0 10px">फ़िंगरप्रिंट / चेहरे / फ़ोन के लॉक से खोलें</div><button class="btn" id="lkb">🔓 खोलें</button><div id="lke" class="err"></div></div>
-<div id="mn" class="hid" style="position:fixed;inset:0;background:#0007;z-index:9;display:flex;align-items:flex-end"><div style="background:#fff;width:100%;padding:14px;border-radius:12px 12px 0 0"><div class="muted" id="mi" style="margin:0 0 8px"></div><button class="btn g" id="mb1"></button><button class="btn g" id="mb2">लॉगआउट (फ़ोन से डेटा हटाएँ)</button><button class="btn" id="mb3">बंद करें</button></div></div>
+<div id="mn" class="hid" style="position:fixed;inset:0;background:#0007;z-index:9;display:flex;align-items:flex-end"><div style="background:#fff;width:100%;padding:14px;border-radius:12px 12px 0 0"><div class="muted" id="mi" style="margin:0 0 8px"></div><button class="btn" id="mbu">🔄 अपडेट देखें</button><button class="btn g" id="mb1"></button><button class="btn g" id="mb2">लॉगआउट (फ़ोन से डेटा हटाएँ)</button><button class="btn" id="mb3">बंद करें</button></div></div>
 <div id="app" class="hid">
+<div id="upb" class="hid" style="background:#2e7d32;color:#fff;padding:9px 12px;text-align:center;font-weight:600">🔄 ऐप का नया अपडेट आ गया — यहाँ दबाएँ</div>
 <header><div><b id="hd"></b><small id="hs"></small></div><span id="badge">—</span></header>
 <div class="sb"><input id="q" autocomplete="off" placeholder="🔍 नाम / पिता-पति / EPIC / क्रम / मकान नं.">
 <div class="two"><select id="w"></select><select id="by"><option value="">सब</option><option value="M">सिर्फ़ पुरुष</option><option value="F">सिर्फ़ महिला</option></select></div>
@@ -146,7 +147,7 @@ async function sync(){if(syncing||!API||!D)return;if(navigator.onLine===false){f
   if(r.exp&&r.exp!==EXP)EXP=r.exp;
   if(r.dv&&r.dv!==DV)await getData();
   if(r.uv&&r.uv>UIV&&r.uv!==g('bh_uiv',0))await getUi();
-  run();stat()}catch(e){lastErr=String(e&&e.message||e)}
+  run();stat();$('upb').classList.toggle('hid',!newUi())}catch(e){lastErr=String(e&&e.message||e)}
  syncing=false;foot();if(pend()&&!lastErr)schedule(2000)}
 async function getData(){try{var r=await post({a:'data',id:ID});if(!r||!r.ok||!r.blob)return;var b=typeof r.blob==='string'?JSON.parse(r.blob):r.blob;
  var d=await dec(b,KEY);D=d;DV=b.ver;sv('bh_blob',b);init()}catch(e){lastErr='data '+e}}
@@ -160,26 +161,31 @@ $('res').addEventListener('click',function(e){var b=e.target.closest('button');i
  if(b.getAttribute('data-ph')){addPhone(c.getAttribute('data-k'));return}if(c&&c.getAttribute('data-k')&&b.getAttribute('data-s'))mark(c.getAttribute('data-k'),b.getAttribute('data-s'))});
 
 function locOf(sd){var g=String(sd[7]||''),c=String(sd[5]||'');if(/^गाँव/.test(g))return 'G';if(/^ढाणी/.test(g))return 'D';if(/^बाहर/.test(g))return 'B';if(c==='In village')return 'G';if(/Dhani/i.test(c))return 'D';if(/Outside/i.test(c))return 'B';return 'U'}
-var MGT=2,MGQ='';
-function mgView(){var T=MGT,m={},w=$('w').value;D.v.forEach(function(v){if(v[10]===2||!vis(v))return;if(w&&v[0]!=+w)return;var sd=(D.s||{})[key(v)]||[],nm=sd[T]||'(खाली)';if(MGQ&&String(nm).toLowerCase().indexOf(MGQ)<0)return;
+var MGT=3,MGQ='';function grp(sd,T){return T===3?(sd[2]||'(खाली)')+' → '+(sd[1]||'(खाली)'):(sd[T]||'(खाली)')}
+function mgView(){var T=MGT,m={},w=$('w').value;D.v.forEach(function(v){if(v[10]===2||!vis(v))return;if(w&&v[0]!=+w)return;var sd=(D.s||{})[key(v)]||[],nm=grp(sd,T);if(MGQ&&String(nm).toLowerCase().indexOf(MGQ)<0)return;
   var r=m[nm]=m[nm]||{n:nm,a:0,G:0,D:0,B:0,U:0,V:0};r.a++;r[locOf(sd)]++;if(stOf(v)==='V')r.V++});
  var R=Object.keys(m).map(function(k){return m[k]}).sort(function(x,y){return y.a-x.a});
  var c=function(r,f,x){return x?'<a href="#" data-mg="'+esc(r.n)+'|'+f+'" style="font-weight:600">'+x+'</a>':'<span class="muted">0</span>'};
- $('res').innerHTML='<div class="card"><div class="two"><select id="mgt2"><option value="2"'+(T===2?' selected':'')+'>मेन (मुखिया)</option><option value="1"'+(T===1?' selected':'')+'>सब-मुखिया</option></select><input id="mgq2" placeholder="नाम खोजें" value="'+esc(MGQ)+'"></div>'+
+ $('res').innerHTML='<div class="card"><div class="two"><select id="mgt2"><option value="3"'+(T===3?' selected':'')+'>मेन + सब (दोनों)</option><option value="2"'+(T===2?' selected':'')+'>सिर्फ़ मेन (मुखिया)</option><option value="1"'+(T===1?' selected':'')+'>सिर्फ़ सब-मुखिया</option></select><input id="mgq2" placeholder="नाम खोजें" value="'+esc(MGQ)+'"></div>'+
   '<div class="muted">संख्या दबाएँ तो नाम दिखेंगे'+(w?' · सिर्फ़ वार्ड '+w:'')+'</div><div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><tr style="background:#eef2f6"><th align="left">नाम</th><th>कुल</th><th>गाँव</th><th>ढाणी</th><th>बाहर</th><th>वोट डाला</th></tr>'+
   R.map(function(r){return '<tr style="border-top:1px solid #e3e8ee"><td>'+esc(r.n)+'</td><td align="center">'+c(r,'a',r.a)+'</td><td align="center">'+c(r,'G',r.G)+'</td><td align="center">'+c(r,'D',r.D)+'</td><td align="center">'+c(r,'B',r.B)+'</td><td align="center">'+c(r,'V',r.V)+'</td></tr>'}).join('')+'</table></div></div>';
  $('mgt2').onchange=function(){MGT=+this.value;mgView()};$('mgq2').oninput=function(){MGQ=this.value.trim().toLowerCase();var p=this.selectionStart;mgView();var e=$('mgq2');e.focus();try{e.setSelectionRange(p,p)}catch(x){}}}
 var FNM={a:'सारे वोट',G:'गाँव में',D:'ढाणी में',B:'बाहर',V:'वोट डाला'};
-function mgList(nm,f){var T=MGT,w=$('w').value,L=D.v.filter(function(v){if(v[10]===2||!vis(v))return false;if(w&&v[0]!=+w)return false;var sd=(D.s||{})[key(v)]||[];if((sd[T]||'(खाली)')!==nm)return false;return f==='a'?true:f==='V'?stOf(v)==='V':locOf(sd)===f});
- $('res').innerHTML='<div class="card"><button class="sm" id="mgback">← गिनती पर वापस</button> <b>'+(T===2?'मेन':'सब')+': '+esc(nm)+' · '+FNM[f]+' — '+L.length+' लोग</b></div>'+L.slice(0,300).map(row).join('');$('mgback').onclick=mgView;window.scrollTo(0,0)}
+function mgList(nm,f){var T=MGT,w=$('w').value,L=D.v.filter(function(v){if(v[10]===2||!vis(v))return false;if(w&&v[0]!=+w)return false;var sd=(D.s||{})[key(v)]||[];if(grp(sd,T)!==nm)return false;return f==='a'?true:f==='V'?stOf(v)==='V':locOf(sd)===f});
+ $('res').innerHTML='<div class="card"><button class="sm" id="mgback">← गिनती पर वापस</button> <b>'+(T===2?'मेन':T===1?'सब':'मेन → सब')+': '+esc(nm)+' · '+FNM[f]+' — '+L.length+' लोग</b></div>'+L.slice(0,300).map(row).join('');$('mgback').onclick=mgView;window.scrollTo(0,0)}
 $('mgb').onclick=function(){mgView()};
 $('res').addEventListener('click',function(e){var a=e.target.closest('[data-mg]');if(!a)return;e.preventDefault();var p=a.getAttribute('data-mg').split('|');mgList(p[0],p[1])});
 
 $('fy').onclick=function(){lastErr='';sync()};
 function bio(){return window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.NativeBiometric}
 function lockOn(){return g('bh_lock',true)}
-function menu(){$('mi').textContent=ID+' · '+NAME+(bio()?'':' · (इस फ़ोन में फ़िंगरप्रिंट लॉक उपलब्ध नहीं)');$('mb1').textContent=lockOn()?'🔒 फ़िंगरप्रिंट लॉक: चालू (बंद करें)':'🔓 फ़िंगरप्रिंट लॉक: बंद (चालू करें)';$('mn').classList.remove('hid')}
+function menu(){$('mi').textContent=ID+' · '+NAME+' · वर्ज़न '+UIV+(bio()?'':' · (इस फ़ोन में फ़िंगरप्रिंट लॉक उपलब्ध नहीं)');$('mb1').textContent=lockOn()?'🔒 फ़िंगरप्रिंट लॉक: चालू (बंद करें)':'🔓 फ़िंगरप्रिंट लॉक: बंद (चालू करें)';$('mn').classList.remove('hid')}
 $('fo').onclick=menu;$('mb3').onclick=function(){$('mn').classList.add('hid')};
+function newUi(){return (+LS.getItem('bh_uiv')||0)>UIV&&!!LS.getItem('bh_ui')}
+function applyUpd(){LS.setItem('bh_boot','1');location.reload()}
+$('upb').onclick=applyUpd;
+$('mbu').onclick=async function(){var b=$('mbu');b.disabled=true;b.textContent='🔄 देख रहे हैं…';lastErr='';try{await sync()}catch(e){}
+ b.disabled=false;b.textContent='🔄 अपडेट देखें';if(newUi()){if(confirm('नया अपडेट आ गया है। अभी लागू करें? (ऐप एक बार फिर से खुलेगा)'))applyUpd()}else alert(navigator.onLine===false?'नेट नहीं है — नेट चालू करके फिर दबाएँ':(lastErr?'सर्वर से जुड़ नहीं पाए — थोड़ी देर बाद फिर दबाएँ':'ऐप पहले से नया है ✔ (वर्ज़न '+UIV+')'))};
 $('mb1').onclick=function(){sv('bh_lock',!lockOn());menu()};
 $('mb2').onclick=function(){if(confirm('लॉगआउट करें? इस फ़ोन से सारा डेटा हट जाएगा। भेजी न गई '+pend()+' एंट्री भी जाएँगी।')){$('mn').classList.add('hid');wipe('')}};
 async function unlock(){var b=bio();if(!b||!lockOn())return true;
