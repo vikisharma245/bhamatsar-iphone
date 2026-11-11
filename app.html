@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=4;</script>
+<script>var UIV=5;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -58,15 +58,19 @@ function wipe(msg){['bh_code','bh_name','bh_blob','bh_st','bh_q','bh_since','bh_
 function showLogin(msg){$('app').classList.add('hid');$('lg').classList.remove('hid');$('le').textContent=msg||'';LS.setItem('bh_boot','1')}
 async function loadBlob(){var st=g('bh_blob',null),bu=null;try{var r=await fetch('data.enc.json');if(r.ok)bu=await r.json()}catch(e){}
  var b=(st&&(!bu||st.ver>=bu.ver))?st:bu;
- if(!b&&API){var r2=await post({a:'data',id:ID});if(r2&&r2.revoked)throw new Error('बंद');if(r2&&r2.ok&&r2.blob)b=typeof r2.blob==='string'?JSON.parse(r2.blob):r2.blob}
+ if(!b&&API){var r2=await post({a:'data',id:ID});if(r2&&r2.revoked)throw new Error('बंद');if(r2&&r2.bound)throw new Error('दूसरे फ़ोन');if(r2&&r2.ok&&r2.blob)b=typeof r2.blob==='string'?JSON.parse(r2.blob):r2.blob}
  if(!b)throw new Error('पहली बार नेट चाहिए — नेट चालू करके फिर कोशिश करें');return b}
 async function start(code,name,fresh){
  var p=String(code||'').trim().toUpperCase(),i=p.indexOf('-');if(i<1||i>=p.length-1){showLogin('कोड सही नहीं (जैसे AB12CD-D01)');return}
  KEY=p.slice(0,i);ID=p.slice(i+1);VIEW=ID.charAt(0)==='S';NAME=String(name||'').trim();
  if(!NAME){showLogin('अपना नाम लिखें');return}
+ if(fresh&&API){var h=null;try{h=await post({a:'hello',id:ID})}catch(e){}
+  if(!h){showLogin('पहली बार लॉगिन के लिए नेट चाहिए — नेट चालू करके फिर दबाएँ');return}
+  if(h.revoked){showLogin('यह कोड गलत है या बंद है');return}
+  if(h.bound){showLogin('यह ID किसी दूसरे फ़ोन में चालू है — मास्टर से बात करें');return}}
  try{var b=await loadBlob();EXP=b.exp||0;
   if(EXP&&Date.now()>EXP){wipe('चुनाव की अवधि समाप्त — ऐप बंद है');return}
-  D=await dec(b,KEY);DV=b.ver}catch(e){showLogin(/नेट/.test(e.message)?e.message:(/बंद/.test(e.message)?'यह कोड बंद है':'कोड गलत है'));return}
+  D=await dec(b,KEY);DV=b.ver}catch(e){showLogin(/नेट/.test(e.message)?e.message:/दूसरे फ़ोन/.test(e.message)?'यह ID किसी दूसरे फ़ोन में चालू है':(/बंद/.test(e.message)?'यह कोड बंद है':'कोड गलत है'));return}
  sv('bh_code',p);sv('bh_name',NAME);init();if(fresh)sv('bh_blob',b);schedule(300)}
 function init(){
  IX=D.v.map(function(v){var sd=(D.s||{})[v[0]+'-'+v[1]];return norm([v[3],v[4],v[5],v[6],v[9],sd?sd[4]:''].join(' '))});
@@ -109,14 +113,16 @@ function mark(k,s){if(VIEW)return;var a=k.split('-');var q=g('bh_q',[]),ts=Date.
  if(ST[k]&&ST[k][0]==='V'&&(s==='L'||s==='N')){alert('इसका वोट डाला जा चुका है — बदलने के लिए पहले ↺ हटाएँ दबाएँ');return}
  if(s==='C'){delete ST[k];s=''}else ST[k]=[s,ts,ID];
  q.push([+a[0],+a[1],s,ts]);sv('bh_q',q);sv('bh_st',ST);run();stat();schedule(1500)}
-async function post(o){var c=new AbortController(),t=setTimeout(function(){c.abort()},25000);
+function DEV(){var d=LS.getItem('bh_dev');if(!d){d=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now().toString(36)+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2));try{LS.setItem('bh_dev',d)}catch(e){}}return d}
+async function post(o){o.dev=DEV();var c=new AbortController(),t=setTimeout(function(){c.abort()},25000);
  try{var r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(o),signal:c.signal});return await r.json()}finally{clearTimeout(t)}}
 function schedule(ms){clearTimeout(stm);stm=setTimeout(sync,ms)}
 async function sync(){if(syncing||!API||!D)return;if(navigator.onLine===false){foot();return}
  syncing=true;foot();
  try{var q=g('bh_q',[]),n=q.length,r=await post({a:'sync',id:ID,name:NAME,key:'',since:g('bh_since',0),ents:q,dv:DV,uv:UIV});
   if(!r||!r.ok)throw new Error(r&&r.err||'bad');
-  if(r.revoked){wipe('यह सेवा बंद कर दी गई है');return}
+  if(r.revoked){syncing=false;wipe('यह सेवा बंद कर दी गई है');return}
+  if(r.bound){syncing=false;wipe('यह ID किसी दूसरे फ़ोन में चालू है — मास्टर से बात करें');return}
   if((r.ep||0)!==(+g('bh_ep',0)||0)){ST={};sv('bh_st',ST);sv('bh_q',[]);sv('bh_since',0);sv('bh_ep',r.ep||0)}
   sv('bh_q',g('bh_q',[]).slice(n));
   if(r.now)sv('bh_off',r.now-Date.now());
