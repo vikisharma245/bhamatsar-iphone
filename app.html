@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=1;</script>
+<script>var UIV=3;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -105,7 +105,8 @@ function stat(){var a=0,l=0,vv=0;D.v.forEach(function(v){if(v[10]===2)return;a++
 function pend(){return g('bh_q',[]).length}
 function foot(){var p=pend(),ls=g('bh_sync',0);$('fs').textContent=(p?p+' एंट्री भेजनी बाकी · ':'सब भेजा जा चुका · ')+(ls?'आख़िरी सिंक '+new Date(ls).toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'}):'अभी सिंक नहीं हुआ');
  $('badge').textContent=syncing?'⏳ सिंक…':(!API?'⚪ सिर्फ़ फ़ोन':(navigator.onLine===false?'🔴 ऑफलाइन':(p?'🟡 '+p+' बाकी':(lastErr?'🟠 सर्वर नहीं मिला':'🟢 सिंक'))))}
-function mark(k,s){if(VIEW)return;var a=k.split('-');var q=g('bh_q',[]),ts=Date.now();
+function mark(k,s){if(VIEW)return;var a=k.split('-');var q=g('bh_q',[]),ts=Date.now()+(+g('bh_off',0)||0);
+ if(ST[k]&&ST[k][0]==='V'&&(s==='L'||s==='N')){alert('इसका वोट डाला जा चुका है — बदलने के लिए पहले ✖ हटाएँ');return}
  if(s==='C'){delete ST[k];s=''}else ST[k]=[s,ts,ID];
  q.push([+a[0],+a[1],s,ts]);sv('bh_q',q);sv('bh_st',ST);run();stat();schedule(1500)}
 async function post(o){var c=new AbortController(),t=setTimeout(function(){c.abort()},25000);
@@ -116,8 +117,10 @@ async function sync(){if(syncing||!API||!D)return;if(navigator.onLine===false){f
  try{var q=g('bh_q',[]),n=q.length,r=await post({a:'sync',id:ID,name:NAME,key:'',since:g('bh_since',0),ents:q,dv:DV,uv:UIV});
   if(!r||!r.ok)throw new Error(r&&r.err||'bad');
   if(r.revoked){wipe('यह सेवा बंद कर दी गई है');return}
+  if((r.ep||0)!==(+g('bh_ep',0)||0)){ST={};sv('bh_st',ST);sv('bh_q',[]);sv('bh_since',0);sv('bh_ep',r.ep||0)}
   sv('bh_q',g('bh_q',[]).slice(n));
-  (r.ents||[]).forEach(function(e){var k=e[0]+'-'+e[1],o=ST[k];if(!o||e[3]>=o[1]){if(e[2])ST[k]=[e[2],e[3],e[4]];else delete ST[k]}});
+  if(r.now)sv('bh_off',r.now-Date.now());
+  (r.ents||[]).sort(function(x,y){return x[3]-y[3]}).forEach(function(e){var k=e[0]+'-'+e[1],o=ST[k];if(o&&e[3]<o[1])return;if(o&&o[0]==='V'&&(e[2]==='L'||e[2]==='N'))return;if(e[2])ST[k]=[e[2],e[3],e[4]];else delete ST[k]});
   sv('bh_st',ST);sv('bh_since',Math.max(0,(r.now||0)-3000));sv('bh_sync',Date.now());lastErr='';
   if(r.exp&&r.exp!==EXP)EXP=r.exp;
   if(r.dv&&r.dv!==DV)await getData();
