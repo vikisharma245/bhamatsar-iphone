@@ -24,7 +24,7 @@ table{border-collapse:collapse;width:100%;font-size:14px}th,td{border-bottom:1px
 <div class="card"><div class="r"><b>सब लोग</b><span class="muted">बंद करने पर उसका कोड तुरंत बेकार (नेट मिलते ही फ़ोन से डेटा हट जाएगा)</span></div><table id="tl"></table></div>
 <div class="card"><b>टेस्ट के बाद सफ़ाई</b><div class="muted" style="margin:4px 0 8px">टेस्टिंग के बाद पुरानी ID और उनका किया हुआ काम मिटाकर फ्रेश शुरू कर सकते हैं। फ़ोन नेट मिलते ही अपना टेस्ट वाला काम अपने-आप मिटा देंगे।</div>
 <div class="r"><button class="d" id="cd">🧹 सारा टेस्ट काम मिटाओ (ID रहेंगी)</button><button class="d" id="ra">🗑 सब कुछ मिटाओ — ID भी (नंबर फिर 01 से)</button></div></div>
-<div class="card"><div class="r"><b>पूरी सेवा बंद/चालू (चुनाव के बाद)</b><button class="d" id="rv"></button></div></div></div>
+<div class="card hid"><div class="r"><b>पूरी सेवा बंद/चालू (चुनाव के बाद)</b><button class="d" id="rv"></button></div></div></div>
 <div id="tC" class="hid"><div class="card"><div class="r"><b>हर 2 घंटे की रिपोर्ट</b><button class="g" id="sn">अभी की रिपोर्ट बनाओ</button><button class="g" id="rc">CSV</button></div><svg id="ch" viewBox="0 0 700 200" style="width:100%;max-height:220px;margin-top:8px"></svg><table id="tp"></table></div></div>
 <div id="tD" class="hid"><div class="card"><b>✏️ किसी की स्थिति सुधारें (मास्टर)</b><div class="muted" style="margin:4px 0 8px">गलती से "लाया" / "वोट डाला" / "नहीं" लग गया हो तो यहाँ से हटाएँ या बदलें। मास्टर का सुधार सब फ़ोनों पर पहुँच जाता है।</div>
 <div class="r"><input id="xq" placeholder="नाम / EPIC / वार्ड-क्रम (जैसे 3-45) / मकान नं." style="min-width:260px"><button class="p" id="xf">खोजें</button></div><div id="xr" style="margin-top:8px"></div></div>
@@ -104,7 +104,7 @@ $('mk').onclick=async function(){var n=$('nm').value.trim();if(!n){alert('ना
  $('wa').href='https://wa.me/?text='+encodeURIComponent('भामटसर सहायक ऐप का लॉगिन कोड: '+code+'\nऐप खोलकर यह कोड और अपना नाम डालें।');pull()};
 $('cp').onclick=function(){navigator.clipboard&&navigator.clipboard.writeText($('nc').textContent)};
 $('cd').onclick=async function(){if(!confirm('सारी एंट्री (लाया/वोट डाला) और रिपोर्ट मिट जाएँगी। ID रहेंगी। पक्का?'))return;var r=await post({a:'admin',op:'clearData'});alert(r.ok?'मिट गया ✔':(r.err||'नहीं हुआ'));if(r.ok)pull()};
-$('ra').onclick=async function(){var w=prompt('सारी ID, एंट्री और रिपोर्ट मिट जाएँगी — वापस नहीं आएँगी।\nपक्का हो तो नीचे  मिटाओ  लिखें:');if(w===null)return;if(w.trim()!=='मिटाओ'){alert('कुछ नहीं मिटा (मिटाओ नहीं लिखा)');return}var r=await post({a:'admin',op:'resetAll'});alert(r.ok?'सब मिट गया ✔ — अब फ्रेश ID बनाएँ':(r.err||'नहीं हुआ'));if(r.ok)pull()};
+$('ra').onclick=async function(){var w=prompt('सारी ID, एंट्री और रिपोर्ट मिट जाएँगी — वापस नहीं आएँगी।\nपक्का हो तो नीचे  DELETE  लिखें:');if(w===null)return;var ww=w.trim().toUpperCase();if(ww!=='DELETE'&&ww!=='मिटाओ'){alert('कुछ नहीं मिटा (DELETE नहीं लिखा)');return}var r=await post({a:'admin',op:'resetAll'});alert(r.ok?'सब मिट गया ✔ — अब फ्रेश ID बनाएँ':(r.err||'नहीं हुआ'));if(r.ok)pull()};
 $('rv').onclick=async function(){var on=!REV;if(!confirm(on?'सब फ़ोन से डेटा हट जाएगा। पक्का बंद करें?':'सेवा फिर चालू करें?'))return;var r=await post({a:'admin',op:'revoke',on:on});if(r.ok)pull()};
 $('sn').onclick=async function(){var r=await post({a:'admin',op:'snapshot'});if(r.ok)pull();else alert(r.err||'नहीं हुआ')};
 function reports(){var T=0;D.v.forEach(function(v){if(v[10]!==2)T++});
