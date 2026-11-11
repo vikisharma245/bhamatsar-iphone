@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>भामटसर सहायक</title>
+<script>var UIV=1;</script>
+<style>
+*{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
+header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
+header b{font-size:16px}header small{display:block;opacity:.85;font-size:12px}
+#badge{background:#ffffff26;border-radius:12px;padding:3px 10px;font-size:12.5px;white-space:nowrap}
+.sb{position:sticky;top:50px;z-index:4;background:#eef2f6;padding:8px 10px 4px}
+main{max-width:680px;margin:0 auto;padding:0 10px 70px}
+input,select{width:100%;font:inherit;padding:11px 12px;border:1px solid #b9c5d1;border-radius:7px;background:#fff;color:#14202b}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:6px}
+.chips{display:flex;gap:6px;margin-top:6px;overflow-x:auto}.chip{flex:none;border:1px solid #1f4e78;color:#1f4e78;background:#fff;border-radius:16px;padding:5px 12px;font-size:13px}.chip.on{background:#1f4e78;color:#fff}
+.card{background:#fff;border-radius:8px;padding:10px 12px;margin:0 0 9px;box-shadow:0 1px 2px #0001}
+.n{font-weight:600}.m{font-size:12.5px;color:#4a5866;margin-top:2px}.muted{color:#5a6673;font-size:12.5px;margin:6px 2px}
+.bt{display:grid;grid-template-columns:repeat(4,1fr);gap:5px;margin-top:7px}
+.bt button{font:inherit;font-size:13px;padding:8px 2px;border:1px solid #b9c5d1;background:#fff;border-radius:6px}
+.bt button.on.L{background:#1565c0;color:#fff;border-color:#1565c0}.bt button.on.N{background:#c62828;color:#fff;border-color:#c62828}.bt button.on.V{background:#2e7d32;color:#fff;border-color:#2e7d32}
+.tag{display:inline-block;font-size:11.5px;border-radius:10px;padding:1px 7px;margin:3px 3px 0 0;background:#e8edf2;color:#333}.tag.d{background:#444;color:#fff}
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin:0 0 9px}.stats div{background:#fff;border-radius:8px;padding:7px;text-align:center;font-size:12px;box-shadow:0 1px 2px #0001}.stats b{display:block;font-size:18px;color:#1f4e78}
+.login{max-width:420px;margin:30px auto;padding:0 14px}.login input{margin:6px 0}
+.btn{width:100%;font:inherit;padding:12px;background:#1f4e78;color:#fff;border:0;border-radius:7px;margin-top:6px}.btn.g{background:#fff;color:#1f4e78;border:1px solid #1f4e78}
+.err{color:#c62828;font-size:13px;margin:6px 0}.hid{display:none!important}
+#foot{position:fixed;left:0;right:0;bottom:0;background:#fff;border-top:1px solid #d5dce4;padding:7px 12px;display:flex;justify-content:space-between;align-items:center;font-size:12.5px;z-index:6}
+#foot button{font:inherit;font-size:13px;border:1px solid #1f4e78;background:#fff;color:#1f4e78;border-radius:6px;padding:6px 10px}
+</style><link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="भामटसर"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="theme-color" content="#1f6f43"></head>
+<body>
+<div id="lg" class="login hid"><h2 style="color:#1f4e78;margin:0 0 4px">भामटसर सहायक</h2><div class="muted" style="margin:0 0 10px">अपना लॉगिन कोड डालें (जैसे <b>AB12CD-D01</b>)। पहली बार के बाद बिना नेट के भी चलेगा।</div>
+<input id="lc" placeholder="लॉगिन कोड" autocapitalize="characters" autocomplete="off"><input id="ln" placeholder="आपका नाम" autocomplete="off">
+<div id="le" class="err"></div><button class="btn" id="lb">अंदर जाएँ</button></div>
+<div id="lk" class="login hid"><h2 style="color:#1f4e78;margin:0 0 8px">भामटसर सहायक</h2><div class="muted" style="margin:0 0 10px">फ़िंगरप्रिंट / चेहरे / फ़ोन के लॉक से खोलें</div><button class="btn" id="lkb">🔓 खोलें</button><div id="lke" class="err"></div></div>
+<div id="mn" class="hid" style="position:fixed;inset:0;background:#0007;z-index:9;display:flex;align-items:flex-end"><div style="background:#fff;width:100%;padding:14px;border-radius:12px 12px 0 0"><div class="muted" id="mi" style="margin:0 0 8px"></div><button class="btn g" id="mb1"></button><button class="btn g" id="mb2">लॉगआउट (फ़ोन से डेटा हटाएँ)</button><button class="btn" id="mb3">बंद करें</button></div></div>
+<div id="app" class="hid">
+<header><div><b id="hd"></b><small id="hs"></small></div><span id="badge">—</span></header>
+<div class="sb"><input id="q" autocomplete="off" placeholder="🔍 नाम / पिता-पति / EPIC / क्रम / मकान नं.">
+<div class="two"><select id="w"></select><select id="by"><option value="">सब</option><option value="M">सिर्फ़ पुरुष</option><option value="F">सिर्फ़ महिला</option></select></div>
+<select id="rt" style="margin-top:6px"></select>
+<div class="chips" id="chips"></div></div>
+<main><div class="stats" id="stats"></div><div id="res"></div></main>
+<div id="foot"><span id="fs"></span><span><button id="fy">अभी सिंक</button> <button id="fo">⚙</button></span></div>
+</div>
+<script src="config.js"></script>
+<script>
+var $=function(i){return document.getElementById(i)},LS=localStorage,CFG=window.CFG||{},API=CFG.API||'';
+function g(k,d){try{var v=LS.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}}
+function sv(k,v){try{LS.setItem(k,JSON.stringify(v));return true}catch(e){return false}}
+function esc(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+function norm(x){return String(x||'').toLowerCase().replace(/[़ँं‌‍.]/g,'').replace(/\s+/g,' ')}
+function b64(b){var s=atob(b),a=new Uint8Array(s.length);for(var i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a}
+async function dec(blob,key){
+ var km=await crypto.subtle.importKey('raw',new TextEncoder().encode(key),'PBKDF2',false,['deriveKey']);
+ var k=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(blob.salt),iterations:100000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
+ var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(blob.iv)},k,b64(blob.ct));
+ return JSON.parse(await new Response(new Blob([pt]).stream().pipeThrough(new DecompressionStream('gzip'))).text())}
+var VIEW=false,KEY='',ID='',NAME='',D=null,IX=[],ST=g('bh_st',{}),DV=0,EXP=0,FIL='',LIM=100,syncing=false,tm,stm,lastErr='';
+function wipe(msg){['bh_code','bh_name','bh_blob','bh_st','bh_q','bh_since','bh_ui','bh_uiv','bh_sync'].forEach(function(k){LS.removeItem(k)});ST={};showLogin(msg||'')}
+function showLogin(msg){$('app').classList.add('hid');$('lg').classList.remove('hid');$('le').textContent=msg||'';LS.setItem('bh_boot','1')}
+async function loadBlob(){var st=g('bh_blob',null),bu=null;try{var r=await fetch('data.enc.json');if(r.ok)bu=await r.json()}catch(e){}
+ var b=(st&&(!bu||st.ver>=bu.ver))?st:bu;
+ if(!b&&API){var r2=await post({a:'data',id:ID});if(r2&&r2.revoked)throw new Error('बंद');if(r2&&r2.ok&&r2.blob)b=typeof r2.blob==='string'?JSON.parse(r2.blob):r2.blob}
+ if(!b)throw new Error('पहली बार नेट चाहिए — नेट चालू करके फिर कोशिश करें');return b}
+async function start(code,name,fresh){
+ var p=String(code||'').trim().toUpperCase(),i=p.indexOf('-');if(i<1||i>=p.length-1){showLogin('कोड सही नहीं (जैसे AB12CD-D01)');return}
+ KEY=p.slice(0,i);ID=p.slice(i+1);VIEW=ID.charAt(0)==='S';NAME=String(name||'').trim();
+ if(!NAME){showLogin('अपना नाम लिखें');return}
+ try{var b=await loadBlob();EXP=b.exp||0;
+  if(EXP&&Date.now()>EXP){wipe('चुनाव की अवधि समाप्त — ऐप बंद है');return}
+  D=await dec(b,KEY);DV=b.ver}catch(e){showLogin(/नेट/.test(e.message)?e.message:(/बंद/.test(e.message)?'यह कोड बंद है':'कोड गलत है'));return}
+ sv('bh_code',p);sv('bh_name',NAME);init();if(fresh)sv('bh_blob',b);schedule(300)}
+function init(){
+ IX=D.v.map(function(v){var sd=(D.s||{})[v[0]+'-'+v[1]];return norm([v[3],v[4],v[5],v[6],v[9],sd?sd[4]:''].join(' '))});
+ var ws=[],seen={};D.v.forEach(function(v){if(!seen[v[0]]){seen[v[0]]=1;ws.push(v[0])}});ws.sort(function(a,b){return a-b});
+ $('w').innerHTML='<option value="">सारे वार्ड</option>'+ws.map(function(w){var b=(D.w[w]||[])[0];return '<option value="'+w+'">वार्ड '+w+(b?' (बूथ '+esc(b)+')':'')+'</option>'}).join('');
+ var rs={};Object.keys(D.s||{}).forEach(function(k){var r=D.s[k][8];if(r)rs[r]=1});$('rt').innerHTML='<option value="">सारे रूट / गाँव</option>'+Object.keys(rs).sort().map(function(r){return '<option>'+esc(r)+'</option>'}).join('');
+ $('hd').textContent=D.vill||CFG.TITLE;$('lg').classList.add('hid');$('app').classList.remove('hid');
+ chips();run();stat();LS.setItem('bh_boot','1')}
+var CH=[['','सब'],['R','बचे हुए'],['L','🚗 लाए'],['V','🗳 वोट डाला']];
+function chips(){$('chips').innerHTML=CH.map(function(c){return '<span class="chip'+(FIL===c[0]?' on':'')+'" data-f="'+c[0]+'">'+c[1]+'</span>'}).join('')}
+function key(v){return v[0]+'-'+v[1]}
+function stOf(v){var e=ST[key(v)];return e?e[0]:''}
+function fok(v){var s=stOf(v);if(v[10]===2)return !FIL;return !FIL||(FIL==='R'?s!=='V':s===FIL)}
+function wok(v){var w=$('w').value,r=$('rt').value;return (!w||v[0]==+w)&&(!r||((D.s||{})[key(v)]||[])[8]===r)}
+function gok(v){var x=$('by').value;return !x||(x==='M'?v[8]==='पुरुष':v[8]==='महिला')}
+function find(q){q=q.trim();var o=[],m;
+ if(!q){if($('w').value||FIL){D.v.forEach(function(v){if(wok(v)&&gok(v)&&fok(v))o.push(v)})}return o}
+ if((m=q.match(/^(मकान|house|h)\s*:?\s*(\S+)$/i))){D.v.forEach(function(v){if(String(v[2]).split(' ')[0]===m[2]&&wok(v)&&gok(v)&&fok(v))o.push(v)});return o}
+ if(/^\d+$/.test(q)){D.v.forEach(function(v){if((v[1]==+q||String(v[2]).split(' ')[0]===q)&&wok(v)&&gok(v)&&fok(v))o.push(v)});return o}
+ var t=norm(q).split(' ').filter(Boolean);if(t.length===1&&t[0].length<2)return o;
+ for(var i=0;i<D.v.length;i++){var v=D.v[i];if(!wok(v)||!gok(v)||!fok(v))continue;var s=IX[i],ok=true;for(var j=0;j<t.length;j++)if(s.indexOf(t[j])<0){ok=false;break}if(ok)o.push(v)}return o}
+var LB={L:'🚗 लाया',N:'❌ नहीं',V:'🗳 वोट डाला'};
+function row(v){var e=ST[key(v)],s=e?e[0]:'',b=(D.w[v[0]]||[])[0],sd=(D.s||{})[key(v)]||[],ph=String(sd[4]||'').replace(/[^0-9+]/g,'');
+ return '<div class="card" data-k="'+key(v)+'"><div class="n">'+esc(v[3])+(v[4]&&v[4]!==v[3]?' <span class="muted">('+esc(v[4])+')</span>':'')+'</div>'+
+ '<div class="m">पिता/पति: '+esc(v[5])+' · वार्ड '+v[0]+' · क्रम '+v[1]+' · मकान '+esc(v[2])+' · '+esc(v[8])+' '+esc(v[7])+(b?' · बूथ '+esc(b):'')+'</div>'+
+ ((sd[6]||sd[8]||sd[5])?'<div class="m">'+(sd[6]?'पर्ची '+esc(sd[6]):'')+(sd[8]?' · '+esc(sd[8]):'')+(sd[5]?' · अभी: '+esc(sd[5]):'')+'</div>':'')+
+ ((sd[3]||sd[2]||sd[1])?'<div class="m">'+(sd[3]?'जाति: '+esc(sd[3]):'')+(sd[1]?' · सब: '+esc(sd[1]):'')+(sd[2]?' · मेन: '+esc(sd[2]):'')+'</div>':'')+(ph?'<div class="m"><a href="tel:'+ph+'">📞 '+esc(ph)+'</a></div>':'')+(sd[9]?'<div class="m">📝 '+esc(sd[9])+'</div>':'')+
+ (v[10]===2?'<span class="tag d">सूची से हटाया गया</span>':'')+(e&&e[0]?'<span class="tag">'+LB[e[0]]+(e[2]?' · '+esc(e[2]):'')+'</span>':'')+
+ (VIEW?'':'<div class="bt">'+['L','N','V'].map(function(x){return '<button data-s="'+x+'" class="'+x+(s===x?' on':'')+'">'+LB[x]+'</button>'}).join('')+'<button data-s="C">↺ हटाएँ</button></div>')+'</div>'}
+function run(){var r=find($('q').value);
+ if(!r.length){$('res').innerHTML=$('q').value.trim()?'<p class="muted">कोई नहीं मिला</p>':'<div class="card"><p class="muted">ऊपर नाम, पिता/पति, EPIC, क्रम या मकान नंबर लिखें।<br>जैसे: <b>रामलाल</b> · <b>राम सिंह</b> · <b>मकान 58</b><br>वार्ड चुनें तो उसके सब मतदाता दिखेंगे।</p></div>';return}
+ $('res').innerHTML='<p class="muted">'+r.length+' मिले'+(r.length>LIM?' (पहले '+LIM+' दिखाए — और लिखकर छोटा करें)':'')+'</p>'+r.slice(0,LIM).map(row).join('')}
+function stat(){var a=0,l=0,vv=0;D.v.forEach(function(v){if(v[10]===2)return;a++;var s=stOf(v);if(s==='L')l++;if(s==='V')vv++});
+ $('stats').innerHTML='<div><b>'+a+'</b>कुल मतदाता</div><div><b>'+l+'</b>लाए गए</div><div><b>'+vv+'</b>वोट डाला</div>';
+ $('hs').textContent=ID+' · '+NAME+(VIEW?' · सिर्फ़ देखने के लिए':'')+' · डेटा '+(D.gen||'');foot()}
+function pend(){return g('bh_q',[]).length}
+function foot(){var p=pend(),ls=g('bh_sync',0);$('fs').textContent=(p?p+' एंट्री भेजनी बाकी · ':'सब भेजा जा चुका · ')+(ls?'आख़िरी सिंक '+new Date(ls).toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'}):'अभी सिंक नहीं हुआ');
+ $('badge').textContent=syncing?'⏳ सिंक…':(!API?'⚪ सिर्फ़ फ़ोन':(navigator.onLine===false?'🔴 ऑफलाइन':(p?'🟡 '+p+' बाकी':(lastErr?'🟠 सर्वर नहीं मिला':'🟢 सिंक'))))}
+function mark(k,s){if(VIEW)return;var a=k.split('-');var q=g('bh_q',[]),ts=Date.now();
+ if(s==='C'){delete ST[k];s=''}else ST[k]=[s,ts,ID];
+ q.push([+a[0],+a[1],s,ts]);sv('bh_q',q);sv('bh_st',ST);run();stat();schedule(1500)}
+async function post(o){var c=new AbortController(),t=setTimeout(function(){c.abort()},25000);
+ try{var r=await fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(o),signal:c.signal});return await r.json()}finally{clearTimeout(t)}}
+function schedule(ms){clearTimeout(stm);stm=setTimeout(sync,ms)}
+async function sync(){if(syncing||!API||!D)return;if(navigator.onLine===false){foot();return}
+ syncing=true;foot();
+ try{var q=g('bh_q',[]),n=q.length,r=await post({a:'sync',id:ID,name:NAME,key:'',since:g('bh_since',0),ents:q,dv:DV,uv:UIV});
+  if(!r||!r.ok)throw new Error(r&&r.err||'bad');
+  if(r.revoked){wipe('यह सेवा बंद कर दी गई है');return}
+  sv('bh_q',g('bh_q',[]).slice(n));
+  (r.ents||[]).forEach(function(e){var k=e[0]+'-'+e[1],o=ST[k];if(!o||e[3]>=o[1]){if(e[2])ST[k]=[e[2],e[3],e[4]];else delete ST[k]}});
+  sv('bh_st',ST);sv('bh_since',Math.max(0,(r.now||0)-3000));sv('bh_sync',Date.now());lastErr='';
+  if(r.exp&&r.exp!==EXP)EXP=r.exp;
+  if(r.dv&&r.dv!==DV)await getData();
+  if(r.uv&&r.uv>UIV&&r.uv!==g('bh_uiv',0))await getUi();
+  run();stat()}catch(e){lastErr=String(e&&e.message||e)}
+ syncing=false;foot();if(pend()&&!lastErr)schedule(2000)}
+async function getData(){try{var r=await post({a:'data',id:ID});if(!r||!r.ok||!r.blob)return;var b=typeof r.blob==='string'?JSON.parse(r.blob):r.blob;
+ var d=await dec(b,KEY);D=d;DV=b.ver;sv('bh_blob',b);init()}catch(e){lastErr='data '+e}}
+async function getUi(){try{var r=await post({a:'ui',id:ID});if(r&&r.ok&&r.html&&r.uv){sv0('bh_ui',r.html);sv0('bh_uiv',r.uv)}}catch(e){}}
+function sv0(k,v){try{LS.setItem(k,String(v))}catch(e){}}
+$('lb').onclick=function(){start($('lc').value,$('ln').value,true)};
+$('q').addEventListener('input',function(){clearTimeout(tm);tm=setTimeout(run,120)});$('w').onchange=run;$('rt').onchange=run;$('by').onchange=run;
+$('chips').addEventListener('click',function(e){var t=e.target.closest('.chip');if(t){FIL=t.getAttribute('data-f');chips();run()}});
+$('res').addEventListener('click',function(e){var b=e.target.closest('button');if(!b)return;var c=b.closest('.card');if(c)mark(c.getAttribute('data-k'),b.getAttribute('data-s'))});
+$('fy').onclick=function(){lastErr='';sync()};
+function bio(){return window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.NativeBiometric}
+function lockOn(){return g('bh_lock',true)}
+function menu(){$('mi').textContent=ID+' · '+NAME+(bio()?'':' · (इस फ़ोन में फ़िंगरप्रिंट लॉक उपलब्ध नहीं)');$('mb1').textContent=lockOn()?'🔒 फ़िंगरप्रिंट लॉक: चालू (बंद करें)':'🔓 फ़िंगरप्रिंट लॉक: बंद (चालू करें)';$('mn').classList.remove('hid')}
+$('fo').onclick=menu;$('mb3').onclick=function(){$('mn').classList.add('hid')};
+$('mb1').onclick=function(){sv('bh_lock',!lockOn());menu()};
+$('mb2').onclick=function(){if(confirm('लॉगआउट करें? इस फ़ोन से सारा डेटा हट जाएगा। भेजी न गई '+pend()+' एंट्री भी जाएँगी।')){$('mn').classList.add('hid');wipe('')}};
+async function unlock(){var b=bio();if(!b||!lockOn())return true;
+ try{var a=await b.isAvailable();if(!a||!a.isAvailable)return true}catch(e){return true}
+ try{await b.verifyIdentity({reason:'ऐप खोलने के लिए',title:'भामटसर सहायक',subtitle:'फ़िंगरप्रिंट / चेहरा / फ़ोन लॉक',useFallback:true,maxAttempts:3});return true}catch(e){return false}}
+async function gate(c,n){$('lg').classList.add('hid');if(await unlock()){$('lk').classList.add('hid');start(c,n,false)}else{$('lk').classList.remove('hid');$('lke').textContent='खुल नहीं पाया — फिर कोशिश करें';$('lkb').onclick=function(){gate(c,n)}}}
+window.addEventListener('online',function(){lastErr='';schedule(800)});window.addEventListener('offline',foot);
+document.addEventListener('visibilitychange',function(){if(!document.hidden){lastErr='';schedule(800)}});
+setInterval(function(){if(D){if(EXP&&Date.now()>EXP){wipe('चुनाव की अवधि समाप्त — ऐप बंद है');return}lastErr='';sync()}},30000);
+(function(){var c=g('bh_code',''),n=g('bh_name','');if(c&&n){$('lc').value=c;$('ln').value=n;gate(c,n)}else showLogin('')})();
+</script></body></html>

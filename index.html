@@ -1,0 +1,11 @@
+<!DOCTYPE html>
+<html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>भामटसर सहायक</title><link rel="manifest" href="manifest.json"><link rel="apple-touch-icon" href="icon-192.png"><meta name="apple-mobile-web-app-capable" content="yes"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-title" content="भामटसर"><meta name="apple-mobile-web-app-status-bar-style" content="default"><meta name="theme-color" content="#1f6f43"></head>
+<body style="margin:0;background:#eef2f6"><script>if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(function(){});</script><script>
+/* Chhota loader: bundled www/app.html chalata hai; server se naya UI (bh_ui) utar chuka ho aur usse naya ho to wahi. Pichhla boot poora na hua ho to override hata deta hai. */
+(async function(){var L=localStorage,src=null;try{
+ var bundled=await (await fetch('app.html')).text(),m=bundled.match(/var UIV=(\d+)/),bv=m?+m[1]:0;
+ var o=L.getItem('bh_ui'),v=+L.getItem('bh_uiv')||0;
+ if(L.getItem('bh_boot')==='0'){L.removeItem('bh_ui');L.removeItem('bh_uiv');o=null}
+ if(o&&v>bv){src=o;L.setItem('bh_boot','0')}else src=bundled}catch(e){}
+ if(src){document.open();document.write(src);document.close()}else document.body.textContent='ऐप नहीं खुला — दोबारा खोलें'})();
+</script></body></html>
