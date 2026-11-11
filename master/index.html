@@ -26,7 +26,9 @@ table{border-collapse:collapse;width:100%;font-size:14px}th,td{border-bottom:1px
 <div class="r"><button class="d" id="cd">🧹 सारा टेस्ट काम मिटाओ (ID रहेंगी)</button><button class="d" id="ra">🗑 सब कुछ मिटाओ — ID भी (नंबर फिर 01 से)</button></div></div>
 <div class="card"><div class="r"><b>पूरी सेवा बंद/चालू (चुनाव के बाद)</b><button class="d" id="rv"></button></div></div></div>
 <div id="tC" class="hid"><div class="card"><div class="r"><b>हर 2 घंटे की रिपोर्ट</b><button class="g" id="sn">अभी की रिपोर्ट बनाओ</button><button class="g" id="rc">CSV</button></div><svg id="ch" viewBox="0 0 700 200" style="width:100%;max-height:220px;margin-top:8px"></svg><table id="tp"></table></div></div>
-<div id="tD" class="hid"><div class="card"><div class="r"><b>अभी तक वोट नहीं डाला</b> <select id="sw"></select><select id="sf"><option value="R">सब बचे हुए</option><option value="L">लाए पर वोट नहीं</option><option value="N">"नहीं" वाले</option><option value="Z">कोई एंट्री नहीं</option></select><button class="g" id="csv">CSV उतारें</button><span id="cnt" class="muted"></span></div>
+<div id="tD" class="hid"><div class="card"><b>✏️ किसी की स्थिति सुधारें (मास्टर)</b><div class="muted" style="margin:4px 0 8px">गलती से "लाया" / "वोट डाला" / "नहीं" लग गया हो तो यहाँ से हटाएँ या बदलें। मास्टर का सुधार सब फ़ोनों पर पहुँच जाता है।</div>
+<div class="r"><input id="xq" placeholder="नाम / EPIC / वार्ड-क्रम (जैसे 3-45) / मकान नं." style="min-width:260px"><button class="p" id="xf">खोजें</button></div><div id="xr" style="margin-top:8px"></div></div>
+<div class="card"><div class="r"><b>अभी तक वोट नहीं डाला</b> <select id="sw"></select><select id="sf"><option value="R">सब बचे हुए</option><option value="L">लाए पर वोट नहीं</option><option value="N">"नहीं" वाले</option><option value="Z">कोई एंट्री नहीं</option><option value="A">सब मतदाता (पूरा बैकअप)</option></select><button class="g" id="csv">CSV उतारें</button><span id="cnt" class="muted"></span></div>
 <div style="max-height:520px;overflow:auto;margin-top:8px"><table id="tr"></table></div></div></div>
 <div id="tE" class="hid">
 <div class="card hid" id="mp"><b>मैनुअल पर्ची</b><div class="muted" style="margin:4px 0 8px">मकान नंबर डालें → उस घर के सदस्य दिखेंगे → जिनकी पर्ची चाहिए उन्हें चुनकर "टोकरी में जोड़ें"। कई घर जोड़कर एक साथ छाप सकते हैं।</div>
@@ -112,7 +114,7 @@ function reports(){var T=0;D.v.forEach(function(v){if(v[10]!==2)T++});
  var line=function(ix,col){return '<polyline fill="none" stroke="'+col+'" stroke-width="2.5" points="'+REPS.map(function(r,i){return X(i)+','+Y(r[ix])}).join(' ')+'"/>'};
  s.innerHTML='<line x1="40" y1="180" x2="690" y2="180" stroke="#b9c5d1"/>'+line(2,'#1565c0')+line(3,'#2e7d32')+'<text x="44" y="14" fill="#1565c0" font-size="12">● लाए</text><text x="100" y="14" fill="#2e7d32" font-size="12">● वोट डाला</text><text x="4" y="24" font-size="11" fill="#5a6673">'+mx+'</text>'}
 $('rc').onclick=function(){dl('report.csv','समय,लाए,वोट,नहीं\n'+REPS.map(function(r){return [r[1],r[2],r[3],r[4]].join(',')}).join('\n'))};
-function pick(){var w=$('sw').value,f=$('sf').value;return D.v.filter(function(v){if(v[10]===2)return false;if(w&&v[0]!=+w)return false;var s=stOf(v);return f==='R'?s!=='V':f==='L'?s==='L':f==='N'?s==='N':!s})}
+function pick(){var w=$('sw').value,f=$('sf').value;return D.v.filter(function(v){if(v[10]===2)return false;if(w&&v[0]!=+w)return false;var s=stOf(v);return f==='A'?true:f==='R'?s!=='V':f==='L'?s==='L':f==='N'?s==='N':!s})}
 function list(){var r=pick();$('cnt').textContent=r.length+' लोग';
  $('tr').innerHTML='<tr><th>वार्ड</th><th>क्रम</th><th>मकान</th><th>नाम</th><th>पिता/पति</th><th>उम्र</th><th>मोबाइल</th><th>रूट</th><th>स्थिति</th></tr>'+r.slice(0,800).map(function(v){var s=stOf(v);
   return '<tr><td>'+v[0]+'</td><td>'+v[1]+'</td><td>'+esc(v[2])+'</td><td>'+esc(v[3])+'</td><td>'+esc(v[5])+'</td><td>'+esc(v[7])+'</td><td>'+esc((sOf2(v)[4])||'')+'</td><td>'+esc((sOf2(v)[8])||'')+'</td><td>'+({L:'🚗 लाया',N:'❌ नहीं',V:'🗳 वोट डाला'}[s]||'—')+'</td></tr>'}).join('')+(r.length>800?'<tr><td colspan="9" class="muted">पहले 800 दिखाए — पूरी सूची CSV में</td></tr>':'')}
@@ -165,6 +167,20 @@ $('vall').onclick=function(){vDo('l')};$('valls').onclick=function(){vDo('s')};
 $('vc').addEventListener('change',function(e){var t=e.target;if(t.classList.contains('vnm')){VH.names[+t.getAttribute('data-i')]=t.value.trim();vsave();setTimeout(renderVeh,0)}else if(t.classList.contains('vr')){VH.asg[t.getAttribute('data-r')]=+t.value;vsave();setTimeout(renderVeh,0)}});
 $('vc').addEventListener('click',function(e){var l=e.target.getAttribute&&e.target.getAttribute('data-vl'),s=e.target.getAttribute&&e.target.getAttribute('data-vs');if(l!=null)vDo('l',+l);else if(s!=null)vDo('s',+s)});
 $('pn').addEventListener('change',renderVeh);
+
+var LBM={L:'🚗 लाया',N:'❌ नहीं',V:'🗳 वोट डाला'};
+function who(e){return e?(e[4]==='MASTER'?'मास्टर':esc(e[5]||'')+' ('+esc(e[4])+')')+' · '+new Date(e[3]).toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'}):''}
+function xfind(q){q=String(q||'').trim().toLowerCase();if(!q)return[];var m=q.match(/^(\d+)\s*[-\/ ]\s*(\d+)$/);
+ return D.v.filter(function(v){if(m)return v[0]==+m[1]&&v[1]==+m[2];return String(v[3]).toLowerCase().indexOf(q)>=0||String(v[4]||'').toLowerCase().indexOf(q)>=0||String(v[9]||'').toLowerCase()===q||String(v[2]).toLowerCase()===q}).slice(0,40)}
+function xdraw(){var L=xfind($('xq').value);if(!$('xq').value.trim()){$('xr').innerHTML='';return}
+ $('xr').innerHTML=L.length?'<table><tr><th>वार्ड-क्रम</th><th>नाम</th><th>पिता/पति</th><th>मकान</th><th>अभी</th><th>किसने / कब</th><th>बदलें</th></tr>'+L.map(function(v){var k=v[0]+'-'+v[1],e=ROWS[k],s=e?e[2]:'';
+  return '<tr><td>'+k+'</td><td>'+esc(v[3])+'</td><td>'+esc(v[5])+'</td><td>'+esc(v[2])+'</td><td><b>'+(LBM[s]||'—')+'</b></td><td class="muted">'+(s?who(e):'')+'</td><td style="white-space:nowrap">'+(s?'<button class="d" data-x="'+k+'" data-st="">↺ हटाओ</button> ':'')+['L','V','N'].filter(function(x){return x!==s}).map(function(x){return '<button class="g" data-x="'+k+'" data-st="'+x+'">'+LBM[x]+'</button>'}).join(' ')+'</td></tr>'}).join('')+'</table>':'<div class="muted">कोई नहीं मिला</div>'}
+$('xf').onclick=xdraw;$('xq').onkeydown=function(e){if(e.key==='Enter')xdraw()};
+$('xr').onclick=async function(e){var b=e.target.closest('button');if(!b)return;var k=b.getAttribute('data-x'),st=b.getAttribute('data-st'),p=k.split('-');
+ if(!confirm(k+' की स्थिति '+(st?'"'+LBM[st]+'"':'हटाकर खाली')+' करनी है?'))return;
+ if(navigator.onLine===false){alert('नेट नहीं है — नेट आने पर फिर दबाएँ');return}
+ b.disabled=true;try{var r=await post({a:'admin',op:'setState',w:+p[0],s:+p[1],state:st});if(!r.ok){alert(r.err||'नहीं हुआ');b.disabled=false;return}
+  if(st)ROWS[k]=[+p[0],+p[1],st,r.ts||Date.now(),'MASTER','मास्टर'];else delete ROWS[k];draw();xdraw();pull()}catch(x){alert('सर्वर नहीं मिला');b.disabled=false}};
 
 var BK=[];
 function hn(s){return String(s).replace(/\s+/g,'').toLowerCase()}
