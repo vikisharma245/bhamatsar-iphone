@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=9;</script>
+<script>var UIV=10;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -56,8 +56,8 @@ async function dec(blob,key){
  var k=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(blob.salt),iterations:100000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
  var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(blob.iv)},k,b64(blob.ct));
  return JSON.parse(await new Response(new Blob([pt]).stream().pipeThrough(new DecompressionStream('gzip'))).text())}
-var VIEW=false,KEY='',ID='',NAME='',D=null,IX=[],ST=g('bh_st',{}),PH=g('bh_ph',{}),FAM={},MYS={},SC=g('bh_sc',''),SCW=null,DV=0,EXP=0,FIL='',LIM=100,syncing=false,tm,stm,lastErr='';
-function wipe(msg){['bh_code','bh_name','bh_blob','bh_st','bh_q','bh_ph','bh_pq','bh_my','bh_av','bh_sc','bh_since','bh_ui','bh_uiv','bh_sync'].forEach(function(k){LS.removeItem(k)});ST={};showLogin(msg||'')}
+var VIEW=false,KEY='',ID='',NAME='',D=null,IX=[],ST=g('bh_st',{}),PH=g('bh_ph',{}),NT=g('bh_nt',{}),FAM={},MYS={},SC=g('bh_sc',''),SCW=null,DV=0,EXP=0,FIL='',LIM=100,syncing=false,tm,stm,lastErr='';
+function wipe(msg){['bh_code','bh_name','bh_blob','bh_st','bh_q','bh_ph','bh_pq','bh_nt','bh_my','bh_av','bh_sc','bh_since','bh_ui','bh_uiv','bh_sync'].forEach(function(k){LS.removeItem(k)});ST={};showLogin(msg||'')}
 function showLogin(msg){$('app').classList.add('hid');$('lg').classList.remove('hid');$('le').textContent=msg||'';LS.setItem('bh_boot','1')}
 async function loadBlob(){var st=g('bh_blob',null),bu=null;try{var r=await fetch('data.enc.json');if(r.ok)bu=await r.json()}catch(e){}
  var b=(st&&(!bu||st.ver>=bu.ver))?st:bu;
@@ -76,7 +76,9 @@ async function start(code,name,fresh){
   if(EXP&&Date.now()>EXP){wipe('चुनाव की अवधि समाप्त — ऐप बंद है');return}
   D=await dec(b,KEY);DV=b.ver}catch(e){showLogin(/नेट/.test(e.message)?e.message:/दूसरे फ़ोन/.test(e.message)?'यह ID किसी दूसरे फ़ोन में चालू है':(/बंद/.test(e.message)?'यह कोड बंद है':'कोड गलत है'));return}
  sv('bh_code',p);sv('bh_name',NAME);init();if(fresh)sv('bh_blob',b);schedule(300)}
+function applyNT(){D.s=D.s||{};Object.keys(NT).forEach(function(k){var o;try{o=JSON.parse(NT[k][0])}catch(e){return}var s=D.s[k]=D.s[k]||['','','','','','','','','',''];if('m' in o)s[2]=o.m;if('s' in o)s[1]=o.s;if('g' in o){s[7]=o.g;s[5]=''}})}
 function init(){
+ applyNT();
  MYS={};g('bh_my',[]).forEach(function(x){MYS[x[0]+'-'+x[1]]=1});
  PH=g('bh_ph',{});FAM={};D.v.forEach(function(v){if(v[10]===2)return;var f=v[0]+'|'+String(v[2]).split(' ')[0];FAM[f]=(FAM[f]||0)+1});
  var mm={},sb={};Object.keys(D.s||{}).forEach(function(k){var x=D.s[k];if(x[2])mm[x[2]]=1;if(x[1])sb[x[1]]=1});
@@ -136,10 +138,11 @@ async function sync(){if(syncing||!API||!D)return;if(navigator.onLine===false){f
   if(!r||!r.ok)throw new Error(r&&r.err||'bad');
   if(r.revoked){syncing=false;wipe('यह सेवा बंद कर दी गई है');return}
   if(r.bound){syncing=false;wipe('यह ID किसी दूसरे फ़ोन में चालू है — मास्टर से बात करें');return}
-  if((r.ep||0)!==(+g('bh_ep',0)||0)){ST={};sv('bh_st',ST);sv('bh_q',[]);PH={};sv('bh_ph',PH);sv('bh_pq',[]);sv('bh_since',0);sv('bh_ep',r.ep||0)}
+  if((r.ep||0)!==(+g('bh_ep',0)||0)){ST={};sv('bh_st',ST);sv('bh_q',[]);PH={};sv('bh_ph',PH);sv('bh_pq',[]);NT={};sv('bh_nt',NT);sv('bh_since',0);sv('bh_ep',r.ep||0)}
   sv('bh_q',g('bh_q',[]).slice(n));sv('bh_pq',g('bh_pq',[]).slice(pn));
   if(r.sc!=null&&String(r.sc)!==SC){setSc(r.sc);init()}
   if(r.my){sv('bh_my',r.my);sv('bh_av',r.av);MYS={};r.my.forEach(function(x){MYS[x[0]+'-'+x[1]]=1});chips()}
+  var ntc=0;(r.nts||[]).sort(function(x,y){return x[3]-y[3]}).forEach(function(e){var k=e[0]+'-'+e[1],o=NT[k];if(o&&e[3]<o[1])return;NT[k]=[e[2],e[3]];ntc++});if(ntc){sv('bh_nt',NT);init()}
   (r.phs||[]).sort(function(x,y){return x[3]-y[3]}).forEach(function(e){var k=e[0]+'-'+e[1],o=PH[k];if(o&&e[3]<o[1])return;if(e[2])PH[k]=[e[2],e[3],e[4]];else delete PH[k]});sv('bh_ph',PH);
   if(r.now)sv('bh_off',r.now-Date.now());
   (r.ents||[]).sort(function(x,y){return x[3]-y[3]}).forEach(function(e){var k=e[0]+'-'+e[1],o=ST[k];if(o&&e[3]<o[1])return;if(o&&o[0]==='V'&&(e[2]==='L'||e[2]==='N')&&e[4]!=='MASTER')return;if(e[2])ST[k]=[e[2],e[3],e[4]];else delete ST[k]});
@@ -163,16 +166,16 @@ $('res').addEventListener('click',function(e){var b=e.target.closest('button');i
 function locOf(sd){var g=String(sd[7]||''),c=String(sd[5]||'');if(/^गाँव/.test(g))return 'G';if(/^ढाणी/.test(g))return 'D';if(/^बाहर/.test(g))return 'B';if(c==='In village')return 'G';if(/Dhani/i.test(c))return 'D';if(/Outside/i.test(c))return 'B';return 'U'}
 var MGT=3,MGQ='';function grp(sd,T){return T===3?(sd[2]||'(खाली)')+' → '+(sd[1]||'(खाली)'):(sd[T]||'(खाली)')}
 function mgView(){var T=MGT,m={},w=$('w').value;D.v.forEach(function(v){if(v[10]===2||!vis(v))return;if(w&&v[0]!=+w)return;var sd=(D.s||{})[key(v)]||[],nm=grp(sd,T);if(MGQ&&String(nm).toLowerCase().indexOf(MGQ)<0)return;
-  var r=m[nm]=m[nm]||{n:nm,a:0,G:0,D:0,B:0,U:0,V:0};r.a++;r[locOf(sd)]++;if(stOf(v)==='V')r.V++});
+  var r=m[nm]=m[nm]||{n:nm,a:0,G:0,D:0,B:0,U:0,V:0,w:{}};r.a++;r.w[v[0]]=(r.w[v[0]]||0)+1;r[locOf(sd)]++;if(stOf(v)==='V')r.V++});
  var R=Object.keys(m).map(function(k){return m[k]}).sort(function(x,y){return y.a-x.a});
  var c=function(r,f,x){return x?'<a href="#" data-mg="'+esc(r.n)+'|'+f+'" style="font-weight:600">'+x+'</a>':'<span class="muted">0</span>'};
  $('res').innerHTML='<div class="card"><div class="two"><select id="mgt2"><option value="3"'+(T===3?' selected':'')+'>मेन + सब (दोनों)</option><option value="2"'+(T===2?' selected':'')+'>सिर्फ़ मेन (मुखिया)</option><option value="1"'+(T===1?' selected':'')+'>सिर्फ़ सब-मुखिया</option></select><input id="mgq2" placeholder="नाम खोजें" value="'+esc(MGQ)+'"></div>'+
   '<div class="muted">संख्या दबाएँ तो नाम दिखेंगे'+(w?' · सिर्फ़ वार्ड '+w:'')+'</div><div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><tr style="background:#eef2f6"><th align="left">नाम</th><th>कुल</th><th>गाँव</th><th>ढाणी</th><th>बाहर</th><th>वोट डाला</th></tr>'+
-  R.map(function(r){return '<tr style="border-top:1px solid #e3e8ee"><td>'+esc(r.n)+'</td><td align="center">'+c(r,'a',r.a)+'</td><td align="center">'+c(r,'G',r.G)+'</td><td align="center">'+c(r,'D',r.D)+'</td><td align="center">'+c(r,'B',r.B)+'</td><td align="center">'+c(r,'V',r.V)+'</td></tr>'}).join('')+'</table></div></div>';
+  R.map(function(r){return '<tr style="border-top:1px solid #e3e8ee"><td>'+esc(r.n)+'<div style="font-size:11px">'+Object.keys(r.w).sort(function(x,y){return r.w[y]-r.w[x]}).map(function(w){return '<a href="#" data-mg="'+esc(r.n)+'|w'+w+'">वार्ड '+w+'</a>('+r.w[w]+')'}).join(' ')+'</div></td><td align="center">'+c(r,'a',r.a)+'</td><td align="center">'+c(r,'G',r.G)+'</td><td align="center">'+c(r,'D',r.D)+'</td><td align="center">'+c(r,'B',r.B)+'</td><td align="center">'+c(r,'V',r.V)+'</td></tr>'}).join('')+'</table></div></div>';
  $('mgt2').onchange=function(){MGT=+this.value;mgView()};$('mgq2').oninput=function(){MGQ=this.value.trim().toLowerCase();var p=this.selectionStart;mgView();var e=$('mgq2');e.focus();try{e.setSelectionRange(p,p)}catch(x){}}}
 var FNM={a:'सारे वोट',G:'गाँव में',D:'ढाणी में',B:'बाहर',V:'वोट डाला'};
-function mgList(nm,f){var T=MGT,w=$('w').value,L=D.v.filter(function(v){if(v[10]===2||!vis(v))return false;if(w&&v[0]!=+w)return false;var sd=(D.s||{})[key(v)]||[];if(grp(sd,T)!==nm)return false;return f==='a'?true:f==='V'?stOf(v)==='V':locOf(sd)===f});
- $('res').innerHTML='<div class="card"><button class="sm" id="mgback">← गिनती पर वापस</button> <b>'+(T===2?'मेन':T===1?'सब':'मेन → सब')+': '+esc(nm)+' · '+FNM[f]+' — '+L.length+' लोग</b></div>'+L.slice(0,300).map(row).join('');$('mgback').onclick=mgView;window.scrollTo(0,0)}
+function mgList(nm,f){var T=MGT,w=$('w').value,L=D.v.filter(function(v){if(v[10]===2||!vis(v))return false;if(w&&v[0]!=+w)return false;var sd=(D.s||{})[key(v)]||[];if(grp(sd,T)!==nm)return false;return f==='a'?true:f.charAt(0)==='w'?v[0]==+f.slice(1):f==='V'?stOf(v)==='V':locOf(sd)===f});
+ $('res').innerHTML='<div class="card"><button class="sm" id="mgback">← गिनती पर वापस</button> <b>'+(T===2?'मेन':T===1?'सब':'मेन → सब')+': '+esc(nm)+' · '+(f.charAt(0)==='w'?'वार्ड '+f.slice(1):FNM[f])+' — '+L.length+' लोग</b></div>'+L.slice(0,300).map(row).join('');$('mgback').onclick=mgView;window.scrollTo(0,0)}
 $('mgb').onclick=function(){mgView()};
 $('res').addEventListener('click',function(e){var a=e.target.closest('[data-mg]');if(!a)return;e.preventDefault();var p=a.getAttribute('data-mg').split('|');mgList(p[0],p[1])});
 
