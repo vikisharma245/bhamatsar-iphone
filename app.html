@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=12;</script>
+<script>var UIV=13;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -114,7 +114,7 @@ function row(v){var e=ST[key(v)],s=e?e[0]:'',b=(D.w[v[0]]||[])[0],sd=(D.s||{})[k
  return '<div class="card" data-k="'+key(v)+'"><div class="n">'+esc(v[3])+(v[4]&&v[4]!==v[3]?' <span class="muted">('+esc(v[4])+')</span>':'')+'</div>'+
  '<div class="m">पिता/पति: '+esc(v[5])+' · वार्ड '+v[0]+' · क्रम '+v[1]+' · मकान '+esc(v[2])+' · '+esc(v[8])+' '+esc(v[7])+(b?' · बूथ '+esc(b):'')+'</div>'+
  ((sd[6]||sd[8]||sd[5])?'<div class="m">'+(sd[6]?'पर्ची '+esc(sd[6]):'')+(sd[8]?' · '+esc(sd[8]):'')+(sd[5]?' · अभी: '+esc(sd[5]):'')+'</div>':'')+
- ((sd[3]||sd[2]||sd[1])?'<div class="m">'+(sd[3]?'जाति: '+esc(sd[3]):'')+(sd[1]?' · सब: '+esc(sd[1]):'')+(sd[2]?' · मेन: '+esc(sd[2]):'')+'</div>':'')+'<div class="m">'+(ph?'<a href="tel:'+ph+'">📞 '+esc(ph)+'</a> ':(VIEW?'':'<button class="sm" data-ph="1">📞 नंबर जोड़ें</button> '))+(VIEW||HIDE()?'':'<button class="sm" data-sg="1">💬 सुझाव</button> ')+(fm>1?'<button class="sm" data-fam="'+v[0]+'|'+esc(String(v[2]).split(' ')[0])+'">👨‍👩‍👧 परिवार: '+fm+' सदस्य</button>':'')+'</div>'+(noteTxt(sd)?'<div class="m">📝 '+esc(noteTxt(sd))+'</div>':'')+
+ ((sd[3]||sd[2]||sd[1])?'<div class="m">'+(sd[3]?'जाति: '+esc(sd[3]):'')+(sd[1]?' · सब: '+esc(sd[1]):'')+(sd[2]?' · मेन: '+esc(sd[2]):'')+'</div>':'')+'<div class="m">'+(ph?'<a href="tel:'+ph+'">📞 '+esc(ph)+'</a> ':(VIEW?'':'<button class="sm" data-ph="1">📞 नंबर जोड़ें</button> '))+(fm>1?'<button class="sm" data-fam="'+v[0]+'|'+esc(String(v[2]).split(' ')[0])+'">👨‍👩‍👧 परिवार: '+fm+' सदस्य</button>':'')+'</div>'+(noteTxt(sd)?'<div class="m">📝 '+esc(noteTxt(sd))+'</div>':'')+
  (v[10]===2?'<span class="tag d">सूची से हटाया गया</span>':'')+(e&&e[0]?'<span class="tag">'+LB[e[0]]+(e[2]?' · '+esc(e[2]==='MASTER'?'मास्टर':e[2]):'')+(e[1]?' · '+new Date(e[1]).toTimeString().slice(0,5):'')+'</span>':'')+
  (VIEW?'':'<div class="bt">'+['L','N','V'].map(function(x){return '<button data-s="'+x+'" class="'+x+(s===x?' on':'')+'">'+LB[x]+'</button>'}).join('')+'<button data-s="C">↺ हटाएँ</button></div>')+'</div>'}
 function run(){var r=find($('q').value);
@@ -126,7 +126,7 @@ function stat(){var a=0,l=0,vv=0;D.v.forEach(function(v){if(v[10]===2||!vis(v))r
 function pend(){return g('bh_q',[]).length+g('bh_pq',[]).length+g('bh_sq',[]).length}
 function foot(){var p=pend(),ls=g('bh_sync',0);$('fs').textContent=(p?p+' एंट्री भेजनी बाकी · ':'सब भेजा जा चुका · ')+(ls?'आख़िरी सिंक '+new Date(ls).toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'}):'अभी सिंक नहीं हुआ');
  $('badge').textContent=syncing?'⏳ सिंक…':(!API?'⚪ सिर्फ़ फ़ोन':(navigator.onLine===false?'🔴 ऑफलाइन':(p?'🟡 '+p+' बाकी':(lastErr?'🟠 सर्वर नहीं मिला':'🟢 सिंक'))))}
-function suggest(k){if(VIEW||HIDE())return;var n=prompt('यह मतदाता किसका है? नंबर लिखें:\n1 = हमारा (OK)\n2 = सस्पेंस\n3 = रामलाल\n4 = रामेश्वर','');if(n===null)return;var c={'1':'ok','2':'suspense','3':'RAMLAL','4':'RAMESHWAR'}[String(n).trim()];if(!c){alert('1, 2, 3 या 4 लिखें');return}
+function suggest(k){return;var n=prompt('यह मतदाता किसका है? नंबर लिखें:\n1 = हमारा (OK)\n2 = सस्पेंस\n3 = रामलाल\n4 = रामेश्वर','');if(n===null)return;var c={'1':'ok','2':'suspense','3':'RAMLAL','4':'RAMESHWAR'}[String(n).trim()];if(!c){alert('1, 2, 3 या 4 लिखें');return}
  var cm=prompt('कोई बात लिखनी हो तो (वरना खाली छोड़ें):','');if(cm===null)cm='';var a=k.split('-'),ts=Date.now()+(+g('bh_off',0)||0),q=g('bh_sq',[]);q.push([+a[0],+a[1],c,ts,String(cm).slice(0,300)]);sv('bh_sq',q);alert('सुझाव मास्टर को भेजा जाएगा ✔ (मास्टर मानेगा तभी बदलेगा)');stat();schedule(1500)}
 function addPhone(k){if(VIEW)return;var n=prompt('मोबाइल नंबर लिखें (10 अंक):','');if(n===null)return;n=String(n).replace(/[^0-9]/g,'');if(n.length===12&&n.indexOf('91')===0)n=n.slice(2);if(n.length!==10){alert('10 अंक का नंबर लिखें');return}
  var a=k.split('-'),ts=Date.now()+(+g('bh_off',0)||0),q=g('bh_pq',[]);PH[k]=[n,ts,ID];q.push([+a[0],+a[1],n,ts]);sv('bh_pq',q);sv('bh_ph',PH);run();schedule(1500)}
