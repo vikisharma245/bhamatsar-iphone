@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=15;</script>
+<script>var UIV=16;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -212,6 +212,6 @@ async function unlock(){var b=bio();if(!b||!lockOn())return true;
 async function gate(c,n){$('lg').classList.add('hid');if(await unlock()){$('lk').classList.add('hid');start(c,n,false)}else{$('lk').classList.remove('hid');$('lke').textContent='खुल नहीं पाया — फिर कोशिश करें';$('lkb').onclick=function(){gate(c,n)}}}
 window.addEventListener('online',function(){lastErr='';schedule(800)});window.addEventListener('offline',foot);
 document.addEventListener('visibilitychange',function(){if(!document.hidden){lastErr='';schedule(800)}});
-setInterval(function(){if(D){if(EXP&&Date.now()>EXP){wipe('चुनाव की अवधि समाप्त — ऐप बंद है');return}lastErr='';sync()}},30000);
+setInterval(function(){if(D){if(EXP&&Date.now()>EXP){wipe('चुनाव की अवधि समाप्त — ऐप बंद है');return}lastErr='';sync()}},60000);   // बिना काम के हर मिनट; बटन दबाते ही 1.5 सेकंड में
 (function(){var c=g('bh_code',''),n=g('bh_name','');if(c&&n){$('lc').value=c;$('ln').value=n;gate(c,n)}else showLogin('')})();
 </script></body></html>
