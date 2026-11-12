@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=16;</script>
+<script>var UIV=17;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -35,7 +35,7 @@ input,select{width:100%;font:inherit;padding:11px 12px;border:1px solid #b9c5d1;
 <div id="app" class="hid">
 <div id="upb" class="hid" style="background:#2e7d32;color:#fff;padding:9px 12px;text-align:center;font-weight:600">🔄 ऐप का नया अपडेट आ गया — यहाँ दबाएँ</div>
 <header><div><b id="hd"></b><small id="hs"></small></div><span id="badge">—</span></header>
-<div class="sb"><div style="display:flex;gap:6px"><input id="q" autocomplete="off" placeholder="🔍 नाम / पिता-पति / EPIC / क्रम" style="flex:1"><input id="hn" autocomplete="off" inputmode="numeric" placeholder="🏠 मकान नं." style="width:34%"></div>
+<div class="sb"><div style="display:flex;gap:6px"><input id="q" autocomplete="off" placeholder="🔍 नाम / पिता-पति / EPIC / क्रम" style="flex:1;min-width:0"><button id="mic" type="button" title="बोलकर खोजें" style="padding:0 10px;font-size:20px;border-radius:10px;border:1px solid #cfd8e3;background:#fff">🎤</button><input id="hn" autocomplete="off" inputmode="numeric" placeholder="🏠 मकान नं." style="width:34%"></div>
 <div class="two"><select id="w"></select><select id="by"><option value="">सब</option><option value="M">सिर्फ़ पुरुष</option><option value="F">सिर्फ़ महिला</option></select></div>
 <select id="rt" style="margin-top:6px"></select>
 <div class="two" style="margin-top:6px"><select id="fmn"></select><select id="fsb"></select></div>
@@ -49,6 +49,24 @@ var $=function(i){return document.getElementById(i)},LS=localStorage,CFG=window.
 function g(k,d){try{var v=LS.getItem(k);return v==null?d:JSON.parse(v)}catch(e){return d}}
 function sv(k,v){try{LS.setItem(k,JSON.stringify(v));return true}catch(e){return false}}
 function esc(x){return String(x==null?'':x).replace(/[&<>"']/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]})}
+var PHC={'क':'k','ख':'k','ग':'g','घ':'g','ङ':'n','च':'c','छ':'c','ज':'j','झ':'j','ञ':'n','ट':'t','ठ':'t','ड':'d','ढ':'d','ण':'n','त':'t','थ':'t','द':'d','ध':'d','न':'n','प':'p','फ':'f','ब':'b','भ':'b','म':'m','य':'y','र':'r','ल':'l','व':'b','श':'s','ष':'s','स':'s','ह':'h','ळ':'l'},PHV={'अ':'a','आ':'a','इ':'i','ई':'i','उ':'u','ऊ':'u','ए':'e','ऐ':'e','ओ':'o','औ':'o','ऋ':'ri','ा':'a','ि':'i','ी':'i','ु':'u','ू':'u','े':'e','ै':'e','ो':'o','ौ':'o','ृ':'ri','ॅ':'e','ॉ':'o','ं':'n','ँ':'n'};
+function phw(w){w=String(w||'').toLowerCase().replace(/ड़/g,'ड़').replace(/ढ़/g,'ढ़');var o='',i,c,n;
+ for(i=0;i<w.length;i++){c=w[i];if(c==='ड़'||c==='ढ़'){o+='r';c='र'}else if(PHC[c]){if(w[i+1]==='़'){o+=(c==='ड'||c==='ढ')?'r':PHC[c];i++}else o+=PHC[c]}else{if(c==='ं'||c==='ँ'){o+=/[पफबभम]/.test(w[i+1]||'')?'m':'n'}else if(PHV[c])o+=PHV[c];else if(/[a-z]/.test(c))o+=c;continue}
+  n=w[i+1];if(!(n&&(PHV[n]&&!/[अआइईउऊएऐओऔऋ]/.test(n)&&n!=='ं'&&n!=='ँ'||n==='्')))o+='a';}
+ w=o.replace(/a(?=[^a-z]|$)/g,'');if(!w)return '';
+ w=w.replace(/ph/g,'f').replace(/([kgcjtdpbs])h+/g,'$1').replace(/z/g,'j').replace(/q/g,'k').replace(/x/g,'ks').replace(/ck/g,'k');
+ w=w.replace(/([^aeiouy])w(?=[^aeiouy]|$)/g,'$1u').replace(/[wv]/g,'b').replace(/y$/,'i');
+ var f=/^[aeiou]/.test(w)?'a':'';w=w.replace(/[aeiou]+/g,'').replace(/(.)\1+/g,'$1');return f+w}
+function phx(s){return String(s||'').split(/\s+/).map(phw).filter(Boolean).join('')}
+function phKey(v){return phx(v[3])+' '+phx(v[4])+'|'+phx(v[5])+' '+phx(v[6])}
+var PHSTOP=/^(पुत्र|पुत्री|पिता|पति|पत्नी|बेटा|बेटी|का|की|के|s\/o|d\/o|w\/o|so|do|wo|son|of|father|husband|wife)$/i;
+function phVar(pt){var o=[pt];for(var i=0;i+1<pt.length;i++)o.push(pt.slice(0,i).concat([pt[i]+pt[i+1]],pt.slice(i+2)));return o}
+function phScore(pt,key){var p=key.split('|'),N=p[0],F=p[1]||'',NW=N.split(' '),vs=phVar(pt),best=0;
+ var st=function(x){var r=0;NW.forEach(function(w){if(w&&w.indexOf(x)===0)r=Math.max(r,x.length/w.length)});return r};
+ vs.forEach(function(t){var s=0,s0=st(t[0]);if(t.every(function(x){return key.indexOf(x)>=0})){s=2+(s0?1+s0/2:N.indexOf(t[0])>=0?0.5:0);if(t.length>1&&t.slice(1).every(function(x){return F.indexOf(x)>=0}))s+=1}
+  else if(t.length>=2&&s0){var h=t.slice(1).filter(function(x){return F.indexOf(x)>=0}).length;if(h>=t.length-2)s=0.5+s0/4+0.2*h/(t.length-1)}
+  if(s>best)best=s});return best}
+function phToks(q){var t=String(q||'').trim().split(/\s+/).filter(function(x){return !PHSTOP.test(x)});if(t.some(function(x){return /\d/.test(x)}))return null;t=t.map(phw).filter(Boolean);return t.length&&t.every(function(x){return x.length>=2})?t:null}
 function norm(x){return String(x||'').toLowerCase().replace(/[़ँं‌‍.]/g,'').replace(/\s+/g,' ')}
 function b64(b){var s=atob(b),a=new Uint8Array(s.length);for(var i=0;i<s.length;i++)a[i]=s.charCodeAt(i);return a}
 async function dec(blob,key){
@@ -56,7 +74,7 @@ async function dec(blob,key){
  var k=await crypto.subtle.deriveKey({name:'PBKDF2',salt:b64(blob.salt),iterations:100000,hash:'SHA-256'},km,{name:'AES-GCM',length:256},false,['decrypt']);
  var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(blob.iv)},k,b64(blob.ct));
  return JSON.parse(await new Response(new Blob([pt]).stream().pipeThrough(new DecompressionStream('gzip'))).text())}
-var VIEW=false,KEY='',ID='',NAME='',D=null,IX=[],ST=g('bh_st',{}),PH=g('bh_ph',{}),NT=g('bh_nt',{}),FAM={},MYS={},SC=g('bh_sc',''),SCW=null,DV=0,EXP=0,FIL='',LIM=100,syncing=false,tm,stm,lastErr='';
+var VIEW=false,KEY='',ID='',NAME='',D=null,IX=[],FX=null,ST=g('bh_st',{}),PH=g('bh_ph',{}),NT=g('bh_nt',{}),FAM={},MYS={},SC=g('bh_sc',''),SCW=null,DV=0,EXP=0,FIL='',LIM=100,syncing=false,tm,stm,lastErr='';
 function wipe(msg){['bh_code','bh_name','bh_blob','bh_st','bh_q','bh_ph','bh_pq','bh_nt','bh_nq','bh_sq','bh_my','bh_av','bh_sc','bh_since','bh_ui','bh_uiv','bh_sync'].forEach(function(k){LS.removeItem(k)});ST={};showLogin(msg||'')}
 function showLogin(msg){$('app').classList.add('hid');$('lg').classList.remove('hid');$('le').textContent=msg||'';LS.setItem('bh_boot','1')}
 async function loadBlob(){var st=g('bh_blob',null),bu=null;try{var r=await fetch('data.enc.json');if(r.ok)bu=await r.json()}catch(e){}
@@ -88,7 +106,7 @@ function init(){
  var mm={},sb={};Object.keys(D.s||{}).forEach(function(k){var x=D.s[k];if(x[2])mm[x[2]]=1;if(x[1])sb[x[1]]=1});
  $('fmn').innerHTML='<option value="">सारे मेन (मुखिया)</option>'+Object.keys(mm).sort().map(function(x){return '<option>'+esc(x)+'</option>'}).join('');
  $('fsb').innerHTML='<option value="">सारे सब-मुखिया</option>'+Object.keys(sb).sort().map(function(x){return '<option>'+esc(x)+'</option>'}).join('');
- IX=D.v.map(function(v){var sd=(D.s||{})[v[0]+'-'+v[1]];return norm([v[3],v[4],v[5],v[6],v[9],sd?sd[4]:''].join(' '))});
+ FX=null;IX=D.v.map(function(v){var sd=(D.s||{})[v[0]+'-'+v[1]];return norm([v[3],v[4],v[5],v[6],v[9],sd?sd[4]:''].join(' '))});
  setSc(SC);if(SC==='M'&&!FIL)FIL='M';else if(HIDE()&&!FIL)FIL='P';var ws=[],seen={};D.v.forEach(function(v){if(!seen[v[0]]&&vis(v)){seen[v[0]]=1;ws.push(v[0])}});ws.sort(function(a,b){return a-b});
  $('w').innerHTML='<option value="">सारे वार्ड</option>'+ws.map(function(w){var b=(D.w[w]||[])[0];return '<option value="'+w+'">वार्ड '+w+(b?' (बूथ '+esc(b)+')':'')+'</option>'}).join('');
  var rs={};Object.keys(D.s||{}).forEach(function(k){var r=D.s[k][8];if(r)rs[r]=1});$('rt').innerHTML='<option value="">सारे रूट / गाँव</option>'+Object.keys(rs).sort().map(function(r){return '<option>'+esc(r)+'</option>'}).join('');
@@ -109,7 +127,9 @@ function find(q){q=q.trim();var o=[],m;
  if((m=q.match(/^(मकान|house|h)\s*:?\s*(\S+)$/i))){D.v.forEach(function(v){if(String(v[2]).split(' ')[0]===m[2]&&wok(v)&&gok(v)&&fok(v))o.push(v)});return o}
  if(/^\d+$/.test(q)){D.v.forEach(function(v){if((v[1]==+q||String(v[2]).split(' ')[0]===q)&&wok(v)&&gok(v)&&fok(v))o.push(v)});return o}
  var t=norm(q).split(' ').filter(Boolean);if(t.length===1&&t[0].length<2)return o;
- for(var i=0;i<D.v.length;i++){var v=D.v[i];if(!wok(v)||!gok(v)||!fok(v))continue;var s=IX[i],ok=true;for(var j=0;j<t.length;j++)if(s.indexOf(t[j])<0){ok=false;break}if(ok)o.push(v)}return o}
+ for(var i=0;i<D.v.length;i++){var v=D.v[i];if(!wok(v)||!gok(v)||!fok(v))continue;var s=IX[i],ok=true;for(var j=0;j<t.length;j++)if(s.indexOf(t[j])<0){ok=false;break}if(ok)o.push(v)}
+ var pt=phToks(q);if(pt){if(!FX)FX=D.v.map(phKey);var seen={},fz=[],full=0;o.forEach(function(v){seen[v[0]+'-'+v[1]]=1});for(i=0;i<D.v.length;i++){v=D.v[i];if(seen[v[0]+'-'+v[1]]||!wok(v)||!gok(v)||!fok(v))continue;var sc=phScore(pt,FX[i]);if(sc){fz.push([sc,v]);if(sc>1)full++}}
+  fz.sort(function(a,b){return b[0]-a[0]});var np=0;fz.forEach(function(x){if(x[0]>=2||((o.length+full)<10&&np++<15))o.push(x[1])})}return o}
 var LB={L:'🚗 लाया',N:'❌ नहीं',V:'🗳 वोट डाला'};
 function row(v){var e=ST[key(v)],s=e?e[0]:'',b=(D.w[v[0]]||[])[0],sd=(D.s||{})[key(v)]||[],pp=PH[key(v)],ph=String((pp&&pp[0])||sd[4]||'').replace(/[^0-9+]/g,''),fm=FAM[v[0]+'|'+String(v[2]).split(' ')[0]]||1;
  return '<div class="card" data-k="'+key(v)+'"><div class="n">'+esc(v[3])+(v[4]&&v[4]!==v[3]?' <span class="muted">('+esc(v[4])+')</span>':'')+'</div>'+
@@ -169,6 +189,16 @@ async function getData(){try{var r=await post({a:'data',id:ID});if(!r||!r.ok||!r
 async function getUi(){try{var r=await post({a:'ui',id:ID});if(r&&r.ok&&r.html&&r.uv){sv0('bh_ui',r.html);sv0('bh_uiv',r.uv)}}catch(e){}}
 function sv0(k,v){try{LS.setItem(k,String(v))}catch(e){}}
 $('lb').onclick=function(){start($('lc').value,$('ln').value,true)};
+
+function micStart(inp,done){var CP=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.SpeechRecognition,btn=this;
+ var put=function(t){if(!t)return;inp.value=String(t).trim();inp.dispatchEvent(new Event('input'));if(done)done()};
+ if(CP&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()){(async function(){try{var a=await CP.available();if(!a||!a.available){alert('इस फ़ोन में बोलकर खोजना उपलब्ध नहीं — कीबोर्ड का 🎤 दबाएँ');return}
+   try{var p=await CP.checkPermissions();if(!p||p.speechRecognition!=='granted')p=await CP.requestPermissions();if(p&&p.speechRecognition==='denied'){alert('माइक की अनुमति दें (सेटिंग → ऐप → अनुमति)');return}}catch(e){}
+   var r=await CP.start({language:'hi-IN',maxResults:3,prompt:'नाम बोलिए…',partialResults:false,popup:true});put(r&&r.matches&&r.matches[0])}catch(e){var m=String(e&&e.message||e);if(!/cancel|No match|no match|Didn't understand/i.test(m))alert('आवाज़ नहीं पकड़ी — फिर से दबाएँ')}})();return}
+ var SR=window.SpeechRecognition||window.webkitSpeechRecognition;if(!SR){alert('यहाँ बोलकर खोजना नहीं चलता — कीबोर्ड का 🎤 दबाकर बोलें');inp.focus();return}
+ var r=new SR();r.lang='hi-IN';r.interimResults=false;r.maxAlternatives=1;var old=inp.placeholder;inp.placeholder='🎤 बोलिए…';
+ r.onresult=function(e){put(e.results[0][0].transcript)};r.onerror=function(e){if(e.error==='not-allowed')alert('माइक की अनुमति दें')};r.onend=function(){inp.placeholder=old};try{r.start()}catch(e){inp.placeholder=old}}
+$('mic').onclick=function(){micStart($('q'))};
 $('q').addEventListener('input',function(){clearTimeout(tm);tm=setTimeout(run,120)});$('hn').addEventListener('input',function(){clearTimeout(tm);tm=setTimeout(run,150)});
 $('res').addEventListener('click',function(e){if(e.target&&e.target.id==='more'){var y=window.scrollY;SHOWN+=100;run(true);window.scrollTo(0,y)}});$('w').onchange=run;$('rt').onchange=run;$('fmn').onchange=run;$('fsb').onchange=run;$('by').onchange=run;
 $('chips').addEventListener('click',function(e){var t=e.target.closest('.chip');if(t){FIL=t.getAttribute('data-f');chips();run()}});
