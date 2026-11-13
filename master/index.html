@@ -17,7 +17,7 @@ html,body{max-width:100%;overflow-x:hidden}.card{overflow-x:auto}
 @media (max-width:760px){header{padding:8px 8px;gap:6px}header>b{font-size:15px}nav{width:100%;overflow-x:auto;flex-wrap:nowrap;-webkit-overflow-scrolling:touch;padding-bottom:2px}nav button{white-space:nowrap;padding:6px 10px;font-size:14px;flex:0 0 auto}#st{font-size:11px}
 main{padding:6px}.card{padding:9px 8px}table{font-size:12.5px}th,td{padding:5px 6px}input,select,button{padding:7px 8px}.k b{font-size:20px}.grid{grid-template-columns:repeat(2,1fr);gap:6px}}
 </style></head><body>
-<header><b>भामटसर — मास्टर</b><nav><button data-t="h">🔍 खोजें</button><button data-t="a" class="on">गिनती</button><button data-t="b">लोग (ID बनाएँ)</button><button data-t="c">रिपोर्ट (हर 2 घंटे)</button><button data-t="d">बचे हुए</button><button data-t="e">छपाई / PDF</button><button data-t="f">मुखिया गिनती</button><button data-t="i">🗺 नक्शा <span id="lmbd" style="background:#c62828;color:#fff;border-radius:10px;padding:0 6px;display:none"></span></button><button data-t="g">🚐 गाड़ियाँ <span id="rqbd" style="background:#c62828;color:#fff;border-radius:10px;padding:0 6px;display:none"></span></button></nav><span id="st" class="muted" style="color:#dbe7f2"></span></header>
+<header><b>भामटसर — मास्टर</b><nav><button data-t="h">🔍 खोजें</button><button data-t="a" class="on">गिनती</button><button data-t="b">लोग (ID बनाएँ)</button><button data-t="c">रिपोर्ट (14 / 16 नवंबर)</button><button data-t="d">बचे हुए</button><button data-t="e">छपाई / PDF</button><button data-t="f">मुखिया गिनती</button><button data-t="i">🗺 नक्शा <span id="lmbd" style="background:#c62828;color:#fff;border-radius:10px;padding:0 6px;display:none"></span></button><button data-t="g">🚐 गाड़ियाँ <span id="rqbd" style="background:#c62828;color:#fff;border-radius:10px;padding:0 6px;display:none"></span></button></nav><span id="st" class="muted" style="color:#dbe7f2"></span></header>
 <main>
 <div id="rqban" class="hid" style="background:#c62828;color:#fff;padding:10px 14px;border-radius:10px;margin-bottom:8px;font-weight:700;cursor:pointer"></div>
 <div class="card hid" id="cf"><div class="r"><b>पहली बार:</b><input id="mkey" class="hid" placeholder="ऐप कोड (KEY)" style="width:130px" autocapitalize="characters"><input id="mc" type="password" placeholder="मास्टर कोड"><button class="p" id="go">खोलें</button></div><div class="muted" style="margin-top:6px">मास्टर कोड इस कंप्यूटर में ही रहता है।</div></div>
@@ -29,6 +29,7 @@ main{padding:6px}.card{padding:9px 8px}table{font-size:12.5px}th,td{padding:5px 
 <div class="grid" id="fck" style="margin-top:8px"></div>
 <div class="r" style="align-items:flex-start;gap:12px;margin-top:8px"><div style="flex:1;min-width:280px;overflow:auto"><b>वार्ड के हिसाब से</b><table id="fcw"></table></div>
 <div style="flex:1;min-width:280px;overflow:auto"><b>जाति के हिसाब से</b> <span class="muted" id="fcn"></span><div style="max-height:420px;overflow:auto"><table id="fcj"></table></div></div></div>
+<div style="overflow:auto;margin-top:8px"><b>🛣 रूट / ढाणी के हिसाब से</b> <span class="muted">— किस रूट में कितने सौंपे, कितने बाकी (संख्या दबाकर नाम देखें, वहीं से सौंप भी सकते हैं)</span><div style="max-height:460px;overflow:auto"><table id="fcr"></table></div></div>
 <div style="overflow:auto;margin-top:8px"><b>उम्र के हिसाब से</b><table id="fca"></table></div></div>
 <div class="card hid" id="sgc"><b>💬 फ़ील्ड से आए सुझाव (<span id="sgn">0</span>)</b><div class="muted">वॉलंटियर / ड्राइवर ने बताया कि यह मतदाता किसका है — मानें तो बदलेगा, वरना नहीं।</div><div style="max-height:300px;overflow:auto;margin-top:6px"><table id="sgt"></table></div></div>
 <div class="card"><div class="r"><b>वर्ग के हिसाब से (हमारा / सस्पेंस / रामलाल / रामेश्वर)</b><select id="cwW"><option value="">सारे वार्ड</option></select></div><div class="muted">संख्या दबाएँ तो नाम दिखेंगे। यह जानकारी सिर्फ़ मास्टर में है — ड्राइवर / वॉलंटियर के फ़ोन में नहीं दिखती।</div><table id="cwt"></table></div><div class="card hid" id="dd"><div class="r" style="justify-content:space-between"><b id="ddt"></b><span><button class="g" id="ddp">📄 PDF</button> <button class="g" id="ddx">✖ बंद</button></span></div><div id="ddbbar"></div><div style="max-height:520px;overflow:auto;margin-top:6px"><table id="ddb"></table></div></div><div class="card"><b>वार्ड के हिसाब से</b><table id="tw"></table></div><div class="card"><b>किसने कितना किया</b><table id="tu"></table></div></div>
@@ -53,7 +54,7 @@ main{padding:6px}.card{padding:9px 8px}table{font-size:12.5px}th,td{padding:5px 
 <div class="r"><button class="p" id="waGo">📤 अगले को व्हाट्सएप पर भेजें</button><span class="muted" id="waSt"></span><button class="g" id="waRs">↺ फिर से शुरू</button><button class="g" id="waLs">📋 सूची दिखाओ</button></div>
 <div id="waL" style="max-height:420px;overflow:auto;margin-top:6px"></div></div>
 <div class="card hid"><div class="r"><b>पूरी सेवा बंद/चालू (चुनाव के बाद)</b><button class="d" id="rv"></button></div></div></div>
-<div id="tC" class="hid"><div class="card"><div class="r"><b>हर 2 घंटे की रिपोर्ट</b><button class="g" id="sn">अभी की रिपोर्ट बनाओ</button><button class="g" id="rc">CSV</button></div><svg id="ch" viewBox="0 0 700 200" style="width:100%;max-height:220px;margin-top:8px"></svg><table id="tp"></table></div></div>
+<div id="tC" class="hid"><div class="card"><div class="r"><b>हर 2 घंटे की रिपोर्ट</b><span class="muted">अपने-आप सिर्फ़ 14 और 16 नवंबर (मतदान के दिन) बनेगी</span><button class="g" id="sn">अभी की रिपोर्ट बनाओ</button><button class="g" id="rc">CSV</button></div><svg id="ch" viewBox="0 0 700 200" style="width:100%;max-height:220px;margin-top:8px"></svg><table id="tp"></table></div></div>
 <div id="tD" class="hid"><div class="card"><b>✏️ किसी की स्थिति सुधारें (मास्टर)</b><div class="muted" style="margin:4px 0 8px">गलती से "लाया" / "वोट डाला" / "नहीं" लग गया हो तो यहाँ से हटाएँ या बदलें। मास्टर का सुधार सब फ़ोनों पर पहुँच जाता है।</div>
 <div class="r"><input id="xq" placeholder="नाम / EPIC / वार्ड-क्रम (जैसे 3-45) / मकान नं." style="min-width:260px"><button class="p" id="xf">खोजें</button></div><div id="xr" style="margin-top:8px"></div></div>
 <div class="card"><div class="r"><b>अभी तक वोट नहीं डाला</b> <select id="sw"></select><select id="sf"><option value="R">सब बचे हुए</option><option value="L">लाए पर वोट नहीं</option><option value="N">"नहीं" वाले</option><option value="Z">कोई एंट्री नहीं</option><option value="A">सब मतदाता (पूरा बैकअप)</option></select><button class="g" id="csv">CSV उतारें</button><span id="cnt" class="muted"></span></div>
@@ -292,8 +293,8 @@ $('avrem').onclick=function(){var L=D.v.filter(function(v){var k=v[0]+'-'+v[1];r
 
 var DDL=[],DDT='';
 function ddShow(spec){var p=spec.split(':'),t=p[0],L,ti;
- if(t==='q'){var qw=p[1],qc=decodeURIComponent(p[2]),qj=decodeURIComponent(p[3]),qg=p[4],qa=p[5];L=D.v.filter(function(v){if(!fcIn(v,qw,qc))return false;if(qj&&casteK(v)!==qj)return false;var g=/^(F|म|स्त्री)/.test(String(v[8]))?'F':'M',s=stOf(v);if((qg==='M'||qg==='F')&&g!==qg)return false;var kq=v[0]+'-'+v[1];if(qg==='A'&&!ASN[kq])return false;if(qg==='P1'&&(ASN[kq]||!impCat(kq)))return false;if(qg==='P2'&&(ASN[kq]||impCat(kq)))return false;if(qg==='V'&&s!=='V')return false;if(qg==='R'&&s==='V')return false;if(qa!==''&&qa!=null){var b=AGB[+qa],ag=+v[7]||0;if(ag<b[0]||ag>b[1])return false}return true}).sort(vcmp);
-  ti=[qw?'वार्ड '+qw:'सारे वार्ड',qc!=='*'?CATN[qc]:'',qj?'जाति: '+qj:'',{M:'पुरुष',F:'महिला',V:'वोट डाला',R:'बाकी',A:'👤 वॉलंटियर को सौंपे',P1:'⏳ बाकी सौंपना (हमारा + सस्पेंस)',P2:'बाकी — नॉट ओके / पता नहीं'}[qg]||'',qa!==''&&qa!=null?'उम्र '+AGB[+qa][0]+'–'+AGB[+qa][1]:''].filter(Boolean).join(' · ')}
+ if(t==='q'){var qw=p[1],qc=decodeURIComponent(p[2]),qj=decodeURIComponent(p[3]),qg=p[4],qa=p[5],qr=decodeURIComponent(p[6]||'');L=D.v.filter(function(v){if(!fcIn(v,qw,qc))return false;if(qj&&casteK(v)!==qj)return false;if(qr&&rtKey(v)!==qr)return false;var g=/^(F|म|स्त्री)/.test(String(v[8]))?'F':'M',s=stOf(v);if((qg==='M'||qg==='F')&&g!==qg)return false;var kq=v[0]+'-'+v[1];if(qg==='A'&&!ASN[kq])return false;if(qg==='P1'&&(ASN[kq]||!impCat(kq)))return false;if(qg==='P2'&&(ASN[kq]||impCat(kq)))return false;if(qg==='V'&&s!=='V')return false;if(qg==='R'&&s==='V')return false;if(qa!==''&&qa!=null){var b=AGB[+qa],ag=+v[7]||0;if(ag<b[0]||ag>b[1])return false}return true}).sort(vcmp);
+  ti=[qw?'वार्ड '+qw:'सारे वार्ड',qr?'रूट: '+qr:'',qc!=='*'?CATN[qc]:'',qj?'जाति: '+qj:'',{M:'पुरुष',F:'महिला',V:'वोट डाला',R:'बाकी',A:'👤 वॉलंटियर को सौंपे',P1:'⏳ बाकी सौंपना (हमारा + सस्पेंस)',P2:'बाकी — नॉट ओके / पता नहीं'}[qg]||'',qa!==''&&qa!=null?'उम्र '+AGB[+qa][0]+'–'+AGB[+qa][1]:''].filter(Boolean).join(' · ')}
  else if(t==='c'){L=D.v.filter(function(v){if(v[10]===2)return false;if(p[3]&&v[0]!=+p[3])return false;if(catOfK(v[0]+'-'+v[1])!==p[1])return false;var s=stOf(v),kk=v[0]+'-'+v[1];return p[2]==='a'?true:p[2]==='A'?!!ASN[kk]:p[2]==='P'?!ASN[kk]:p[2]==='R'?s!=='V':s===p[2]}).sort(vcmp);ti=(CATN[p[1]]||p[1])+' · '+({a:'सब',L:'लाए',V:'वोट डाला',R:'बाकी',A:'👤 वॉलंटियर को सौंपे',P:'⏳ किसी को नहीं सौंपे'}[p[2]])+(p[3]?' · वार्ड '+p[3]:'')}else{
  L=D.v.filter(function(v){if(v[10]===2)return false;var e=ROWS[v[0]+'-'+v[1]];if(!e||!e[2])return false;
   if(t==='s')return e[2]===p[1];if(t==='w')return v[0]==+p[1]&&e[2]===p[2];if(t==='u')return e[4]===p[1]&&(!p[2]||e[2]===p[2]||(p[2]==='N'&&e[2]!=='L'&&e[2]!=='V'));return false});
@@ -513,16 +514,18 @@ var AGB=[[18,25],[26,35],[36,45],[46,60],[61,200]];
 function fcIn(v,w,c){if(v[10]===2)return false;if(w&&v[0]!=+w)return false;if(c!=='*'&&catOfK(v[0]+'-'+v[1])!==c)return false;return true}
 function casteK(v){return String((((D.s||{})[v[0]+'-'+v[1]]||[])[3])||'').trim()||'(खाली)'}
 function fcLink(spec,x){return x?'<a href="#" data-dd="q:'+spec+'">'+x+'</a>':'0'}
-function fcSpec(w,c,j,g,a){return [w||'',encodeURIComponent(c),encodeURIComponent(j||''),g||'',a||''].join(':')}
+function fcSpec(w,c,j,g,a,r){return [w||'',encodeURIComponent(c),encodeURIComponent(j||''),g||'',a==null?'':a,encodeURIComponent(r||'')].join(':')}
 function impCat(k){var c=catOfK(k);return c==='ok'||c==='suspense'}
+function rtKey(v){var sd=(D.s||{})[v[0]+'-'+v[1]]||[],r=String(sd[8]||'').trim();if(r)return r;var gl=String(sd[7]||'');if(/^गाँव/.test(gl)||sd[5]==='In village')return 'गाँव (आबादी)';if(/^बाहर/.test(gl))return 'बाहर';return '(रूट नहीं)'}
 function fcCalc(){if(!D)return;var w=$('fcW').value,c=$('fcC').value,q=$('fcQ').value.trim();
  if($('fcW').options.length<2)$('fcW').innerHTML='<option value="">सारे वार्ड</option>'+Object.keys(D.w).sort(function(a,b){return a-b}).map(function(x){return '<option value="'+x+'">वार्ड '+x+'</option>'}).join('');
  if($('fcC').options.length<2)$('fcC').innerHTML='<option value="*">सारे वर्ग</option>'+CATO.concat(['death']).map(function(x){return '<option value="'+x+'">'+CATN[x]+'</option>'}).join('');
- var T={a:0,M:0,F:0,V:0,A:0,P1:0,P2:0},W={},J={},A=AGB.map(function(){return {a:0,M:0,F:0,V:0,A:0,P1:0,P2:0}});
+ var RT={},T={a:0,M:0,F:0,V:0,A:0,P1:0,P2:0},W={},J={},A=AGB.map(function(){return {a:0,M:0,F:0,V:0,A:0,P1:0,P2:0}});
  D.v.forEach(function(v){if(!fcIn(v,'',c))return;var g=/^(F|म|स्त्री)/.test(String(v[8]))?'F':'M',vt=stOf(v)==='V',as=!!ASN[v[0]+'-'+v[1]],pk=as?'':(impCat(v[0]+'-'+v[1])?'P1':'P2');
   var x=W[v[0]]=W[v[0]]||{a:0,M:0,F:0,V:0,A:0,P1:0,P2:0};x.a++;x[g]++;if(vt)x.V++;if(as)x.A++;else x[pk]++;
   if(w&&v[0]!=+w)return;T.a++;T[g]++;if(vt)T.V++;if(as)T.A++;else T[pk]++;
   var jk=casteK(v),y=J[jk]=J[jk]||{a:0,M:0,F:0,V:0,A:0,P1:0,P2:0};y.a++;y[g]++;if(vt)y.V++;if(as)y.A++;else y[pk]++;
+  var rk=rtKey(v),z=RT[rk]=RT[rk]||{a:0,M:0,F:0,V:0,A:0,P1:0,P2:0};z.a++;z[g]++;if(vt)z.V++;if(as)z.A++;else z[pk]++;
   var ag=+v[7]||0;AGB.forEach(function(b,i){if(ag>=b[0]&&ag<=b[1]){A[i].a++;A[i][g]++;if(vt)A[i].V++;if(as)A[i].A++;else A[i][pk]++}})});
  var L=function(j,g,a,x){return fcLink(fcSpec(w,c,j,g,a),x)};
  $('fck').innerHTML=[['कुल वोट',T.a,''],['पुरुष',T.M,'M'],['महिला',T.F,'F'],['👤 वॉलंटियर को सौंपे',T.A,'A'],['⏳ बाकी सौंपना: हमारा + सस्पेंस',T.P1,'P1'],['बाकी: नॉट ओके / पता नहीं',T.P2,'P2'],['वोट डाल चुके',T.V,'V'],['बाकी (वोट)',T.a-T.V,'R']].map(function(k){return '<div class="k"><b>'+L('',k[2],'',k[1])+'</b>'+k[0]+'</div>'}).join('');
@@ -532,7 +535,9 @@ function fcCalc(){if(!D)return;var w=$('fcW').value,c=$('fcC').value,q=$('fcQ').
  var JK=Object.keys(J).filter(function(k){return !q||k.indexOf(q)>=0}).sort(function(a,b){return J[b].a-J[a].a||a.localeCompare(b)});
  $('fcn').textContent='('+JK.length+' जातियाँ'+(w?' · वार्ड '+w:'')+')';
  $('fcj').innerHTML='<tr><th>जाति</th>'+H+JK.map(function(k){return row(esc(k),J[k],function(g,x){return L(k,g,'',x)})}).join('');
- $('fca').innerHTML='<tr><th>उम्र</th>'+H+AGB.map(function(b,i){return row(b[0]+(b[1]>150?'+':'–'+b[1]),A[i],function(g,x){return L('',g,i,x)})}).join('')}
+ $('fca').innerHTML='<tr><th>उम्र</th>'+H+AGB.map(function(b,i){return row(b[0]+(b[1]>150?'+':'–'+b[1]),A[i],function(g,x){return L('',g,i,x)})}).join('');
+ var RK=Object.keys(RT).sort(function(a,b){return (a==='गाँव (आबादी)')-(b==='गाँव (आबादी)')||(a==='(रूट नहीं)')-(b==='(रूट नहीं)')||a.localeCompare(b)});
+ $('fcr').innerHTML='<tr><th>रूट / ढाणी</th>'+H+RK.map(function(k){return row(esc(k),RT[k],function(g2,x){return fcLink(fcSpec(w,c,'',g2,'',k),x)})}).join('')}
 $('fcW').onchange=fcCalc;$('fcC').onchange=fcCalc;$('fcQ').oninput=fcCalc;
 
 var ED={};
