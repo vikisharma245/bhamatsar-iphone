@@ -292,9 +292,9 @@ $('avrem').onclick=function(){var L=D.v.filter(function(v){var k=v[0]+'-'+v[1];r
 
 var DDL=[],DDT='';
 function ddShow(spec){var p=spec.split(':'),t=p[0],L,ti;
- if(t==='q'){var qw=p[1],qc=decodeURIComponent(p[2]),qj=decodeURIComponent(p[3]),qg=p[4],qa=p[5];L=D.v.filter(function(v){if(!fcIn(v,qw,qc))return false;if(qj&&casteK(v)!==qj)return false;var g=/^(F|म|स्त्री)/.test(String(v[8]))?'F':'M',s=stOf(v);if((qg==='M'||qg==='F')&&g!==qg)return false;if(qg==='V'&&s!=='V')return false;if(qg==='R'&&s==='V')return false;if(qa!==''&&qa!=null){var b=AGB[+qa],ag=+v[7]||0;if(ag<b[0]||ag>b[1])return false}return true}).sort(vcmp);
-  ti=[qw?'वार्ड '+qw:'सारे वार्ड',qc!=='*'?CATN[qc]:'',qj?'जाति: '+qj:'',{M:'पुरुष',F:'महिला',V:'वोट डाला',R:'बाकी'}[qg]||'',qa!==''&&qa!=null?'उम्र '+AGB[+qa][0]+'–'+AGB[+qa][1]:''].filter(Boolean).join(' · ')}
- else if(t==='c'){L=D.v.filter(function(v){if(v[10]===2)return false;if(p[3]&&v[0]!=+p[3])return false;if(catOfK(v[0]+'-'+v[1])!==p[1])return false;var s=stOf(v);return p[2]==='a'?true:p[2]==='R'?s!=='V':s===p[2]}).sort(vcmp);ti=(CATN[p[1]]||p[1])+' · '+({a:'सब',L:'लाए',V:'वोट डाला',R:'बाकी'}[p[2]])+(p[3]?' · वार्ड '+p[3]:'')}else{
+ if(t==='q'){var qw=p[1],qc=decodeURIComponent(p[2]),qj=decodeURIComponent(p[3]),qg=p[4],qa=p[5];L=D.v.filter(function(v){if(!fcIn(v,qw,qc))return false;if(qj&&casteK(v)!==qj)return false;var g=/^(F|म|स्त्री)/.test(String(v[8]))?'F':'M',s=stOf(v);if((qg==='M'||qg==='F')&&g!==qg)return false;var kq=v[0]+'-'+v[1];if(qg==='A'&&!ASN[kq])return false;if(qg==='P1'&&(ASN[kq]||!impCat(kq)))return false;if(qg==='P2'&&(ASN[kq]||impCat(kq)))return false;if(qg==='V'&&s!=='V')return false;if(qg==='R'&&s==='V')return false;if(qa!==''&&qa!=null){var b=AGB[+qa],ag=+v[7]||0;if(ag<b[0]||ag>b[1])return false}return true}).sort(vcmp);
+  ti=[qw?'वार्ड '+qw:'सारे वार्ड',qc!=='*'?CATN[qc]:'',qj?'जाति: '+qj:'',{M:'पुरुष',F:'महिला',V:'वोट डाला',R:'बाकी',A:'👤 वॉलंटियर को सौंपे',P1:'⏳ बाकी सौंपना (हमारा + सस्पेंस)',P2:'बाकी — नॉट ओके / पता नहीं'}[qg]||'',qa!==''&&qa!=null?'उम्र '+AGB[+qa][0]+'–'+AGB[+qa][1]:''].filter(Boolean).join(' · ')}
+ else if(t==='c'){L=D.v.filter(function(v){if(v[10]===2)return false;if(p[3]&&v[0]!=+p[3])return false;if(catOfK(v[0]+'-'+v[1])!==p[1])return false;var s=stOf(v),kk=v[0]+'-'+v[1];return p[2]==='a'?true:p[2]==='A'?!!ASN[kk]:p[2]==='P'?!ASN[kk]:p[2]==='R'?s!=='V':s===p[2]}).sort(vcmp);ti=(CATN[p[1]]||p[1])+' · '+({a:'सब',L:'लाए',V:'वोट डाला',R:'बाकी',A:'👤 वॉलंटियर को सौंपे',P:'⏳ किसी को नहीं सौंपे'}[p[2]])+(p[3]?' · वार्ड '+p[3]:'')}else{
  L=D.v.filter(function(v){if(v[10]===2)return false;var e=ROWS[v[0]+'-'+v[1]];if(!e||!e[2])return false;
   if(t==='s')return e[2]===p[1];if(t==='w')return v[0]==+p[1]&&e[2]===p[2];if(t==='u')return e[4]===p[1]&&(!p[2]||e[2]===p[2]||(p[2]==='N'&&e[2]!=='L'&&e[2]!=='V'));return false});
  L.sort(function(a,b){return (ROWS[b[0]+'-'+b[1]][3])-(ROWS[a[0]+'-'+a[1]][3])});
@@ -318,23 +318,23 @@ var MGR=[],MGL=[],MGLT='';
 var MGSEC=[['ok','✅ हमारे (OK)','#e8f5e9'],['suspense','🟡 सस्पेंस','#fff8e1'],['','⚪ पता नहीं','#f3f6f9'],['RAMLAL','🔴 रामलाल','#fdecea'],['RAMESHWAR','🟠 रामेश्वर','#fff0e0'],['death','✖ मृत्यु','#eeeeee']];
 function mgCalc(){var T=+$('mgT').value,fm=$('mgM').value,q=$('mgQ').value.trim().toLowerCase(),mw=$('mgW').value,S={};
  D.v.forEach(function(v){if(v[10]===2)return;if(mw&&v[0]!=+mw)return;var k=v[0]+'-'+v[1],sd=(D.s||{})[k]||[],nm=grp(sd,T),ct=String(sd[0]||'');if(T!==2&&fm&&sd[2]!==fm)return;if(q&&String(nm).toLowerCase().indexOf(q)<0)return;
-  var m=S[ct]=S[ct]||{},r=m[nm]=m[nm]||{n:nm,mn:sd[2]||'',a:0,G:0,D:0,B:0,U:0,V:0,w:{}};r.a++;r.w[v[0]]=(r.w[v[0]]||0)+1;r[locOf(sd)]++;if(stOf(v)==='V')r.V++});
+  var m=S[ct]=S[ct]||{},r=m[nm]=m[nm]||{n:nm,mn:sd[2]||'',a:0,A:0,G:0,D:0,B:0,U:0,V:0,w:{}};r.a++;if(ASN[k])r.A++;r.w[v[0]]=(r.w[v[0]]||0)+1;r[locOf(sd)]++;if(stOf(v)==='V')r.V++});
  var secs=MGSEC.slice();Object.keys(S).forEach(function(c){if(!secs.some(function(s){return s[0]===c}))secs.push([c,c,'#f3f6f9'])});
- var H='<tr><th>'+(T===4?'जाति':T===2?'मेन (मुखिया)':T===1?'सब-मुखिया':'सब → मेन')+'</th>'+(T===1?'<th>मेन</th>':'')+'<th>वार्ड (लोग)</th><th>कुल</th><th>गाँव</th><th>ढाणी</th><th>बाहर</th><th>पता नहीं</th><th>वोट डाला</th><th>बाकी</th><th></th></tr>',out='',G={a:0,V:0};MGR=[];
+ var H='<tr><th>'+(T===4?'जाति':T===2?'मेन (मुखिया)':T===1?'सब-मुखिया':'सब → मेन')+'</th>'+(T===1?'<th>मेन</th>':'')+'<th>वार्ड (लोग)</th><th>कुल</th><th style="background:#e3f2fd">👤 सौंपे</th><th style="background:#fff3e0">⏳ बाकी सौंपना</th><th>गाँव</th><th>ढाणी</th><th>बाहर</th><th>पता नहीं</th><th>वोट डाला</th><th>बाकी</th><th></th></tr>',out='',G={a:0,V:0,A:0,P1:0,P2:0};MGR=[];
  secs.forEach(function(sc){var m=S[sc[0]];if(!m)return;var R=Object.keys(m).map(function(k){return m[k]}).sort(function(a,b){return b.a-a.a});MGR=MGR.concat(R);
-  var tot={a:0,G:0,D:0,B:0,U:0,V:0};R.forEach(function(r){['a','G','D','B','U','V'].forEach(function(f){tot[f]+=r[f]})});G.a+=tot.a;G.V+=tot.V;
+  var tot={a:0,A:0,G:0,D:0,B:0,U:0,V:0};R.forEach(function(r){['a','A','G','D','B','U','V'].forEach(function(f){tot[f]+=r[f]})});G.a+=tot.a;G.V+=tot.V;G.A+=tot.A;if(sc[0]==='ok'||sc[0]==='suspense')G.P1+=tot.a-tot.A;else G.P2+=tot.a-tot.A;var cs=function(f,x){return x?'<a href="#" data-mg="*|'+f+'|'+sc[0]+'">'+x+'</a>':'0'};
   var c=function(r,f,x){return x?'<a href="#" data-mg="'+esc(r.n)+'|'+f+'|'+sc[0]+'">'+x+'</a>':'<span class="muted">0</span>'};
-  out+='<tr style="background:'+sc[2]+';font-weight:700"><td colspan="'+(T===1?2:1)+'" style="white-space:nowrap">'+sc[1]+' · '+R.length+' समूह</td><td></td><td>'+tot.a+'</td><td>'+tot.G+'</td><td>'+tot.D+'</td><td>'+tot.B+'</td><td>'+tot.U+'</td><td>'+tot.V+'</td><td>'+(tot.a-tot.V)+'</td><td></td></tr>'+
-   R.map(function(r){return '<tr><td style="white-space:nowrap"><b>'+esc(r.n)+'</b></td>'+(T===1?'<td class="muted">'+esc(r.mn)+'</td>':'')+'<td style="font-size:12px">'+Object.keys(r.w).sort(function(a,b){return r.w[b]-r.w[a]}).map(function(w){return '<a href="#" style="white-space:nowrap" data-mg="'+esc(r.n)+'|w'+w+'|'+sc[0]+'">वा.'+w+' ('+r.w[w]+')</a>'}).join(' ')+'</td><td>'+c(r,'a',r.a)+'</td><td>'+c(r,'G',r.G)+'</td><td>'+c(r,'D',r.D)+'</td><td>'+c(r,'B',r.B)+'</td><td>'+c(r,'U',r.U)+'</td><td>'+c(r,'V',r.V)+'</td><td>'+c(r,'R',r.a-r.V)+'</td><td><button class="g" style="padding:2px 7px" data-mgr="'+esc(r.n)+'" title="नाम बदलें">✏️</button></td></tr>'}).join('')});
- $('mgt').innerHTML=H+'<tr style="font-weight:700;background:#dfe7ef"><td colspan="'+(T===1?3:2)+'">सब मिलाकर</td><td>'+G.a+'</td><td colspan="3"></td><td></td><td>'+G.V+'</td><td>'+(G.a-G.V)+'</td><td></td></tr>'+out}
+  out+='<tr style="background:'+sc[2]+';font-weight:700"><td colspan="'+(T===1?2:1)+'" style="white-space:nowrap">'+sc[1]+' · '+R.length+' समूह</td><td></td><td>'+cs('a',tot.a)+'</td><td style="background:#e3f2fd">'+cs('A',tot.A)+'</td><td style="background:#fff3e0">'+cs('P',tot.a-tot.A)+'</td><td>'+tot.G+'</td><td>'+tot.D+'</td><td>'+tot.B+'</td><td>'+tot.U+'</td><td>'+tot.V+'</td><td>'+(tot.a-tot.V)+'</td><td></td></tr>'+
+   R.map(function(r){return '<tr><td style="white-space:nowrap"><b>'+esc(r.n)+'</b></td>'+(T===1?'<td class="muted">'+esc(r.mn)+'</td>':'')+'<td style="font-size:12px">'+Object.keys(r.w).sort(function(a,b){return r.w[b]-r.w[a]}).map(function(w){return '<a href="#" style="white-space:nowrap" data-mg="'+esc(r.n)+'|w'+w+'|'+sc[0]+'">वा.'+w+' ('+r.w[w]+')</a>'}).join(' ')+'</td><td>'+c(r,'a',r.a)+'</td><td style="background:#f3f9fe">'+c(r,'A',r.A)+'</td><td style="background:#fffaf2">'+c(r,'P',r.a-r.A)+'</td><td>'+c(r,'G',r.G)+'</td><td>'+c(r,'D',r.D)+'</td><td>'+c(r,'B',r.B)+'</td><td>'+c(r,'U',r.U)+'</td><td>'+c(r,'V',r.V)+'</td><td>'+c(r,'R',r.a-r.V)+'</td><td><button class="g" style="padding:2px 7px" data-mgr="'+esc(r.n)+'" title="नाम बदलें">✏️</button></td></tr>'}).join('')});
+ $('mgt').innerHTML=H+'<tr style="font-weight:700;background:#dfe7ef"><td colspan="'+(T===1?3:2)+'">सब मिलाकर</td><td>'+G.a+'</td><td>'+G.A+'</td><td style="font-size:12px">'+(G.a-G.A)+'<br><span style="color:#1b5e20">हमारा+सस्पेंस: '+G.P1+'</span><br><span style="color:#b71c1c">नॉट ओके/पता नहीं: '+G.P2+'</span></td><td colspan="3"></td><td></td><td>'+G.V+'</td><td>'+(G.a-G.V)+'</td><td></td></tr>'+out}
 function mgFill(){if(!D)return;var mm={};Object.keys(D.s||{}).forEach(function(k){var x=D.s[k][2];if(x)mm[x]=1});var cur=$('mgM').value;
  $('mgM').innerHTML='<option value="">सारे मेन</option>'+Object.keys(mm).sort().map(function(x){return '<option>'+esc(x)+'</option>'}).join('');$('mgM').value=cur;if($('mgW').options.length<2)$('mgW').innerHTML='<option value="">सारे वार्ड</option>'+Object.keys(D.w).sort(function(a,b){return a-b}).map(function(w){return '<option value="'+w+'">वार्ड '+w+'</option>'}).join('');$('mgM').style.display=$('mgT').value!=='2'?'':'none';mgCalc()}
 $('mgT').onchange=mgFill;$('mgW').onchange=mgCalc;$('mgM').onchange=mgCalc;$('mgQ').oninput=mgCalc;
-var FN={a:'सारे वोट',G:'गाँव में',D:'ढाणी में',B:'बाहर',U:'जगह पता नहीं',V:'वोट डाला',R:'बाकी (वोट नहीं डाला)'};
+var FN={A:'👤 वॉलंटियर को सौंपे',P:'⏳ अभी किसी को नहीं सौंपे',a:'सारे वोट',G:'गाँव में',D:'ढाणी में',B:'बाहर',U:'जगह पता नहीं',V:'वोट डाला',R:'बाकी (वोट नहीं डाला)'};
 $('mgt').addEventListener('click',function(e){var a=e.target.closest('[data-mg]');if(!a)return;e.preventDefault();var p=a.getAttribute('data-mg').split('|'),T=+$('mgT').value,f=p[1];
- MGL=D.v.filter(function(v){if(v[10]===2)return false;var k=v[0]+'-'+v[1],sd=(D.s||{})[k]||[];if(grp(sd,T)!==p[0])return false;if(p.length>2&&String(sd[0]||'')!==p[2])return false;if(T!==2&&$('mgM').value&&sd[2]!==$('mgM').value)return false;if($('mgW').value&&v[0]!=+$('mgW').value)return false;
-  return f==='a'?true:f.charAt(0)==='w'?v[0]==+f.slice(1):f==='V'?stOf(v)==='V':f==='R'?stOf(v)!=='V':locOf(sd)===f}).sort(vcmp);
- MGLT=(T===4?'जाति':T===2?'मेन':T===1?'सब':'सब → मेन')+': '+p[0]+(p.length>2?' · '+((MGSEC.filter(function(s){return s[0]===p[2]})[0]||[0,p[2]])[1]):'')+' · '+(f.charAt(0)==='w'?'वार्ड '+f.slice(1):FN[f]);$('mgdt').textContent=MGLT+' — '+MGL.length+' लोग';
+ MGL=D.v.filter(function(v){if(v[10]===2)return false;var k=v[0]+'-'+v[1],sd=(D.s||{})[k]||[];if(p[0]!=='*'&&grp(sd,T)!==p[0])return false;if(p.length>2&&String(sd[0]||'')!==p[2])return false;if(T!==2&&$('mgM').value&&sd[2]!==$('mgM').value)return false;if($('mgW').value&&v[0]!=+$('mgW').value)return false;
+  return f==='a'?true:f==='A'?!!ASN[k]:f==='P'?!ASN[k]:f.charAt(0)==='w'?v[0]==+f.slice(1):f==='V'?stOf(v)==='V':f==='R'?stOf(v)!=='V':locOf(sd)===f}).sort(vcmp);
+ MGLT=(p[0]==='*'?'पूरा समूह':(T===4?'जाति':T===2?'मेन':T===1?'सब':'सब → मेन')+': '+p[0])+(p.length>2?' · '+((MGSEC.filter(function(s){return s[0]===p[2]})[0]||[0,p[2]])[1]):'')+' · '+(f.charAt(0)==='w'?'वार्ड '+f.slice(1):FN[f]);$('mgdt').textContent=MGLT+' — '+MGL.length+' लोग';
  ED.mgdb={L:MGL,x:function(k){return '<td><button class="g" data-mge="'+k+'">✏️</button></td>'}};edDraw('mgdb');
  $('mgd').classList.remove('hid');$('mgd').scrollIntoView({behavior:'smooth'})});
 $('mgdx').onclick=function(){$('mgd').classList.add('hid')};
@@ -366,10 +366,10 @@ $('mges').onclick=async function(){var k=MGE[0];if(!k)return;var o=infoOf(k),p=k
  if(await saveInfo([[+p[0],+p[1],JSON.stringify(o)]],'सुधार सेव ✔ — सब फ़ोनों तक पहुँचेगा')){$('mge').classList.add('hid');$('mgd').classList.add('hid')}};
 
 var SUGS=[];
-function catCalc(){if(!D)return;var w=$('cwW').value,m={};CATO.concat(['death']).forEach(function(c){m[c]={a:0,V:0,L:0}});
- D.v.forEach(function(v){if(v[10]===2)return;if(w&&v[0]!=+w)return;var c=catOfK(v[0]+'-'+v[1]);if(!m[c])m[c]={a:0,V:0,L:0};m[c].a++;var s=stOf(v);if(s==='V')m[c].V++;if(s==='L')m[c].L++});
+function catCalc(){if(!D)return;var w=$('cwW').value,m={};CATO.concat(['death']).forEach(function(c){m[c]={a:0,V:0,L:0,A:0}});
+ D.v.forEach(function(v){if(v[10]===2)return;if(w&&v[0]!=+w)return;var c=catOfK(v[0]+'-'+v[1]);if(!m[c])m[c]={a:0,V:0,L:0,A:0};m[c].a++;if(ASN[v[0]+'-'+v[1]])m[c].A++;var s=stOf(v);if(s==='V')m[c].V++;if(s==='L')m[c].L++});
  var a=function(c,f,x){return x?'<a href="#" data-dd="c:'+c+':'+f+':'+w+'">'+x+'</a>':'0'};
- $('cwt').innerHTML='<tr><th>वर्ग</th><th>कुल</th><th>लाए</th><th>वोट डाला</th><th>बाकी</th><th>वोट %</th></tr>'+Object.keys(m).filter(function(c){return m[c].a}).map(function(c){var x=m[c];return '<tr><td><b>'+(CATN[c]||c)+'</b></td><td>'+a(c,'a',x.a)+'</td><td>'+a(c,'L',x.L)+'</td><td>'+a(c,'V',x.V)+'</td><td>'+a(c,'R',x.a-x.V)+'</td><td>'+(x.a?(x.V*100/x.a).toFixed(1):0)+'%</td></tr>'}).join('');
+ $('cwt').innerHTML='<tr><th>वर्ग</th><th>कुल</th><th style="background:#e3f2fd">👤 सौंपे</th><th style="background:#fff3e0">⏳ बाकी सौंपना</th><th>लाए</th><th>वोट डाला</th><th>बाकी</th><th>वोट %</th></tr>'+Object.keys(m).filter(function(c){return m[c].a}).map(function(c){var x=m[c];return '<tr><td><b>'+(CATN[c]||c)+'</b></td><td>'+a(c,'a',x.a)+'</td><td>'+a(c,'A',x.A)+'</td><td>'+a(c,'P',x.a-x.A)+'</td><td>'+a(c,'L',x.L)+'</td><td>'+a(c,'V',x.V)+'</td><td>'+a(c,'R',x.a-x.V)+'</td><td>'+(x.a?(x.V*100/x.a).toFixed(1):0)+'%</td></tr>'}).join('');
  if($('cwW').options.length<2)$('cwW').innerHTML='<option value="">सारे वार्ड</option>'+Object.keys(D.w).sort(function(a,b){return a-b}).map(function(x){return '<option value="'+x+'">वार्ड '+x+'</option>'}).join('');
  $('sgc').classList.toggle('hid',!SUGS.length);$('sgn').textContent=SUGS.length;
  $('sgt').innerHTML='<tr><th>मतदाता</th><th>अभी</th><th>सुझाव</th><th>किसने</th><th>बात</th><th></th></tr>'+SUGS.map(function(s,i){var k=s[3]+'-'+s[4],v=D.v.filter(function(x){return x[0]+'-'+x[1]===k})[0];return '<tr><td>'+k+' · '+esc(v?v[3]:'')+'</td><td>'+(CATN[catOfK(k)]||catOfK(k))+'</td><td><b>'+(CATN[s[5]]||esc(s[5]))+'</b></td><td>'+esc(s[2])+' ('+esc(s[1])+')</td><td>'+esc(s[6])+'</td><td style="white-space:nowrap"><button class="p" data-sgy="'+i+'">✔ मानो</button> <button class="g" data-sgn="'+i+'">✖ नहीं</button></td></tr>'}).join('')}
@@ -514,19 +514,20 @@ function fcIn(v,w,c){if(v[10]===2)return false;if(w&&v[0]!=+w)return false;if(c!
 function casteK(v){return String((((D.s||{})[v[0]+'-'+v[1]]||[])[3])||'').trim()||'(खाली)'}
 function fcLink(spec,x){return x?'<a href="#" data-dd="q:'+spec+'">'+x+'</a>':'0'}
 function fcSpec(w,c,j,g,a){return [w||'',encodeURIComponent(c),encodeURIComponent(j||''),g||'',a||''].join(':')}
+function impCat(k){var c=catOfK(k);return c==='ok'||c==='suspense'}
 function fcCalc(){if(!D)return;var w=$('fcW').value,c=$('fcC').value,q=$('fcQ').value.trim();
  if($('fcW').options.length<2)$('fcW').innerHTML='<option value="">सारे वार्ड</option>'+Object.keys(D.w).sort(function(a,b){return a-b}).map(function(x){return '<option value="'+x+'">वार्ड '+x+'</option>'}).join('');
  if($('fcC').options.length<2)$('fcC').innerHTML='<option value="*">सारे वर्ग</option>'+CATO.concat(['death']).map(function(x){return '<option value="'+x+'">'+CATN[x]+'</option>'}).join('');
- var T={a:0,M:0,F:0,V:0},W={},J={},A=AGB.map(function(){return {a:0,M:0,F:0,V:0}});
- D.v.forEach(function(v){if(!fcIn(v,'',c))return;var g=/^(F|म|स्त्री)/.test(String(v[8]))?'F':'M',vt=stOf(v)==='V';
-  var x=W[v[0]]=W[v[0]]||{a:0,M:0,F:0,V:0};x.a++;x[g]++;if(vt)x.V++;
-  if(w&&v[0]!=+w)return;T.a++;T[g]++;if(vt)T.V++;
-  var jk=casteK(v),y=J[jk]=J[jk]||{a:0,M:0,F:0,V:0};y.a++;y[g]++;if(vt)y.V++;
-  var ag=+v[7]||0;AGB.forEach(function(b,i){if(ag>=b[0]&&ag<=b[1]){A[i].a++;A[i][g]++;if(vt)A[i].V++}})});
+ var T={a:0,M:0,F:0,V:0,A:0,P1:0,P2:0},W={},J={},A=AGB.map(function(){return {a:0,M:0,F:0,V:0,A:0,P1:0,P2:0}});
+ D.v.forEach(function(v){if(!fcIn(v,'',c))return;var g=/^(F|म|स्त्री)/.test(String(v[8]))?'F':'M',vt=stOf(v)==='V',as=!!ASN[v[0]+'-'+v[1]],pk=as?'':(impCat(v[0]+'-'+v[1])?'P1':'P2');
+  var x=W[v[0]]=W[v[0]]||{a:0,M:0,F:0,V:0,A:0,P1:0,P2:0};x.a++;x[g]++;if(vt)x.V++;if(as)x.A++;else x[pk]++;
+  if(w&&v[0]!=+w)return;T.a++;T[g]++;if(vt)T.V++;if(as)T.A++;else T[pk]++;
+  var jk=casteK(v),y=J[jk]=J[jk]||{a:0,M:0,F:0,V:0,A:0,P1:0,P2:0};y.a++;y[g]++;if(vt)y.V++;if(as)y.A++;else y[pk]++;
+  var ag=+v[7]||0;AGB.forEach(function(b,i){if(ag>=b[0]&&ag<=b[1]){A[i].a++;A[i][g]++;if(vt)A[i].V++;if(as)A[i].A++;else A[i][pk]++}})});
  var L=function(j,g,a,x){return fcLink(fcSpec(w,c,j,g,a),x)};
- $('fck').innerHTML=[['कुल वोट',T.a,''],['पुरुष',T.M,'M'],['महिला',T.F,'F'],['वोट डाल चुके',T.V,'V'],['बाकी',T.a-T.V,'R']].map(function(k){return '<div class="k"><b>'+L('',k[2],'',k[1])+'</b>'+k[0]+'</div>'}).join('');
- var row=function(name,x,lk){return '<tr><td><b>'+name+'</b></td><td>'+lk('',x.a)+'</td><td>'+lk('M',x.M)+'</td><td>'+lk('F',x.F)+'</td><td>'+lk('V',x.V)+'</td><td>'+lk('R',x.a-x.V)+'</td><td>'+(x.a?(x.V*100/x.a).toFixed(1):0)+'%</td></tr>'},H='<th>कुल</th><th>पुरुष</th><th>महिला</th><th>वोट डाला</th><th>बाकी</th><th>%</th></tr>';
- var WT={a:0,M:0,F:0,V:0};Object.keys(W).forEach(function(k){['a','M','F','V'].forEach(function(f){WT[f]+=W[k][f]})});
+ $('fck').innerHTML=[['कुल वोट',T.a,''],['पुरुष',T.M,'M'],['महिला',T.F,'F'],['👤 वॉलंटियर को सौंपे',T.A,'A'],['⏳ बाकी सौंपना: हमारा + सस्पेंस',T.P1,'P1'],['बाकी: नॉट ओके / पता नहीं',T.P2,'P2'],['वोट डाल चुके',T.V,'V'],['बाकी (वोट)',T.a-T.V,'R']].map(function(k){return '<div class="k"><b>'+L('',k[2],'',k[1])+'</b>'+k[0]+'</div>'}).join('');
+ var row=function(name,x,lk){return '<tr><td><b>'+name+'</b></td><td>'+lk('',x.a)+'</td><td>'+lk('M',x.M)+'</td><td>'+lk('F',x.F)+'</td><td style="background:#f3f9fe">'+lk('A',x.A)+'</td><td style="background:#fffaf2"><b>'+lk('P1',x.P1)+'</b></td><td style="background:#fdf3f3">'+lk('P2',x.P2)+'</td><td>'+lk('V',x.V)+'</td><td>'+lk('R',x.a-x.V)+'</td><td>'+(x.a?(x.V*100/x.a).toFixed(1):0)+'%</td></tr>'},H='<th>कुल</th><th>पुरुष</th><th>महिला</th><th style="background:#e3f2fd">👤 सौंपे</th><th style="background:#fff3e0">⏳ बाकी सौंपना<br><small>हमारा+सस्पेंस</small></th><th style="background:#fdecea">बाकी<br><small>नॉट ओके / पता नहीं</small></th><th>वोट डाला</th><th>बाकी</th><th>%</th></tr>';
+ var WT={a:0,M:0,F:0,V:0,A:0,P1:0,P2:0};Object.keys(W).forEach(function(k){['a','M','F','V','A','P1','P2'].forEach(function(f){WT[f]+=W[k][f]})});
  $('fcw').innerHTML='<tr><th>वार्ड</th>'+H+Object.keys(W).sort(function(a,b){return a-b}).map(function(k){return row('वार्ड '+k,W[k],function(g,x){return fcLink(fcSpec(k,c,'',g,''),x)})}).join('')+row('कुल',WT,function(g,x){return fcLink(fcSpec('',c,'',g,''),x)});
  var JK=Object.keys(J).filter(function(k){return !q||k.indexOf(q)>=0}).sort(function(a,b){return J[b].a-J[a].a||a.localeCompare(b)});
  $('fcn').textContent='('+JK.length+' जातियाँ'+(w?' · वार्ड '+w:'')+')';
@@ -550,7 +551,7 @@ function plainTbl(L){return '<table><tr><th>वार्ड-क्रम</th><th
 async function asnApply(keys,to){var by={};keys.forEach(function(k){var c=ASN[k]||'';if(c!==to)(by[c]=by[c]||[]).push(k.split('-').map(Number))});
  if(to){var add=[];Object.keys(by).forEach(function(c){add=add.concat(by[c])});if(add.length){var r=await post({a:'admin',op:'assign',vid:to,add:add,del:[]});if(!r.ok)throw new Error(r.err||'नहीं हुआ');add.forEach(function(p){ASN[p[0]+'-'+p[1]]=to})}}
  else{var cs=Object.keys(by).filter(Boolean);for(var i=0;i<cs.length;i++){var r2=await post({a:'admin',op:'assign',vid:cs[i],add:[],del:by[cs[i]]});if(!r2.ok)throw new Error(r2.err||'नहीं हुआ');by[cs[i]].forEach(function(p){delete ASN[p[0]+'-'+p[1]]})}}
- fillAV();try{fcCalc()}catch(e){}}
+ fillAV();try{fcCalc();catCalc();mgCalc()}catch(e){}}
 function edKeys(w){return Array.prototype.map.call(w.closest('.card').querySelectorAll('.edk:checked'),function(x){return x.value})}
 function edCount(w){var n=w.closest('.card').querySelectorAll('.edk:checked').length,b=w.querySelector('.edn');if(b)b.textContent=n}
 document.addEventListener('change',function(e){var t=e.target,w;if(!t.closest)return;
