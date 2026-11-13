@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=22;</script>
+<script>var UIV=23;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -96,9 +96,10 @@ async function start(code,name,fresh){
   D=await dec(b,KEY);DV=b.ver}catch(e){showLogin(/नेट/.test(e.message)?e.message:/दूसरे फ़ोन/.test(e.message)?'यह ID किसी दूसरे फ़ोन में चालू है':(/बंद/.test(e.message)?'यह कोड बंद है':'कोड गलत है'));return}
  sv('bh_code',p);sv('bh_name',NAME);init();if(fresh)sv('bh_blob',b);schedule(300)}
 var CATN={ok:'हमारा',suspense:'सस्पेंस',RAMLAL:'रामलाल',RAMESHWAR:'रामेश्वर',death:'मृत्यु'};
-var RL='';function HIDE(){return /^[DV]/i.test(RL||ID)}
+var RL='';function HIDE(){return true}   // हमारा / सस्पेंस / रामलाल / रामेश्वर — फ़ोन में किसी को नहीं, सिर्फ़ मास्टर
 function catOf(sd){return String(sd[0]||'')}
-function noteTxt(sd){var n=String(sd[9]||''),p=n.split(' · ');if(CATN[p[0]]!==undefined||p[0]===catOf(sd))p.shift();var seen={},r=p.filter(function(x){x=x.trim();if(!x||seen[x])return false;seen[x]=1;return true}).join(' · ');var c=catOf(sd);return HIDE()?r:((c?(CATN[c]||c):'')+(c&&r?' · ':'')+r)}
+var CATRX=/^\s*(not\s*ok|ok|suspense|ramlal|rameshwar|death|हमारा|हमारे|सस्पेंस|रामलाल|रामेश्वर|नॉट\s*ओके|ओके|मृत्यु)\s*$/i;
+function noteTxt(sd){var n=String(sd[9]||''),p=n.split(' · ').filter(function(x){return !(HIDE()&&CATRX.test(x))});if(CATN[p[0]]!==undefined||p[0]===catOf(sd))p.shift();var seen={},r=p.filter(function(x){x=x.trim();if(!x||seen[x])return false;seen[x]=1;return true}).join(' · ');var c=catOf(sd);return HIDE()?r:((c?(CATN[c]||c):'')+(c&&r?' · ':'')+r)}
 function applyNT(){D.s=D.s||{};Object.keys(NT).forEach(function(k){var o;try{o=JSON.parse(NT[k][0])}catch(e){return}var s=D.s[k]=D.s[k]||['','','','','','','','','',''];if('m' in o)s[2]=o.m;if('s' in o)s[1]=o.s;if('g' in o){s[7]=o.g;s[5]=''}if('c' in o){var rest=String(s[9]||'').split(' · ');if(CATN[rest[0]]!==undefined||rest[0]===s[0])rest.shift();s[0]=o.c;s[9]=[o.c].concat(rest).join(' · ')}})}
 function init(){
  applyNT();try{drawRq();if(/^D/i.test(RL||ID)&&g('bh_duty',0))dutyStart()}catch(e){}
@@ -251,13 +252,36 @@ function pickMap(start){return new Promise(function(done){var ov=document.create
   $('pkme').onclick=function(){myPos().then(function(c){if(c)m.setView([c.latitude,c.longitude],18);else alert('आपकी जगह नहीं मिली — GPS चालू करें')})};
   setTimeout(function(){m.invalidateSize()},200)},function(e){alert(e.message);fin(null)})})}
 
+function isPR(){return /^W/i.test(RL||ID)}
+function agoT(ts){if(!ts)return '<span style="color:#c62828">🔴 ऐप नहीं खोला</span>';var m=Math.round((Date.now()-ts)/60000);return m<15?'<span style="color:#2e7d32">🟢 चालू ('+(m<1?'अभी':m+' मि.')+')</span>':m<120?'<span style="color:#e65100">🟡 '+m+' मिनट पहले</span>':'<span style="color:#c62828">🔴 '+Math.round(m/60)+' घंटे पहले</span>'}
+async function teamView(){$('res').innerHTML='<div class="card">⏳ टीम की जानकारी आ रही है…</div>';window.scrollTo(0,0);var T=null;
+ if(navigator.onLine!==false){try{T=await post({a:'team',id:ID})}catch(e){}}if(T&&T.ok)sv('bh_team',T);else T=g('bh_team',null);
+ if(!T||!T.ok){$('res').innerHTML='<div class="card">नेट नहीं है / जानकारी नहीं मिली — <button class="sm" id="tmback">← वापस</button></div>';$('tmback').onclick=function(){run()};return}
+ var w=$('w').value,inS=function(v){return v[10]!==2&&vis(v)&&(!w||v[0]==+w)},V={},tot={a:0,V:0,L:0,N:0},W={};D.v.forEach(function(v){if(!inS(v))return;var k=key(v),s=stOf(v);V[k]=v;tot.a++;if(s)tot[s]++;var x=W[v[0]]=W[v[0]]||{a:0,V:0};x.a++;if(s==='V')x.V++});
+ var by={};Object.keys(ST).forEach(function(k){if(!V[k])return;var e=ST[k],u=String(e[2]||'').toUpperCase();if(!u)return;var b=by[u]=by[u]||{L:0,N:0,V:0};b[e[0]]=(b[e[0]]||0)+1});
+ var asg={};(T.asg||[]).forEach(function(x){var k=x[0]+'-'+x[1];if(!V[k])return;var a=asg[x[2]]=asg[x[2]]||{n:0,V:0};a.n++;if(stOf(V[k])==='V')a.V++});
+ var U={};(T.users||[]).forEach(function(u){U[u[0]]=u});var tel=function(m){return m?' <a href="tel:'+esc(m)+'">📞 '+esc(m)+'</a>':''};
+ var vols=(T.users||[]).filter(function(u){return (u[2]==='V'||u[2]==='W')&&(asg[u[0]]||by[u[0]])&&u[0]!==ID.toUpperCase()});
+ var bas=(T.users||[]).filter(function(u){return u[2]==='B'&&(by[u[0]]||!u[6]||(SCW&&String(u[6]).split(/[^0-9]+/).some(function(x){return SCW[+x]})))});
+ var rtv={};Object.keys(V).forEach(function(k){var r=((D.s||{})[k]||[])[8];if(r){var x=rtv[r]=rtv[r]||{a:0,V:0,L:0};x.a++;var s=stOf(V[k]);if(s==='V')x.V++;if(s==='L')x.L++}});
+ var vh=(T.veh||[]).filter(function(g2){return (g2.routes||[]).some(function(r){return rtv[r]})||(g2.vols||[]).some(function(x){return asg[x]})});
+ var h='<div class="card"><button class="sm" id="tmback">← वापस</button> <button class="sm" id="tmre">🔄 ताज़ा करें</button><div style="margin-top:6px;font-size:16px"><b>👥 मेरी टीम — '+(w?'वार्ड '+w:'मेरे वार्ड')+'</b></div>'+
+  '<div class="stats" style="margin-top:6px"><div><b>'+tot.a+'</b>कुल</div><div><b>'+tot.V+'</b>वोट डाले</div><div><b>'+(tot.a-tot.V)+'</b>बाकी</div></div>'+
+  '<div class="muted">'+Object.keys(W).sort(function(a,b){return a-b}).map(function(x){return 'वार्ड '+x+': '+W[x].V+'/'+W[x].a+' ('+(W[x].a?Math.round(W[x].V*100/W[x].a):0)+'%)'}).join(' · ')+'</div></div>';
+ h+='<div class="card"><b>🙋 वॉलंटियर ('+vols.length+')</b>'+(vols.length?vols.map(function(u){var a=asg[u[0]]||{n:0,V:0},b=by[u[0]]||{};return '<div style="border-top:1px solid #eee;padding:6px 0"><b>'+esc(u[1])+'</b> <span class="muted">'+u[0]+'</span>'+tel(u[3])+(u[5]?' · 🚗 खुद की गाड़ी':'')+'<br>सौंपे: <b>'+a.n+'</b> · उनमें वोट पड़े: <b>'+a.V+'</b> · बाकी: <b style="color:#c62828">'+(a.n-a.V)+'</b> · इसने "लाया": '+(b.L||0)+'<br>'+agoT(u[4])+'</div>'}).join(''):'<div class="muted">इन वार्डों में कोई वॉलंटियर नहीं</div>')+'</div>';
+ h+='<div class="card"><b>🗳 बूथ एजेंट ('+bas.length+')</b>'+(bas.length?bas.map(function(u){var b=by[u[0]]||{};return '<div style="border-top:1px solid #eee;padding:6px 0"><b>'+esc(u[1])+'</b> <span class="muted">'+u[0]+'</span>'+tel(u[3])+'<br>"वोट डाला" दबाए: <b>'+(b.V||0)+'</b><br>'+agoT(u[4])+'</div>'}).join(''):'<div class="muted">कोई नहीं</div>')+'</div>';
+ h+='<div class="card"><b>🚐 गाड़ियाँ / ड्राइवर ('+vh.length+')</b><div class="muted">लोकेशन सिर्फ़ मास्टर देखता है</div>'+(vh.length?vh.map(function(g2){var du=U[String(g2.did||'').toUpperCase()],j=(T.jobs||{})[g2.no]||{},b=by[String(g2.did||'').toUpperCase()]||{},rs=(g2.routes||[]).filter(function(r){return rtv[r]});
+  return '<div style="border-top:1px solid #eee;padding:6px 0"><b>'+esc(g2.no)+'</b> '+esc(g2.type||'')+' · ड्राइवर: <b>'+esc(g2.dn||'')+'</b>'+tel(g2.dm)+(g2.hm?'<br>🤝 साथी: '+esc(g2.hn||'')+tel(g2.hm):'')+(g2.days&&g2.days.length?'<br>📅 '+g2.days.map(function(d){return +d.split('-')[2]}).join(', ')+' नवंबर':'')+
+  (rs.length?'<br>रूट: '+rs.map(function(r){var x=rtv[r];return esc(r)+' — वोट '+x.V+'/'+x.a+(x.L?' · लाए '+x.L:'')}).join('<br>'):'')+'<br>इसने "लाया": <b>'+(b.L||0)+'</b> · माँग पर गई: '+(j.done||0)+' पूरी'+(j.sent?' · '+j.sent+' चल रही':'')+'<br>'+(du?agoT(du[4]):'<span class="muted">ड्राइवर ID नहीं जुड़ी</span>')+'</div>'}).join(''):'<div class="muted">इन वार्डों के रूट पर कोई गाड़ी नहीं</div>')+'</div>';
+ $('res').innerHTML=h;$('tmback').onclick=function(){run()};$('tmre').onclick=teamView}
+
 var RQT={L:'लोगों को लाना',D:'वापस छोड़ना'},RQS={new:'⏳ माँग भेजी — मास्टर गाड़ी भेजेगा',sent:'🚐 गाड़ी भेजी गई',done:'✔ पूरा हुआ',cancel:'✖ रद्द'};
 function rqList(){var L=g('bh_rq',[]),Q=g('bh_rqq',[]);Q.forEach(function(q){var o=L.filter(function(x){return x.rid===q.rid})[0];if(!o){o={rid:q.rid,id:ID,name:NAME,at:q.ts,st:'new'};L.unshift(o)}Object.keys(q).forEach(function(f){if(f!=='ts')o[f]=q[f]});o.pend=1});return L}
 function drawRq(){var el=$('rqs');if(!el)return;var keep=($('rqf')&&$('rqf').innerHTML)?$('rqf'):null;if(VIEW){el.innerHTML='';return}var drv=/^D/i.test(RL||ID),L=rqList(),cut=Date.now()-12*3600000,h='';
  var act=L.filter(function(q){return q.st==='new'||q.st==='sent'||(q.at>cut&&q.st==='done')});
  if(drv){act=act.filter(function(q){return q.veh&&(String(q.veh.did||'').toUpperCase()===ID.toUpperCase()||String(q.veh.hid||'').toUpperCase()===ID.toUpperCase())&&q.st==='sent'});
   h=dutyCard()+act.map(function(q){return '<div class="card" style="border:2px solid #2e7d32"><b>🚐 आपको भेजा गया: '+(RQT[q.t]||'')+'</b><div>वॉलंटियर: <b>'+esc(q.veh.vn||q.name||'')+'</b>'+(q.veh.vm?' · <a href="tel:'+esc(q.veh.vm)+'">📞 '+esc(q.veh.vm)+'</a>':'')+'</div><div>लोग: <b>'+esc(q.n||'')+'</b> · जगह: <b>'+esc(q.pl||'')+'</b>'+(q.nt?' · '+esc(q.nt):'')+'</div>'+(q.lat?'<div style="display:flex;gap:6px"><a class="btn" style="display:block;text-align:center;text-decoration:none;background:#1565c0" href="'+gdir(q.lat,q.lng)+'" target="_blank">🧭 रास्ता (Google Maps)</a><a class="btn" style="display:block;text-align:center;text-decoration:none;background:#555" href="'+gmap(q.lat,q.lng)+'" target="_blank">🛰 सैटेलाइट में जगह</a></div>':'')+'<button class="btn" data-rqdone="'+esc(q.rid)+'" style="background:#2e7d32">✔ काम पूरा हुआ</button></div>'}).join('');el.innerHTML=h;return}
- h='<button class="btn" id="rqnew" style="background:#e65100;margin:0 0 8px">🚐 गाड़ी चाहिए</button><div id="rqf"></div>';
+ h=(isPR()?'<div style="display:flex;gap:6px;margin-bottom:6px"><button class="btn" id="tmv" style="margin:0;background:#1565c0">👥 टीम का काम</button><button class="btn" id="mgv" style="margin:0;background:#6a1b9a">👑 मेन / सब गिनती</button></div>':'')+'<button class="btn" id="rqnew" style="background:#e65100;margin:0 0 8px">🚐 गाड़ी चाहिए</button><div id="rqf"></div>';
  h+=act.map(function(q){var vh=q.veh||{};return '<div class="card" style="border:2px solid '+(q.st==='sent'?'#2e7d32':q.st==='done'?'#999':'#e65100')+'"><b>'+(RQS[q.st]||q.st)+'</b>'+(q.pend?' <span class="muted">(नेट मिलते ही जाएगी)</span>':'')+
   '<div class="muted">'+(RQT[q.t]||'')+' · '+esc(q.n||'')+' लोग · '+esc(q.pl||'')+' · '+new Date(+q.at).toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'})+'</div>'+
   (vh.no?'<div style="margin-top:4px;font-size:16px">गाड़ी: <b>'+esc(vh.no)+'</b>'+(vh.dn?' · ड्राइवर: <b>'+esc(vh.dn)+'</b>':'')+'</div>'+dlocTxt(q)+(vh.dm?'<a class="btn" style="display:block;text-align:center;text-decoration:none;background:#2e7d32" href="tel:'+esc(vh.dm)+'">📞 ड्राइवर को फ़ोन करें ('+esc(vh.dm)+')</a>':'')+(vh.hm?'<a class="btn" style="display:block;text-align:center;text-decoration:none;background:#558b2f" href="tel:'+esc(vh.hm)+'">📞 साथी'+(vh.hn?' ('+esc(vh.hn)+')':'')+' को फ़ोन करें — '+esc(vh.hm)+'</a>':''):'')+
@@ -294,7 +318,7 @@ function rqForm(){var f=$('rqf');if(f.innerHTML){f.innerHTML='';return}var lg=(D
   var lm=$('rqg').value;if(lm==='map'){if(!PK){alert('नक्शे में जगह चुनें (या दूसरा विकल्प लें)');b.disabled=false;return}q.lat=PK.lat;q.lng=PK.lng;q.acc=0;q.lm='map';go()}
   else if(lm==='gps'){$('rqm').textContent='📍 लोकेशन ले रहे हैं…';myPos().then(function(c){if(c){q.lat=c.latitude.toFixed(6);q.lng=c.longitude.toFixed(6);q.acc=Math.round(c.accuracy)}go()})}
   else go()}}
-document.addEventListener('click',function(e){var t=e.target;if(!t.closest)return;if(t.closest('#rqnew')){rqForm();return}
+document.addEventListener('click',function(e){var t=e.target;if(!t.closest)return;if(t.closest('#rqnew')){rqForm();return}if(t.closest('#tmv')){teamView();return}if(t.closest('#mgv')){mgView();window.scrollTo(0,0);return}
  var d=t.closest('[data-rqdone]'),c=t.closest('[data-rqcan]');
  if(d){if(confirm('काम पूरा हो गया?'))rqPush({rid:d.getAttribute('data-rqdone'),st:'done'})}
  if(c){if(confirm('यह गाड़ी की माँग रद्द करनी है?'))rqPush({rid:c.getAttribute('data-rqcan'),st:'cancel'})}});
