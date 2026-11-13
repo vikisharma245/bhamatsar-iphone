@@ -23,7 +23,7 @@ main{padding:6px}.card{padding:9px 8px}table{font-size:12.5px}th,td{padding:5px 
 <div class="card hid" id="cf"><div class="r"><b>पहली बार:</b><input id="mkey" class="hid" placeholder="ऐप कोड (KEY)" style="width:130px" autocapitalize="characters"><input id="mc" type="password" placeholder="मास्टर कोड"><button class="p" id="go">खोलें</button></div><div class="muted" style="margin-top:6px">मास्टर कोड इस कंप्यूटर में ही रहता है।</div></div>
 <div id="tH" class="hid"><div class="card"><div class="r"><input id="sq" placeholder="🔍 नाम / पिता-पति / EPIC / मोबाइल / वार्ड-क्रम (3-45)" style="flex:1;min-width:260px"><button class="g" id="smic" type="button" title="बोलकर खोजें">🎤</button><input id="sh" placeholder="🏠 मकान नं." style="width:110px"><select id="sw2"><option value="">सारे वार्ड</option></select><button class="p" id="sgo">खोजें</button></div>
 <div class="muted" id="scnt" style="margin-top:4px"></div></div><div id="sres"></div></div>
-<div id="tA"><div class="grid" id="kp"></div>
+<div id="tA"><div class="card" style="border:2px solid #1565c0"><div class="r" style="justify-content:space-between"><b>📊 लाइव डैशबोर्ड (Power BI जैसा)</b><button class="p" id="dsb">लिंक दिखाओ</button></div><div class="muted">सिर्फ़ गिनती जाती है — किसी मतदाता का नाम / मोबाइल नहीं, और हमारा / सस्पेंस वाला वर्ग भी नहीं। हर 2 मिनट में अपने-आप ताज़ा (मास्टर खुला हो तब)। Mac, iPhone, TV — कहीं भी खुलेगा।</div><div id="dsl" style="margin-top:6px"></div></div><div class="grid" id="kp"></div>
 <div class="card" id="fcc"><div class="r"><b>📊 पूरी गिनती (कुल / वार्ड / जाति)</b><select id="fcW"><option value="">सारे वार्ड</option></select><select id="fcC"><option value="*">सारे वर्ग</option></select><input id="fcQ" placeholder="जाति खोजें" style="width:130px"></div>
 <div class="muted">कोई भी संख्या दबाएँ तो नाम दिखेंगे। वार्ड या वर्ग चुनें तो नीचे की जाति-गिनती उसी हिसाब से बदलेगी।</div>
 <div class="grid" id="fck" style="margin-top:8px"></div>
@@ -138,7 +138,7 @@ $('go').onclick=async function(){MC=$('mc').value.trim();if(IPH){var K=$('mkey')
 async function pull(){if(!D)return;if(!MC||navigator.onLine===false){if(MC)$('st').textContent='ऑफलाइन — पुराना डेटा'; return}
  try{var r=await (await fetch(CFG.API+'?a=master&mc='+encodeURIComponent(MC))).json();
   if(!r.ok){$('st').textContent=r.err||'मना किया';if(/galat/.test(r.err||'')){$('cf').classList.remove('hid')}return}
-  ROWS={};r.rows.forEach(function(x){ROWS[x[0]+'-'+x[1]]=x});PHN={};(r.phones||[]).forEach(function(x){PHN[x[0]+'-'+x[1]]=x});applyPh();NTS={};(r.notes||[]).forEach(function(x){NTS[x[0]+'-'+x[1]]=x});applyInfo();SUGS=r.sugs||[];LOCS=r.locs||LOCS;if(r.locdays)LOCDAYS=r.locdays;if(r.loci&&$('loci')&&document.activeElement!==$('loci'))$('loci').value=String(r.loci);if(r.reqs)rqIn(r.reqs);setTimeout(drawLM,300);if(r.veh){try{VEHD=JSON.parse(r.veh);sv('m_veh2',VEHD)}catch(e){}}ASN={};(r.assign||[]).forEach(function(x){ASN[x[0]+'-'+x[1]]=x[2]});if($('avv')){fillAV();renderVeh()}USERS=r.users;REPS=r.reports;REV=r.revoked;
+  ROWS={};r.rows.forEach(function(x){ROWS[x[0]+'-'+x[1]]=x});PHN={};(r.phones||[]).forEach(function(x){PHN[x[0]+'-'+x[1]]=x});applyPh();NTS={};(r.notes||[]).forEach(function(x){NTS[x[0]+'-'+x[1]]=x});applyInfo();SUGS=r.sugs||[];LOCS=r.locs||LOCS;setTimeout(function(){pushDash(false)},1500);if(r.locdays)LOCDAYS=r.locdays;if(r.loci&&$('loci')&&document.activeElement!==$('loci'))$('loci').value=String(r.loci);if(r.reqs)rqIn(r.reqs);setTimeout(drawLM,300);if(r.veh){try{VEHD=JSON.parse(r.veh);sv('m_veh2',VEHD)}catch(e){}}ASN={};(r.assign||[]).forEach(function(x){ASN[x[0]+'-'+x[1]]=x[2]});if($('avv')){fillAV();renderVeh()}USERS=r.users;REPS=r.reports;REV=r.revoked;
   sv('m_cache',{rows:ROWS,users:USERS,reps:REPS,rev:REV,phn:PHN,asn:ASN,nts:NTS,t:Date.now()});if(IPH&&r.dv&&r.dv!==g('m_ver',0)){try{var nb=await fetchBlob();D=await dec(nb,g('m_key',''));sv('m_blob',nb);sv('m_ver',nb.ver)}catch(e){}}publish(r);$('st').textContent='ताज़ा: '+new Date().toLocaleTimeString('hi-IN');draw()}
  catch(e){$('st').textContent='सर्वर नहीं मिला — पुराना डेटा'}}
 function sOf2(v){return (D.s||{})[v[0]+'-'+v[1]]||[]}
@@ -685,6 +685,36 @@ function lmLists(){if(!$('lmV'))return;var act=REQS.filter(function(q){return q.
   return '<tr style="background:'+(q.st==='new'?'#fdecea':'#e8f5e9')+'"><td>'+(q.lat?'<a href="#" data-lmgo="'+q.lat+','+q.lng+'">':'')+'<b>'+esc(q.name||q.id)+'</b>'+(q.lat?'</a>':'')+'<br><span class="muted">'+(RQS[q.st]||'')+(q.veh&&q.veh.no?' · '+esc(q.veh.no):'')+'</span></td><td>'+esc(q.n||'')+' · '+esc(q.pl||'')+'</td><td>'+(q.lat?(near.length?near.map(function(n){var vh=vehOfId(n[1][0]);return '🚐 '+esc(vh?vh.no:n[1][1])+' '+etaTxt(n[0])}).join('<br>'):'<span style="color:#c62828">पास में कोई चालू गाड़ी नहीं</span>'):'<span class="muted">लोकेशन नहीं दी</span>')+'</td></tr>'}).join(''):'<tr><td colspan="3" class="muted">अभी कोई माँग नहीं</td></tr>')}
 document.addEventListener('click',function(e){var a=e.target.closest&&e.target.closest('[data-lmgo]');if(!a)return;e.preventDefault();var p=a.getAttribute('data-lmgo').split(',');if(LM){LM.setView([+p[0],+p[1]],17);$('lmap').scrollIntoView({behavior:'smooth'})}});
 
+var LASTDASH=0,DASHH='';
+function buildDash(){if(!D)return null;var tot={a:0,M:0,F:0,V:0,L:0,N:0,A:0,mob:0,loc:{G:0,D:0,B:0,U:0}},W={},R={},C={},AG=[[18,25],[26,35],[36,45],[46,60],[61,200]].map(function(r){return {r:r,a:0,V:0}}),H={},VS={};
+ D.v.forEach(function(v){if(v[10]===2)return;var k=v[0]+'-'+v[1],sd=(D.s||{})[k]||[],e=ROWS[k],s=e?e[2]:'',f=String(v[8])==='महिला'?'F':'M',as=ASN[k];
+  tot.a++;tot[f]++;if(s)tot[s]=(tot[s]||0)+1;if(as)tot.A++;if(sd[4])tot.mob++;tot.loc[locOf(sd)]++;
+  var w=W[v[0]]=W[v[0]]||{b:(D.w[v[0]]||[])[0]||'',a:0,V:0,L:0,A:0,M:0,F:0};w.a++;w[f]++;if(s==='V')w.V++;if(s==='L')w.L++;if(as)w.A++;
+  var rk=String(sd[8]||'').trim()||(locOf(sd)==='G'?'गाँव (आबादी)':locOf(sd)==='B'?'बाहर':'(रूट नहीं)'),r=R[rk]=R[rk]||{a:0,V:0,L:0,A:0};r.a++;if(s==='V')r.V++;if(s==='L')r.L++;if(as)r.A++;
+  var ck=String(sd[3]||'').trim()||'(खाली)',c=C[ck]=C[ck]||{a:0,V:0,A:0};c.a++;if(s==='V')c.V++;if(as)c.A++;
+  var ag=+v[7]||0;AG.forEach(function(x){if(ag>=x.r[0]&&ag<=x.r[1]){x.a++;if(s==='V')x.V++}});
+  if(s==='V'&&e[3]){var dt=new Date(+e[3]+19800000),dk=dt.toISOString().slice(0,10),hh=dt.getUTCHours();(H[dk]=H[dk]||{})[hh]=(H[dk][hh]||0)+1}
+  if(as){var x=VS[as]=VS[as]||{n:0,V:0};x.n++;if(s==='V')x.V++}});
+ var rl=function(id){var u=(USERS||[]).filter(function(x){return x[0]===id})[0];return u?rlOf(u):String(id).charAt(0)};
+ var team={V:0,D:0,W:0,B:0};(USERS||[]).forEach(function(u){var r2=rlOf(u);if(team[r2]!=null)team[r2]++});
+ var ent={};Object.keys(ROWS).forEach(function(k){var e=ROWS[k];if(!e||!e[4]||e[4]==='MASTER')return;var x=ent[e[4]]=ent[e[4]]||{L:0,V:0,N:0};if(x[e[2]]!=null)x[e[2]]++});
+ return {v:1,gen:Date.now(),vill:D.vill||'भामटसर',tot:tot,
+  wards:Object.keys(W).sort(function(a,b){return a-b}).map(function(k){var x=W[k];return [+k,x.b,x.a,x.V,x.L,x.A,x.M,x.F]}),
+  routes:Object.keys(R).map(function(k){var x=R[k];return [k,x.a,x.V,x.L,x.A]}).sort(function(a,b){return b[1]-a[1]}),
+  castes:Object.keys(C).map(function(k){var x=C[k];return [k,x.a,x.V,x.A]}).sort(function(a,b){return b[1]-a[1]}).slice(0,25),
+  ages:AG.map(function(x){return [x.r[0]+(x.r[1]>150?'+':'–'+x.r[1]),x.a,x.V]}),hourly:H,
+  vols:Object.keys(VS).map(function(id){return [id,rl(id),VS[id].n,VS[id].V,(ent[id]||{}).L||0]}).sort(function(a,b){return b[2]-a[2]}).slice(0,300),
+  team:team,ent:Object.keys(ent).length,
+  veh:{n:(VEHD.list||[]).length,live:LOCS.filter(function(r){return Date.now()-r[5]<10*60000}).length,own:Object.keys(ownV()).length,
+   req:{new:REQS.filter(function(q){return q.st==='new'}).length,sent:REQS.filter(function(q){return q.st==='sent'}).length,done:REQS.filter(function(q){return q.st==='done'}).length}},
+  rep:(REPS||[]).slice(-30).map(function(r){return [+r[0],+r[2],+r[3],+r[4]]})}}
+async function pushDash(force){if(!MC||navigator.onLine===false)return;if(!force&&Date.now()-LASTDASH<120000)return;var d=buildDash();if(!d)return;var s=JSON.stringify(Object.assign({},d,{gen:0})),h=s.length+':'+s.slice(-200);if(!force&&h===DASHH)return;
+ LASTDASH=Date.now();try{var r=await post({a:'admin',op:'putdash',data:JSON.stringify(d)});if(r.ok)DASHH=h}catch(e){}}
+async function dashLink(reset){var r=await post({a:'admin',op:'dashkey',reset:!!reset});if(!r.ok){alert(r.err||'नहीं हुआ');return}await pushDash(true);
+ var u='https://vikisharma245.github.io/bhamatsar-iphone/dash/?k='+r.dk;$('dsl').innerHTML='<a href="'+u+'" target="_blank"><b>📊 डैशबोर्ड खोलें</b></a> <button class="g" id="dscp">📋 लिंक कॉपी</button> <button class="g" id="dsrs">🔁 नया लिंक (पुराना बंद)</button><div class="muted" style="word-break:break-all">'+esc(u)+'</div>';
+ $('dscp').onclick=function(){(navigator.clipboard?navigator.clipboard.writeText(u):Promise.reject()).then(function(){$('st').textContent='लिंक कॉपी ✔'},function(){prompt('लिंक:',u)})};$('dsrs').onclick=function(){if(confirm('नया लिंक बनाना है? पुराना लिंक काम करना बंद कर देगा।'))dashLink(true)}}
+
+$('dsb').onclick=function(){dashLink(false)};
 var BK=[];
 function hn(s){return String(s).replace(/\s+/g,'').toLowerCase()}
 function vOf(k){return D.v.filter(function(v){return v[0]+'-'+v[1]===k})[0]}

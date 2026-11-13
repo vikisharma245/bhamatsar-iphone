@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="hi">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>चुनाव डैशबोर्ड</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Devanagari:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{color-scheme:light;--bg:#f4f5f2;--card:#fcfcfb;--line:#e4e3de;--grid:#ecebe6;--t1:#0b0b0b;--t2:#52514e;--t3:#7d7c77;--s1:#2a78d6;--s1soft:#dbe8f8;--good:#1b7f3b;--warn:#b26a00;--bad:#c62828;--hdr:#12304f}
+@media (prefers-color-scheme:dark){:root:where(:not([data-theme="light"])){color-scheme:dark;--bg:#121211;--card:#1a1a19;--line:#2f2e2b;--grid:#272623;--t1:#f0efec;--t2:#c3c2b7;--t3:#8f8e86;--s1:#3987e5;--s1soft:#1d3554;--good:#4caf6a;--warn:#e0a03a;--bad:#ef6b6b;--hdr:#0d2238}}
+:root[data-theme="dark"]{color-scheme:dark;--bg:#121211;--card:#1a1a19;--line:#2f2e2b;--grid:#272623;--t1:#f0efec;--t2:#c3c2b7;--t3:#8f8e86;--s1:#3987e5;--s1soft:#1d3554;--good:#4caf6a;--warn:#e0a03a;--bad:#ef6b6b;--hdr:#0d2238}
+*{box-sizing:border-box}html,body{margin:0;background:var(--bg);color:var(--t1);font:14px/1.45 "Noto Sans Devanagari",system-ui,sans-serif}
+header{background:var(--hdr);color:#fff;padding:12px 16px;display:flex;flex-wrap:wrap;gap:8px 16px;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:5}
+header h1{margin:0;font-size:19px;font-weight:700}header .s{font-size:12.5px;opacity:.85}
+.dot{display:inline-block;width:9px;height:9px;border-radius:50%;background:#4caf6a;margin-right:6px;vertical-align:middle}
+.dot.off{background:#e0a03a}
+main{max-width:1280px;margin:0 auto;padding:14px 16px 40px}
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(138px,1fr));gap:10px;margin-bottom:12px}
+.k{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.k .v{font-size:26px;font-weight:700;letter-spacing:-.5px;font-variant-numeric:tabular-nums}.k .l{color:var(--t2);font-size:12.5px}.k .x{color:var(--t3);font-size:12px;margin-top:2px}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,520px),1fr));gap:12px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;min-width:0}
+.card h2{font-size:15px;margin:0 0 2px}.card .sub{color:var(--t3);font-size:12px;margin-bottom:10px}
+.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+select,button{font:inherit;color:var(--t1);background:var(--card);border:1px solid var(--line);border-radius:8px;padding:5px 9px}
+table{width:100%;border-collapse:collapse;font-size:13px;font-variant-numeric:tabular-nums}
+th{color:var(--t2);font-weight:600;text-align:left;border-bottom:1px solid var(--line);padding:6px 6px;position:sticky;top:0;background:var(--card)}
+td{border-bottom:1px solid var(--grid);padding:5px 6px;vertical-align:middle}td.n,th.n{text-align:right}
+.scroll{max-height:440px;overflow:auto}
+.mb{position:relative;height:8px;background:var(--grid);border-radius:4px;min-width:70px;overflow:hidden}.mb i{position:absolute;left:0;top:0;bottom:0;background:var(--s1);border-radius:4px}
+.hb{display:grid;grid-template-columns:minmax(70px,auto) 1fr 92px;gap:6px 10px;align-items:center;font-size:13px}
+.hb .bar{height:14px;background:var(--grid);border-radius:4px;position:relative}.hb .bar i{position:absolute;left:0;top:0;bottom:0;background:var(--s1);border-radius:4px}
+.hb .val{text-align:right;color:var(--t2);font-variant-numeric:tabular-nums}
+svg text{fill:var(--t2);font:11px "Noto Sans Devanagari",system-ui,sans-serif}
+.tip{position:fixed;pointer-events:none;background:var(--t1);color:var(--bg);padding:6px 9px;border-radius:8px;font-size:12.5px;z-index:20;display:none;white-space:nowrap}
+.pill{display:inline-block;border-radius:10px;padding:0 7px;font-size:12px;border:1px solid var(--line)}
+.good{color:var(--good)}.warn{color:var(--warn)}.bad{color:var(--bad)}
+#gate{max-width:420px;margin:60px auto;background:var(--card);border:1px solid var(--line);border-radius:12px;padding:18px}
+#gate input{width:100%;font:inherit;padding:9px;border:1px solid var(--line);border-radius:8px;background:var(--bg);color:var(--t1);margin:8px 0}
+.demo{background:#7b1fa2;color:#fff;border-radius:8px;padding:2px 8px;font-size:12px}
+@media (max-width:520px){.k .v{font-size:22px}header h1{font-size:16px}}
+</style>
+</head>
+<body>
+<header><div><h1 id="ttl">📊 चुनाव डैशबोर्ड</h1><div class="s" id="sub">—</div></div><div class="row"><span class="s" id="upd"><span class="dot off"></span>लोड हो रहा है…</span><button id="thm" title="रोशनी / अँधेरा" style="background:transparent;color:#fff;border-color:#ffffff55">🌓</button></div></header>
+<div id="gate" hidden><b>डैशबोर्ड का लिंक</b><div style="color:var(--t3);font-size:13px">मास्टर ऐप → गिनती → "📊 लाइव डैशबोर्ड" → लिंक दिखाओ। उस लिंक से खोलें, या उसका कोड यहाँ डालें।</div><input id="gk" placeholder="डैशबोर्ड कोड" autocapitalize="characters"><button id="gb">खोलें</button> <a href="?demo=1" style="font-size:13px">या नमूना (MLA स्तर) देखें</a></div>
+<main id="app" hidden>
+<div class="kpis" id="kpis"></div>
+<div class="grid2">
+ <div class="card"><div class="row" style="justify-content:space-between"><div><h2>⏱ हर घंटे कितने वोट पड़े</h2><div class="sub" id="hsub"></div></div><select id="day"></select></div><div id="hourly"></div></div>
+ <div class="card"><h2>🗳 वार्ड के हिसाब से मतदान %</h2><div class="sub">पट्टी = वोट पड़े ÷ कुल मतदाता</div><div id="wards" class="hb"></div></div>
+</div>
+<div class="card"><h2>🏘 वार्ड — पूरी तस्वीर</h2><div class="sub">सौंपे = किसी वॉलंटियर को ज़िम्मेदारी दी गई</div><div class="scroll"><table id="wt"></table></div></div>
+<div class="card"><h2>🛣 रूट / ढाणी — कितने सौंपे, कितने बाकी</h2><div class="sub">बाकी सौंपना = अभी किसी वॉलंटियर के पास नहीं</div><div class="scroll"><table id="rt"></table></div></div>
+<div class="grid2">
+ <div class="card"><h2>👥 जाति के हिसाब से</h2><div class="sub">सबसे बड़ी 25</div><div class="scroll"><table id="ct"></table></div></div>
+ <div class="card"><h2>🎂 उम्र के हिसाब से मतदान %</h2><div class="sub">&nbsp;</div><div id="ages" class="hb"></div><h2 style="margin-top:16px">🚐 गाड़ियाँ और टीम</h2><div id="team"></div></div>
+</div>
+<div class="card"><h2>🙋 वॉलंटियर का काम (ID के हिसाब से)</h2><div class="sub">सौंपे सदस्यों में से कितनों के वोट पड़े — कम % वाले ऊपर</div><div class="scroll"><table id="vt"></table></div></div>
+<div class="card"><h2>🕑 हर 2 घंटे की रिपोर्ट</h2><div class="scroll"><table id="rp"></table></div></div>
+<div style="color:var(--t3);font-size:12px;text-align:center">इस डैशबोर्ड में किसी मतदाता का नाम या मोबाइल नंबर नहीं है — सिर्फ़ गिनती।</div>
+</main>
+<div class="tip" id="tip"></div>
+<script src="../config.js"></script>
+<script>
+var $=function(i){return document.getElementById(i)},Q=new URLSearchParams(location.search),DEMO=Q.has('demo'),DATA=null,DAY='',T0=0;
+function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function n(x){return (+x||0).toLocaleString('en-IN')}
+function pc(a,b){return b?Math.round(a*1000/b)/10:0}
+function g(k,d){try{var v=localStorage.getItem(k);return v==null?d:v}catch(e){return d}}function sv(k,v){try{localStorage.setItem(k,v)}catch(e){}}
+(function(){var t=g('dash_theme','');if(t)document.documentElement.setAttribute('data-theme',t)})();
+$('thm').onclick=function(){var r=document.documentElement,c=r.getAttribute('data-theme')||(matchMedia('(prefers-color-scheme: dark)').matches?'dark':'light'),nx=c==='dark'?'light':'dark';r.setAttribute('data-theme',nx);sv('dash_theme',nx)};
+var tip=$('tip');document.addEventListener('mousemove',function(e){var t=e.target.closest&&e.target.closest('[data-tip]');if(!t){tip.style.display='none';return}tip.innerHTML=t.getAttribute('data-tip');tip.style.display='block';var x=e.clientX+14,y=e.clientY+14;if(x+tip.offsetWidth>innerWidth-8)x=e.clientX-tip.offsetWidth-14;tip.style.left=x+'px';tip.style.top=y+'px'});
+function hb(el,rows){$(el).innerHTML=rows.map(function(r){var p=r[2]?Math.min(100,r[1]*100/r[2]):0;return '<div>'+esc(r[0])+'</div><div class="bar" data-tip="'+esc(r[0])+': '+n(r[1])+' / '+n(r[2])+' ('+pc(r[1],r[2])+'%)"><i style="width:'+p+'%"></i></div><div class="val">'+pc(r[1],r[2])+'% <span style="color:var(--t3)">'+n(r[1])+'/'+n(r[2])+'</span></div>'}).join('')}
+function mb(a,b){var p=b?Math.min(100,a*100/b):0;return '<div class="mb" data-tip="'+n(a)+' / '+n(b)+' ('+pc(a,b)+'%)"><i style="width:'+p+'%"></i></div>'}
+function hourly(){var H=DATA.hourly||{},days=Object.keys(H).sort();if(!days.length){$('day').innerHTML='<option>—</option>';$('hourly').innerHTML='<div style="color:var(--t3);padding:30px 0;text-align:center">अभी कोई वोट दर्ज नहीं हुआ — मतदान के दिन यहाँ घंटेवार ग्राफ़ दिखेगा</div>';$('hsub').textContent='';return}
+ if(days.indexOf(DAY)<0)DAY=days[days.length-1];$('day').innerHTML=days.map(function(d){var p=d.split('-');return '<option value="'+d+'"'+(d===DAY?' selected':'')+'>'+(+p[2])+' नवंबर</option>'}).join('');
+ var h=H[DAY],hs=[];for(var i=6;i<=19;i++)hs.push([i,+(h[i]||0)]);Object.keys(h).forEach(function(k){if(+k<6||+k>19)hs.push([+k,+h[k]])});hs.sort(function(a,b){return a[0]-b[0]});
+ var mx=Math.max.apply(null,hs.map(function(x){return x[1]}).concat([1])),tot=hs.reduce(function(s,x){return s+x[1]},0),W=640,Hh=210,pl=40,pb=26,bw=(W-pl-8)/hs.length,nice=Math.pow(10,Math.floor(Math.log10(mx))),st=Math.ceil(mx/nice/4)*nice||1,top=Math.ceil(mx/st)*st;
+ var s='<svg viewBox="0 0 '+W+' '+Hh+'" style="width:100%;height:auto" role="img" aria-label="घंटेवार वोट">';
+ for(var y=0;y<=top;y+=st){var yy=Hh-pb-(y/top)*(Hh-pb-10);s+='<line x1="'+pl+'" x2="'+W+'" y1="'+yy+'" y2="'+yy+'" stroke="var(--grid)"/><text x="'+(pl-6)+'" y="'+(yy+4)+'" text-anchor="end">'+(y>=1000?(Math.round(y/100)/10)+'k':n(y))+'</text>'}
+ var cum=0;hs.forEach(function(x,i){cum+=x[1];var bh=(x[1]/top)*(Hh-pb-10),bx=pl+i*bw+3,by=Hh-pb-bh;s+='<rect x="'+(pl+i*bw)+'" y="0" width="'+bw+'" height="'+Hh+'" fill="transparent" data-tip="'+x[0]+':00 – '+(x[0]+1)+':00 · <b>'+n(x[1])+'</b> वोट · कुल अब तक '+n(cum)+'"/>'+(x[1]?'<path d="M'+bx+','+(Hh-pb)+'V'+(by+4)+'q0,-4 4,-4h'+(bw-14)+'q4,0 4,4V'+(Hh-pb)+'z" fill="var(--s1)" pointer-events="none"/>':'')+'<text x="'+(pl+i*bw+bw/2)+'" y="'+(Hh-8)+'" text-anchor="middle">'+x[0]+'</text>'});
+ $('hourly').innerHTML=s+'</svg>';$('hsub').textContent='उस दिन कुल '+n(tot)+' वोट दर्ज · नीचे घंटा (24 घंटे वाला समय)'}
+function render(){var d=DATA,t=d.tot;document.title='चुनाव डैशबोर्ड — '+d.vill;$('ttl').innerHTML='📊 '+esc(d.vill)+' — चुनाव डैशबोर्ड'+(DEMO?' <span class="demo">नमूना डेटा</span>':'');
+ $('sub').textContent=n(t.a)+' मतदाता · '+(d.wards||[]).length+' वार्ड · '+Object.keys((d.wards||[]).reduce(function(m,w){if(w[1])m[w[1]]=1;return m},{})).length+' बूथ';
+ var ago=Math.round((Date.now()-d.gen)/60000),live=ago<6;$('upd').innerHTML='<span class="dot'+(live?'':' off')+'"></span>'+(live?'लाइव':'आख़िरी अपडेट')+' · '+new Date(d.gen).toLocaleString('hi-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+(live?'':' ('+(ago<120?ago+' मिनट':Math.round(ago/60)+' घंटे')+' पहले — मास्टर खुला नहीं)');
+ var K=[['वोट पड़े',n(t.V),pc(t.V,t.a)+'% मतदान'],['बाकी',n(t.a-t.V),'अभी वोट नहीं डाला'],['लाए गए',n(t.L||0),'बूथ तक पहुँचाए, वोट बाकी'],['कुल मतदाता',n(t.a),'पुरुष '+n(t.M)+' · महिला '+n(t.F)],['वॉलंटियर को सौंपे',pc(t.A,t.a)+'%',n(t.A)+' / '+n(t.a)],['मोबाइल नंबर मिले',pc(t.mob,t.a)+'%',n(t.mob)+' लोगों के'],['टीम',n((d.team.V||0)+(d.team.W||0)+(d.team.D||0)+(d.team.B||0)),'वॉलंटियर '+n(d.team.V)+' · प्रभारी '+n(d.team.W)+' · ड्राइवर '+n(d.team.D)],['गाड़ियाँ',n(d.veh.live)+' / '+n(d.veh.n),'अभी चालू · खुद की गाड़ी '+n(d.veh.own)]];
+ $('kpis').innerHTML=K.map(function(k,i){return '<div class="k"'+(i===0?' style="border-color:var(--s1)"':'')+'><div class="l">'+k[0]+'</div><div class="v">'+k[1]+'</div><div class="x">'+k[2]+'</div></div>'}).join('');
+ hourly();
+ hb('wards',(d.wards||[]).map(function(w){return ['वार्ड '+w[0],w[3],w[2]]}));
+ $('wt').innerHTML='<tr><th>वार्ड</th><th>बूथ</th><th class="n">कुल</th><th class="n">वोट पड़े</th><th>मतदान</th><th class="n">लाए</th><th class="n">सौंपे</th><th>सौंपे %</th></tr>'+(d.wards||[]).map(function(w){return '<tr><td><b>'+w[0]+'</b></td><td>'+esc(w[1])+'</td><td class="n">'+n(w[2])+'</td><td class="n">'+n(w[3])+'</td><td>'+mb(w[3],w[2])+'</td><td class="n">'+n(w[4])+'</td><td class="n">'+n(w[5])+'</td><td>'+mb(w[5],w[2])+'</td></tr>'}).join('');
+ $('rt').innerHTML='<tr><th>रूट / ढाणी</th><th class="n">कुल</th><th class="n">सौंपे</th><th class="n">बाकी सौंपना</th><th>सौंपे %</th><th class="n">वोट पड़े</th><th>मतदान</th></tr>'+(d.routes||[]).map(function(r){var bk=r[1]-r[4];return '<tr><td>'+esc(r[0])+'</td><td class="n">'+n(r[1])+'</td><td class="n">'+n(r[4])+'</td><td class="n '+(bk>0?'bad':'good')+'"><b>'+n(bk)+'</b></td><td>'+mb(r[4],r[1])+'</td><td class="n">'+n(r[2])+'</td><td>'+mb(r[2],r[1])+'</td></tr>'}).join('');
+ $('ct').innerHTML='<tr><th>जाति</th><th class="n">कुल</th><th class="n">वोट पड़े</th><th>मतदान</th><th>सौंपे %</th></tr>'+(d.castes||[]).map(function(c){return '<tr><td>'+esc(c[0])+'</td><td class="n">'+n(c[1])+'</td><td class="n">'+n(c[2])+'</td><td>'+mb(c[2],c[1])+'</td><td>'+mb(c[3],c[1])+'</td></tr>'}).join('');
+ hb('ages',(d.ages||[]).map(function(a){return [a[0]+' वर्ष',a[2],a[1]]}));
+ var q=d.veh.req||{};$('team').innerHTML='<table><tr><td>गाड़ियाँ जुड़ी</td><td class="n"><b>'+n(d.veh.n)+'</b></td></tr><tr><td>अभी चालू (लोकेशन 10 मिनट में)</td><td class="n"><b>'+n(d.veh.live)+'</b></td></tr><tr><td>गाड़ी की माँग — नई (इंतज़ार में)</td><td class="n '+(q.new?'bad':'')+'"><b>'+n(q.new)+'</b></td></tr><tr><td>गाड़ी भेजी — रास्ते में</td><td class="n"><b>'+n(q.sent)+'</b></td></tr><tr><td>माँग पूरी हुई</td><td class="n good"><b>'+n(q.done)+'</b></td></tr><tr><td>ऐप से एंट्री करने वाली ID</td><td class="n"><b>'+n(d.ent)+'</b></td></tr></table>';
+ var V=(d.vols||[]).slice().sort(function(a,b){return pc(a[3],a[2])-pc(b[3],b[2])||b[2]-a[2]});
+ $('vt').innerHTML='<tr><th>ID</th><th>काम</th><th class="n">सौंपे</th><th class="n">वोट पड़े</th><th class="n">बाकी</th><th>पूरा %</th><th class="n">"लाया"</th></tr>'+(V.length?V.map(function(v){var p=pc(v[3],v[2]);return '<tr><td><b>'+esc(v[0])+'</b></td><td>'+({V:'वॉलंटियर',W:'प्रभारी',B:'बूथ एजेंट',D:'ड्राइवर'}[v[1]]||v[1])+'</td><td class="n">'+n(v[2])+'</td><td class="n">'+n(v[3])+'</td><td class="n">'+n(v[2]-v[3])+'</td><td>'+mb(v[3],v[2])+'</td><td class="n">'+n(v[4])+'</td></tr>'}).join(''):'<tr><td colspan="7" style="color:var(--t3)">अभी किसी को सदस्य नहीं सौंपे</td></tr>');
+ $('rp').innerHTML='<tr><th>समय</th><th class="n">लाए</th><th class="n">वोट पड़े</th><th class="n">"नहीं"</th></tr>'+((d.rep||[]).length?d.rep.slice().reverse().map(function(r){return '<tr><td>'+new Date(r[0]).toLocaleString('hi-IN',{day:'numeric',month:'short',hour:'2-digit',minute:'2-digit'})+'</td><td class="n">'+n(r[1])+'</td><td class="n">'+n(r[2])+'</td><td class="n">'+n(r[3])+'</td></tr>'}).join(''):'<tr><td colspan="4" style="color:var(--t3)">रिपोर्ट सिर्फ़ मतदान के दिन (14 / 16 नवंबर) हर 2 घंटे बनती है</td></tr>')}
+$('day').onchange=function(){DAY=this.value;hourly()};
+function demo(){var r=function(a,b){return a+Math.floor(Math.random()*(b-a+1))},wards=[],routes=[],castes=[],H={},tot={a:0,M:0,F:0,V:0,L:0,N:0,A:0,mob:0},cs=['जाट','मेघवाल','राजपूत','बिश्नोई','ब्राह्मण','कुम्हार','नायक','सुथार','माली','स्वामी','मुस्लिम','सोनी','दर्जी','नाई','जैन','गोदारा','भील','रैगर'];
+ for(var b=1;b<=262;b++){var a=r(650,1150),V=Math.round(a*r(38,74)/100),A=Math.round(a*r(55,96)/100),M=Math.round(a*0.52);wards.push([b,String(100+b),a,V,r(5,60),A,M,a-M]);tot.a+=a;tot.V+=V;tot.A+=A;tot.M+=M;tot.F+=a-M;tot.L+=r(5,60)}
+ tot.mob=Math.round(tot.a*0.68);for(var i=1;i<=40;i++){var a2=r(300,2600);routes.push(['रूट '+i,a2,Math.round(a2*0.6),r(10,80),Math.round(a2*r(60,97)/100)])}
+ cs.forEach(function(c){var a3=r(2000,30000);castes.push([c,a3,Math.round(a3*r(45,72)/100),Math.round(a3*r(60,95)/100)])});castes.sort(function(a,b){return b[1]-a[1]});
+ var hh={},rem=tot.V,wt=[3,7,10,12,12,11,10,9,8,7,6,4,1];for(var h=7;h<=19;h++){var x=Math.round(tot.V*wt[h-7]/100);hh[h]=x}H['2026-11-16']=hh;
+ var vols=[];for(var j=1;j<=420;j++){var na=r(25,60);vols.push(['V'+(j<10?'00':j<100?'0':'')+j,'V',na,Math.round(na*r(30,95)/100),r(0,20)])}
+ return {v:1,gen:Date.now(),vill:'नमूना विधानसभा क्षेत्र',tot:tot,wards:wards,routes:routes,castes:castes,ages:[['18–25',Math.round(tot.a*.18),Math.round(tot.V*.15)],['26–35',Math.round(tot.a*.24),Math.round(tot.V*.23)],['36–45',Math.round(tot.a*.21),Math.round(tot.V*.22)],['46–60',Math.round(tot.a*.22),Math.round(tot.V*.25)],['61+',Math.round(tot.a*.15),Math.round(tot.V*.15)]],hourly:H,vols:vols,team:{V:420,W:62,D:180,B:262},ent:690,veh:{n:180,live:151,own:96,req:{new:7,sent:23,done:214}},rep:[]}}
+var KEY=Q.get('k')||g('dash_k','');
+async function load(){if(DEMO){DATA=demo();$('app').hidden=false;render();return}
+ if(!KEY){$('gate').hidden=false;return}
+ try{var api=(window.CFG&&CFG.API)||'',r=await (await fetch(api+(api.indexOf('?')>=0?'&':'?')+'a=dash&dk='+encodeURIComponent(KEY),{cache:'no-store'})).json();
+  if(!r.ok){$('gate').hidden=false;$('app').hidden=true;$('upd').innerHTML='<span class="dot off"></span>'+(r.err||'कोड गलत');return}
+  sv('dash_k',KEY);if(Q.get('k'))history.replaceState(null,'',location.pathname);
+  if(!r.data){$('upd').innerHTML='<span class="dot off"></span>अभी डेटा नहीं आया — मास्टर ऐप एक बार खोलें';return}
+  DATA=r.data;$('gate').hidden=true;$('app').hidden=false;render()}catch(e){$('upd').innerHTML='<span class="dot off"></span>नेट नहीं — '+(DATA?'पुराना डेटा':'फिर कोशिश करेंगे')}}
+$('gb').onclick=function(){KEY=$('gk').value.trim().toUpperCase();if(KEY)load()};
+load();setInterval(function(){if(!DEMO)load()},60000);
+</script>
+</body>
+</html>
