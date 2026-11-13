@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=19;</script>
+<script>var UIV=20;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -40,7 +40,7 @@ input,select{width:100%;font:inherit;padding:11px 12px;border:1px solid #b9c5d1;
 <select id="rt" style="margin-top:6px"></select>
 <div class="two" style="margin-top:6px"><select id="fmn"></select><select id="fsb"></select></div>
 <div class="chips" id="chips"></div></div>
-<main><div class="stats" id="stats"></div><div id="res"></div></main>
+<main><div id="rqs"></div><div class="stats" id="stats"></div><div id="res"></div></main>
 <div id="foot"><span id="fs"></span><span><button id="fy">अभी सिंक</button> <button id="fo">⚙</button></span></div>
 </div>
 <script src="config.js"></script>
@@ -75,7 +75,7 @@ async function dec(blob,key){
  var pt=await crypto.subtle.decrypt({name:'AES-GCM',iv:b64(blob.iv)},k,b64(blob.ct));
  return JSON.parse(await new Response(new Blob([pt]).stream().pipeThrough(new DecompressionStream('gzip'))).text())}
 var VIEW=false,KEY='',ID='',NAME='',D=null,IX=[],FX=null,ST=g('bh_st',{}),PH=g('bh_ph',{}),NT=g('bh_nt',{}),FAM={},MYS={},SC=g('bh_sc',''),SCW=null,DV=0,EXP=0,FIL='',LIM=100,syncing=false,tm,stm,lastErr='';
-function wipe(msg){['bh_code','bh_name','bh_blob','bh_st','bh_q','bh_ph','bh_pq','bh_nt','bh_nq','bh_sq','bh_my','bh_av','bh_sc','bh_rl','bh_since','bh_ui','bh_uiv','bh_sync'].forEach(function(k){LS.removeItem(k)});ST={};showLogin(msg||'')}
+function wipe(msg){try{dutyStop()}catch(e){}['bh_code','bh_name','bh_blob','bh_st','bh_q','bh_ph','bh_pq','bh_nt','bh_nq','bh_sq','bh_my','bh_av','bh_sc','bh_rl','bh_rq','bh_rqq','bh_rqv','bh_dloc','bh_duty','bh_lastloc','bh_since','bh_ui','bh_uiv','bh_sync'].forEach(function(k){LS.removeItem(k)});ST={};showLogin(msg||'')}
 function showLogin(msg){$('app').classList.add('hid');$('lg').classList.remove('hid');$('le').textContent=msg||'';LS.setItem('bh_boot','1')}
 async function loadBlob(){var st=g('bh_blob',null),bu=null;try{var r=await fetch('data.enc.json');if(r.ok)bu=await r.json()}catch(e){}
  var b=(st&&(!bu||st.ver>=bu.ver))?st:bu;
@@ -101,7 +101,7 @@ function catOf(sd){return String(sd[0]||'')}
 function noteTxt(sd){var n=String(sd[9]||''),p=n.split(' · ');if(CATN[p[0]]!==undefined||p[0]===catOf(sd))p.shift();var seen={},r=p.filter(function(x){x=x.trim();if(!x||seen[x])return false;seen[x]=1;return true}).join(' · ');var c=catOf(sd);return HIDE()?r:((c?(CATN[c]||c):'')+(c&&r?' · ':'')+r)}
 function applyNT(){D.s=D.s||{};Object.keys(NT).forEach(function(k){var o;try{o=JSON.parse(NT[k][0])}catch(e){return}var s=D.s[k]=D.s[k]||['','','','','','','','','',''];if('m' in o)s[2]=o.m;if('s' in o)s[1]=o.s;if('g' in o){s[7]=o.g;s[5]=''}if('c' in o){var rest=String(s[9]||'').split(' · ');if(CATN[rest[0]]!==undefined||rest[0]===s[0])rest.shift();s[0]=o.c;s[9]=[o.c].concat(rest).join(' · ')}})}
 function init(){
- applyNT();
+ applyNT();try{drawRq();if(/^D/i.test(RL||ID)&&g('bh_duty',0))dutyStart()}catch(e){}
  MYS={};g('bh_my',[]).forEach(function(x){MYS[x[0]+'-'+x[1]]=1});
  PH=g('bh_ph',{});FAM={};D.v.forEach(function(v){if(v[10]===2)return;var f=v[0]+'|'+String(v[2]).split(' ')[0];FAM[f]=(FAM[f]||0)+1});
  var mm={},sb={};Object.keys(D.s||{}).forEach(function(k){var x=D.s[k];if(x[2])mm[x[2]]=1;if(x[1])sb[x[1]]=1});
@@ -167,12 +167,12 @@ async function post(o){o.dev=DEV();var c=new AbortController(),t=setTimeout(func
 function schedule(ms){clearTimeout(stm);stm=setTimeout(sync,ms)}
 async function sync(){if(syncing||!API||!D)return;if(navigator.onLine===false){foot();return}
  syncing=true;foot();
- try{var q=g('bh_q',[]),n=q.length,pq=g('bh_pq',[]),pn=pq.length,nq=g('bh_nq',[]),nn=nq.length,sq=g('bh_sq',[]),sn=sq.length,r=await post({a:'sync',id:ID,name:NAME,key:'',since:g('bh_since',0),ents:q,phs:pq,nts:nq,sug:sq,av:g('bh_av','-'),dv:DV,uv:UIV});
+ try{var q=g('bh_q',[]),n=q.length,pq=g('bh_pq',[]),pn=pq.length,nq=g('bh_nq',[]),nn=nq.length,sq=g('bh_sq',[]),sn=sq.length,rqn=g('bh_rqq',[]).length,r=await post({a:'sync',id:ID,name:NAME,key:'',since:g('bh_since',0),ents:q,phs:pq,nts:nq,sug:sq,rqs:g('bh_rqq',[]),rqv:g('bh_rqv','-'),trk:rqList().filter(function(q){return q.st==='sent'&&q.veh&&q.veh.did}).map(function(q){return q.veh.did}),av:g('bh_av','-'),dv:DV,uv:UIV});
   if(!r||!r.ok)throw new Error(r&&r.err||'bad');
   if(r.revoked){syncing=false;wipe('यह सेवा बंद कर दी गई है');return}
   if(r.bound){syncing=false;wipe('यह ID किसी दूसरे फ़ोन में चालू है — मास्टर से बात करें');return}
   if((r.ep||0)!==(+g('bh_ep',0)||0)){ST={};sv('bh_st',ST);sv('bh_q',[]);PH={};sv('bh_ph',PH);sv('bh_pq',[]);NT={};sv('bh_nt',NT);sv('bh_since',0);sv('bh_ep',r.ep||0)}
-  sv('bh_q',g('bh_q',[]).slice(n));sv('bh_pq',g('bh_pq',[]).slice(pn));sv('bh_nq',g('bh_nq',[]).slice(nn));sv('bh_sq',g('bh_sq',[]).slice(sn));
+  sv('bh_q',g('bh_q',[]).slice(n));sv('bh_pq',g('bh_pq',[]).slice(pn));sv('bh_nq',g('bh_nq',[]).slice(nn));sv('bh_sq',g('bh_sq',[]).slice(sn));sv('bh_rqq',g('bh_rqq',[]).slice(rqn));if(r.dloc)sv('bh_dloc',r.dloc);if(r.myrq){var old=g('bh_rq',[]),ch=r.myrq.some(function(q){var o=old.filter(function(x){return x.rid===q.rid})[0];return q.st==='sent'&&(!o||o.st!=='sent')});sv('bh_rq',r.myrq);sv('bh_rqv',r.rqv);if(ch&&navigator.vibrate)try{navigator.vibrate([300,150,300])}catch(x){}}drawRq();
   if(r.sc!=null&&String(r.sc)!==SC){setSc(r.sc);init()}
   if(r.rl&&r.rl!==RL){RL=r.rl;VIEW=RL==='S';sv('bh_rl',RL);try{init()}catch(x){}}
   if(r.my){sv('bh_my',r.my);sv('bh_av',r.av);MYS={};r.my.forEach(function(x){MYS[x[0]+'-'+x[1]]=1});chips()}
@@ -234,6 +234,65 @@ $('fo').onclick=menu;$('mb3').onclick=function(){$('mn').classList.add('hid')};
 function newUi(){return (+LS.getItem('bh_uiv')||0)>UIV&&!!LS.getItem('bh_ui')}
 function applyUpd(){LS.setItem('bh_boot','1');location.reload()}
 $('upb').onclick=applyUpd;
+
+var VCEN=[27.6678,73.3620];
+function gmap(lat,lng){return 'https://www.google.com/maps/search/?api=1&query='+lat+','+lng+'&basemap=satellite'}
+function gdir(lat,lng){return 'https://www.google.com/maps/dir/?api=1&destination='+lat+','+lng+'&travelmode=driving'}
+function kmTo(a,b,c,d){var R=6371,x=(c-a)*Math.PI/180,y=(d-b)*Math.PI/180,h=Math.sin(x/2)*Math.sin(x/2)+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(y/2)*Math.sin(y/2);return 2*R*Math.asin(Math.sqrt(h))}
+function etaTxt(km){var rk=km*1.35,min=Math.max(1,Math.round(rk/25*60));return '~'+rk.toFixed(1)+' km · लगभग '+min+' मिनट'}
+var LFP=null;function loadLF(){if(window.L&&L.map)return Promise.resolve();if(LFP)return LFP;LFP=new Promise(function(ok,no){var c=document.createElement('link');c.rel='stylesheet';c.href='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css';document.head.appendChild(c);var s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js';s.onload=ok;s.onerror=function(){LFP=null;no(new Error('नक्शा लोड नहीं हुआ — नेट देखें'))};document.head.appendChild(s)});return LFP}
+function satLayers(m){L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}',{maxZoom:19,attribution:'Esri'}).addTo(m);L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}',{maxZoom:19}).addTo(m)}
+function myPos(){return new Promise(function(ok){if(!navigator.geolocation){ok(null);return}var d=false,t=setTimeout(function(){if(!d){d=true;ok(null)}},15000);navigator.geolocation.getCurrentPosition(function(p){if(d)return;d=true;clearTimeout(t);ok(p.coords)},function(){if(d)return;d=true;clearTimeout(t);ok(null)},{enableHighAccuracy:true,timeout:14000,maximumAge:30000})})}
+function pickMap(start){return new Promise(function(done){var ov=document.createElement('div');ov.style.cssText='position:fixed;inset:0;z-index:50;background:#000;display:flex;flex-direction:column';
+ ov.innerHTML='<div style="background:#1f4e78;color:#fff;padding:10px;font-weight:600">🗺 नक्शे को खिसकाकर बीच वाला 📍 खेत / ढाणी पर लाएँ</div><div id="pkm" style="flex:1;position:relative"></div><div style="position:absolute;left:50%;top:50%;transform:translate(-50%,-100%);font-size:40px;z-index:1000;pointer-events:none;margin-top:22px">📍</div><div style="display:flex;gap:6px;padding:8px;background:#fff"><button class="btn" id="pkme" style="background:#555;margin:0">🎯 मेरी जगह</button><button class="btn" id="pkok" style="background:#2e7d32;margin:0">✔ यही जगह</button><button class="btn" id="pkx" style="background:#888;margin:0">✖</button></div>';
+ document.body.appendChild(ov);var fin=function(v){try{ov.remove()}catch(e){}done(v)};$('pkx').onclick=function(){fin(null)};
+ loadLF().then(function(){var m=L.map('pkm',{zoomControl:true,attributionControl:false}).setView(start||VCEN,start?17:14);satLayers(m);
+  $('pkok').onclick=function(){var c=m.getCenter();fin({lat:c.lat.toFixed(6),lng:c.lng.toFixed(6),acc:0})};
+  $('pkme').onclick=function(){myPos().then(function(c){if(c)m.setView([c.latitude,c.longitude],18);else alert('आपकी जगह नहीं मिली — GPS चालू करें')})};
+  setTimeout(function(){m.invalidateSize()},200)},function(e){alert(e.message);fin(null)})})}
+
+var RQT={L:'लोगों को लाना',D:'वापस छोड़ना'},RQS={new:'⏳ माँग भेजी — मास्टर गाड़ी भेजेगा',sent:'🚐 गाड़ी भेजी गई',done:'✔ पूरा हुआ',cancel:'✖ रद्द'};
+function rqList(){var L=g('bh_rq',[]),Q=g('bh_rqq',[]);Q.forEach(function(q){var o=L.filter(function(x){return x.rid===q.rid})[0];if(!o){o={rid:q.rid,id:ID,name:NAME,at:q.ts,st:'new'};L.unshift(o)}Object.keys(q).forEach(function(f){if(f!=='ts')o[f]=q[f]});o.pend=1});return L}
+function drawRq(){var el=$('rqs');if(!el)return;var keep=($('rqf')&&$('rqf').innerHTML)?$('rqf'):null;if(VIEW){el.innerHTML='';return}var drv=/^D/i.test(RL||ID),L=rqList(),cut=Date.now()-12*3600000,h='';
+ var act=L.filter(function(q){return q.st==='new'||q.st==='sent'||(q.at>cut&&q.st==='done')});
+ if(drv){act=act.filter(function(q){return q.veh&&String(q.veh.did||'').toUpperCase()===ID.toUpperCase()&&q.st==='sent'});
+  h=dutyCard()+act.map(function(q){return '<div class="card" style="border:2px solid #2e7d32"><b>🚐 आपको भेजा गया: '+(RQT[q.t]||'')+'</b><div>वॉलंटियर: <b>'+esc(q.veh.vn||q.name||'')+'</b>'+(q.veh.vm?' · <a href="tel:'+esc(q.veh.vm)+'">📞 '+esc(q.veh.vm)+'</a>':'')+'</div><div>लोग: <b>'+esc(q.n||'')+'</b> · जगह: <b>'+esc(q.pl||'')+'</b>'+(q.nt?' · '+esc(q.nt):'')+'</div>'+(q.lat?'<div style="display:flex;gap:6px"><a class="btn" style="display:block;text-align:center;text-decoration:none;background:#1565c0" href="'+gdir(q.lat,q.lng)+'" target="_blank">🧭 रास्ता (Google Maps)</a><a class="btn" style="display:block;text-align:center;text-decoration:none;background:#555" href="'+gmap(q.lat,q.lng)+'" target="_blank">🛰 सैटेलाइट में जगह</a></div>':'')+'<button class="btn" data-rqdone="'+esc(q.rid)+'" style="background:#2e7d32">✔ काम पूरा हुआ</button></div>'}).join('');el.innerHTML=h;return}
+ h='<button class="btn" id="rqnew" style="background:#e65100;margin:0 0 8px">🚐 गाड़ी चाहिए</button><div id="rqf"></div>';
+ h+=act.map(function(q){var vh=q.veh||{};return '<div class="card" style="border:2px solid '+(q.st==='sent'?'#2e7d32':q.st==='done'?'#999':'#e65100')+'"><b>'+(RQS[q.st]||q.st)+'</b>'+(q.pend?' <span class="muted">(नेट मिलते ही जाएगी)</span>':'')+
+  '<div class="muted">'+(RQT[q.t]||'')+' · '+esc(q.n||'')+' लोग · '+esc(q.pl||'')+' · '+new Date(+q.at).toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'})+'</div>'+
+  (vh.no?'<div style="margin-top:4px;font-size:16px">गाड़ी: <b>'+esc(vh.no)+'</b>'+(vh.dn?' · ड्राइवर: <b>'+esc(vh.dn)+'</b>':'')+'</div>'+dlocTxt(q)+(vh.dm?'<a class="btn" style="display:block;text-align:center;text-decoration:none;background:#2e7d32" href="tel:'+esc(vh.dm)+'">📞 ड्राइवर को फ़ोन करें ('+esc(vh.dm)+')</a>':''):'')+
+  (q.st==='new'||q.st==='sent'?'<div style="display:flex;gap:6px">'+(q.st==='sent'?'<button class="btn" data-rqdone="'+esc(q.rid)+'" style="background:#2e7d32">✔ गाड़ी आ गई / काम पूरा</button>':'')+'<button class="btn" data-rqcan="'+esc(q.rid)+'" style="background:#888">✖ रद्द करें</button></div>':'')+'</div>'}).join('');
+ el.innerHTML=h;if(keep&&$('rqf'))$('rqf').replaceWith(keep)}
+function dlocTxt(q){if(q.st!=='sent'||!q.veh||!q.veh.did)return '';var d=(g('bh_dloc',[])||[]).filter(function(r){return String(r[0]).toUpperCase()===String(q.veh.did).toUpperCase()})[0];if(!d||!d[2])return '<div class="muted">गाड़ी की लोकेशन अभी नहीं आई</div>';var ago=Math.round((Date.now()-d[5])/60000);
+ return '<div style="background:#e8f5e9;padding:6px;border-radius:6px;margin-top:4px">🚐 गाड़ी अभी: '+(q.lat?'<b>'+etaTxt(kmTo(+q.lat,+q.lng,d[2],d[3]))+'</b> दूर':'')+' <span class="muted">('+(ago<1?'अभी':ago+' मिनट पहले')+' की जगह)</span><br><a href="'+gmap(d[2],d[3])+'" target="_blank">🗺 गाड़ी नक्शे में देखें</a></div>'}
+
+var DUTYW=null,LASTLOC=0;
+function dutyCard(){var on=!!g('bh_duty',0),l=g('bh_lastloc',0);return '<div class="card" style="border:2px solid '+(on?'#2e7d32':'#c62828')+'"><b>'+(on?'🟢 ड्यूटी चालू — आपकी गाड़ी की जगह मास्टर को जा रही है':'🔴 ड्यूटी बंद')+'</b>'+(on&&l?'<div class="muted">आख़िरी जगह भेजी: '+new Date(l).toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'})+'</div>':'')+'<button class="btn" id="duty" style="background:'+(on?'#888':'#2e7d32')+'">'+(on?'ड्यूटी बंद करें':'▶ ड्यूटी चालू करें (लोकेशन भेजें)')+'</button></div>'}
+function sendLoc(c){var now=Date.now();if(now-LASTLOC<45000)return;LASTLOC=now;if(navigator.onLine===false)return;post({a:'loc',id:ID,name:NAME,lat:c.latitude,lng:c.longitude,acc:c.accuracy,spd:c.speed||0}).then(function(r){if(r&&r.ok){sv('bh_lastloc',Date.now())}}).catch(function(){})}
+async function dutyStart(){var BG=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.BackgroundGeolocation;if(DUTYW)return;
+ if(BG&&Capacitor.isNativePlatform&&Capacitor.isNativePlatform()){try{DUTYW={bg:await BG.addWatcher({backgroundMessage:'ड्यूटी चालू — गाड़ी की जगह मास्टर को जा रही है',backgroundTitle:'भामटसर सहायक',requestPermissions:true,stale:false,distanceFilter:30},function(loc,err){if(err){if(err.code==='NOT_AUTHORIZED'&&confirm('लोकेशन की अनुमति नहीं है। सेटिंग खोलें?'))BG.openSettings();return}if(loc)sendLoc(loc)})};return}catch(e){DUTYW=null}}
+ if(navigator.geolocation){DUTYW={web:navigator.geolocation.watchPosition(function(p){sendLoc(p.coords)},function(){},{enableHighAccuracy:true,maximumAge:20000})}}}
+async function dutyStop(){var BG=window.Capacitor&&Capacitor.Plugins&&Capacitor.Plugins.BackgroundGeolocation;if(!DUTYW)return;try{if(DUTYW.bg&&BG)await BG.removeWatcher({id:DUTYW.bg});if(DUTYW.web!=null)navigator.geolocation.clearWatch(DUTYW.web)}catch(e){}DUTYW=null}
+document.addEventListener('click',function(e){if(!e.target.closest||!e.target.closest('#duty'))return;var on=!g('bh_duty',0);sv('bh_duty',on?1:0);if(on){LASTLOC=0;dutyStart()}else dutyStop();drawRq()});
+function rqPush(q){q.ts=Date.now()+(+g('bh_off',0)||0);var Q=g('bh_rqq',[]);Q.push(q);sv('bh_rqq',Q);drawRq();try{sync()}catch(e){}}
+function rqRoutes(){var m={};Object.keys(D.s||{}).forEach(function(k){var r=String(D.s[k][8]||'').trim();if(r)m[r]=(m[r]||0)+1});return '<option value="">— ढाणी / रूट चुनें —</option><option value="गाँव">गाँव (आबादी) में</option>'+Object.keys(m).sort().map(function(r){return '<option value="'+esc(r)+'">'+esc(r)+'</option>'}).join('')+'<option value="other">दूसरी जगह (नीचे लिखें)</option>'}
+function rqForm(){var f=$('rqf');if(f.innerHTML){f.innerHTML='';return}var lg=(D.s&&MYS&&Object.keys(MYS).length)?Object.keys(MYS).length:'';
+ f.innerHTML='<div class="card" style="border:2px solid #e65100"><b>🚐 गाड़ी की माँग</b><select id="rqt2" style="margin-top:6px"><option value="L">लोगों को वोट डालने लाना है</option><option value="D">लोगों को वापस घर छोड़ना है</option></select>'+
+  '<input id="rqn" inputmode="numeric" placeholder="कितने लोग? (जैसे 6)" style="margin-top:6px" value=""><select id="rqr" style="margin-top:6px">'+rqRoutes()+'</select><input id="rqp" placeholder="जगह की पहचान (जैसे: मोतीलाल जी की ढाणी, स्कूल के पास)" style="margin-top:6px"><input id="rqx" placeholder="कुछ और बताना हो (वैकल्पिक)" style="margin-top:6px">'+
+  '<div style="margin-top:8px"><b>📍 गाड़ी कहाँ आए?</b><select id="rqg" style="margin-top:4px"><option value="gps">मैं जहाँ खड़ा हूँ (मेरी अभी की जगह)</option><option value="map">🗺 नक्शे में खेत / ढाणी चुनूँगा</option><option value="none">लोकेशन नहीं भेजनी</option></select><div id="rqgl" class="muted"></div></div>'+
+  '<div style="display:flex;gap:6px"><button class="btn" id="rqok" style="background:#e65100">📤 माँग भेजें</button><button class="btn" id="rqno" style="background:#888">बंद</button></div><div class="muted" id="rqm"></div></div>';
+ $('rqno').onclick=function(){f.innerHTML=''};var PK=null;
+ $('rqg').onchange=function(){if(this.value!=='map'){PK=null;$('rqgl').textContent='';return}$('rqgl').textContent='नक्शा खुल रहा है…';myPos().then(function(c){return pickMap(c?[c.latitude,c.longitude]:null)}).then(function(p){PK=p;if(p)$('rqgl').innerHTML='✔ जगह चुनी: <a href="'+gmap(p.lat,p.lng)+'" target="_blank">'+p.lat+', '+p.lng+'</a> <a href="#" id="rqgc">(बदलें)</a>';else{$('rqg').value='gps';$('rqgl').textContent=''}var cc=$('rqgc');if(cc)cc.onclick=function(e){e.preventDefault();$('rqg').onchange()}})};
+ $('rqok').onclick=function(){var n=$('rqn').value.replace(/[^0-9]/g,''),rr=$('rqr').value,p=$('rqp').value.trim();if(!n){alert('कितने लोग हैं — लिखें');return}if(!rr){alert('ढाणी / रूट चुनें');return}if(rr==='other'&&!p){alert('जगह का नाम लिखें');return}
+  var q={rid:ID+'-'+Date.now().toString(36),t:$('rqt2').value,n:n,rt:rr==='other'?'':rr,pl:(rr==='other'?'':rr)+(p?(rr==='other'?'':' · ')+p:''),nt:$('rqx').value.trim(),st:'new'},b=$('rqok');b.disabled=true;
+  var go=function(){f.innerHTML='';rqPush(q);alert(navigator.onLine===false?'माँग सेव हो गई — नेट मिलते ही मास्टर के पास पहुँचेगी':'✔ माँग मास्टर के पास भेज दी। गाड़ी भेजने पर यहाँ गाड़ी नंबर और ड्राइवर का नंबर दिखेगा।')};
+  var lm=$('rqg').value;if(lm==='map'){if(!PK){alert('नक्शे में जगह चुनें (या दूसरा विकल्प लें)');b.disabled=false;return}q.lat=PK.lat;q.lng=PK.lng;q.acc=0;q.lm='map';go()}
+  else if(lm==='gps'){$('rqm').textContent='📍 लोकेशन ले रहे हैं…';myPos().then(function(c){if(c){q.lat=c.latitude.toFixed(6);q.lng=c.longitude.toFixed(6);q.acc=Math.round(c.accuracy)}go()})}
+  else go()}}
+document.addEventListener('click',function(e){var t=e.target;if(!t.closest)return;if(t.closest('#rqnew')){rqForm();return}
+ var d=t.closest('[data-rqdone]'),c=t.closest('[data-rqcan]');
+ if(d){if(confirm('काम पूरा हो गया?'))rqPush({rid:d.getAttribute('data-rqdone'),st:'done'})}
+ if(c){if(confirm('यह गाड़ी की माँग रद्द करनी है?'))rqPush({rid:c.getAttribute('data-rqcan'),st:'cancel'})}});
 $('mveh').onclick=async function(){if(VIEW||/^D/i.test(RL||ID)){alert('यह विकल्प वॉलंटियर / बूथ एजेंट के लिए है');return}var cur=g('bh_myveh',{});
  var n=prompt('क्या आपके घर में अपनी गाड़ी है? (अपने लोगों को खुद लाएँगे — दूसरी गाड़ी नहीं भेजी जाएगी)\n\nगाड़ी नंबर लिखें (जैसे RJ07 AB 1234)\nगाड़ी नहीं है तो खाली छोड़कर OK दबाएँ:',cur.vno||'');if(n===null)return;n=n.trim().toUpperCase();var t='';
  if(n){t=prompt('गाड़ी का प्रकार और कितने लोग बैठेंगे (जैसे: बोलेरो, 8 लोग):',cur.vtype||'');if(t===null)return;t=t.trim()}
