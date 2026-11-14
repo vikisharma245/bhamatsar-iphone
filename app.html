@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=31;</script>
+<script>var UIV=32;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -141,9 +141,14 @@ function row(v){var e=ST[key(v)],s=e?e[0]:'',b=(D.w[v[0]]||[])[0],sd=(D.s||{})[k
  (v[10]===2?'<span class="tag d">सूची से हटाया गया</span>':'')+(e&&e[0]?'<span class="tag">'+LB[e[0]]+(e[2]?' · '+esc(e[2]==='MASTER'?'मास्टर':e[2]):'')+(e[1]?' · '+new Date(e[1]).toTimeString().slice(0,5):'')+'</span>':'')+
  (VIEW?'':'<div class="bt">'+['L','N','V'].map(function(x){var lk=(s==='V'&&x!=='V')||(s==='L'&&x==='N');return '<button data-s="'+x+'" class="'+x+(s===x?' on':'')+'"'+(lk?' disabled style="opacity:.35"':'')+'>'+LB[x]+'</button>'}).join('')+(s==='V'||s==='L'?'<span class="muted" style="align-self:center;font-size:12px;padding:0 4px">🔒 सिर्फ़ मास्टर हटा सकता है</span>':'<button data-s="C">↺ हटाएँ</button>')+'</div>')+'</div>'}
 var SHOWN=100;
+/* खोज में कोई छिपा हो (फ़िल्टर या ID के दायरे से) तो बताना */
+function hidHint(q){var f0=FIL,s0=SC,w0=SCW,a=0,b=0;try{var n0=find(q).length;FIL='';a=find(q).length-n0;SC='';SCW=null;b=find(q).length-n0-a}catch(e){}FIL=f0;SC=s0;SCW=w0;
+ var h='';if(a>0&&(f0==='P'||f0==='M'))h+='<div class="card" style="border:1px solid #f9a825;background:#fffde7">ℹ️ कुछ और मतदाता "'+((CH.concat([['M','मेरे लोग']]).filter(function(c){return c[0]===f0})[0]||['',''])[1])+'" फ़िल्टर की वजह से नहीं दिख रहे — ऊपर <b>"सब"</b> दबाएँ।</div>';
+ if(b>0)h+='<div class="card" style="border:1px solid #e57373;background:#fff5f5">🔒 <b>'+b+'</b> मतदाता आपकी ID के दायरे में नहीं हैं'+(s0==='M'?' (आपको सिर्फ़ सौंपे गए लोग दिखते हैं)':(w0?' (आपको सिर्फ़ वार्ड '+Object.keys(w0).join(', ')+' दिखते हैं)':''))+' — दिखाने हों तो मास्टर से दायरा बदलवाएँ।</div>';return h}
 function run(keep){if(keep!==true)SHOWN=100;var r=find($('q').value);if($('hn').value.trim())r.sort(function(a,b){return a[0]-b[0]||a[1]-b[1]});
- if(!r.length){$('res').innerHTML=($('q').value.trim()||$('hn').value.trim())?'<p class="muted">कोई नहीं मिला</p>':'<div class="card"><p class="muted">ऊपर नाम, पिता/पति, EPIC, क्रम या मकान नंबर लिखें।<br>जैसे: <b>रामलाल</b> · <b>राम सिंह</b> · <b>मकान 58</b><br>वार्ड चुनें तो उसके सब मतदाता दिखेंगे।</p></div>';return}
- var stF=FIL==='R'||FIL==='L'||FIL==='P'||FIL==='V';$('res').innerHTML='<p class="muted">'+(stF?'सूची':r.length+' मिले')+(r.length>SHOWN?' (अभी '+SHOWN+' दिखाए)':'')+'</p>'+r.slice(0,SHOWN).map(row).join('')+(r.length>SHOWN?'<button class="btn" id="more" style="margin:8px 0 70px">⬇ और '+(stF?'':Math.min(100,r.length-SHOWN)+' ')+'दिखाएँ'+(stF?'':' (बाकी '+(r.length-SHOWN)+')')+'</button>':'')}
+ var qq=$('q').value.trim(),hh=(qq||$('hn').value.trim())?hidHint(qq):'';
+ if(!r.length){$('res').innerHTML=(qq||$('hn').value.trim())?'<p class="muted">कोई नहीं मिला</p>'+hh:'<div class="card"><p class="muted">ऊपर नाम, पिता/पति, EPIC, क्रम या मकान नंबर लिखें।<br>जैसे: <b>रामलाल</b> · <b>राम सिंह</b> · <b>मकान 58</b><br>वार्ड चुनें तो उसके सब मतदाता दिखेंगे।</p></div>';return}
+ var stF=FIL==='R'||FIL==='L'||FIL==='P'||FIL==='V';$('res').innerHTML=hh+'<p class="muted">'+(stF?'सूची':r.length+' मिले')+(r.length>SHOWN?' (अभी '+SHOWN+' दिखाए)':'')+'</p>'+r.slice(0,SHOWN).map(row).join('')+(r.length>SHOWN?'<button class="btn" id="more" style="margin:8px 0 70px">⬇ और '+(stF?'':Math.min(100,r.length-SHOWN)+' ')+'दिखाएँ'+(stF?'':' (बाकी '+(r.length-SHOWN)+')')+'</button>':'')}
 function stat(){var a=0,l=0,vv=0;D.v.forEach(function(v){if(v[10]===2||!vis(v))return;a++;var s=stOf(v);if(s==='L')l++;if(s==='V')vv++});
  $('stats').innerHTML='<div><b>'+a+'</b>कुल मतदाता</div>';   /* वोट / लाए की गिनती सिर्फ़ मास्टर में */
  $('hs').textContent=ID+' · '+NAME+(VIEW?' · सिर्फ़ देखने के लिए':'')+' · डेटा '+(D.gen||'');foot()}
