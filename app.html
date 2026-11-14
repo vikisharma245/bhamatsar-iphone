@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=29;</script>
+<script>var UIV=30;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -114,7 +114,7 @@ function init(){
  var rs={};Object.keys(D.s||{}).forEach(function(k){var r=D.s[k][8];if(r)rs[r]=1});$('rt').innerHTML='<option value="">सारे रूट / गाँव</option>'+Object.keys(rs).sort().map(function(r){return '<option>'+esc(r)+'</option>'}).join('');
  $('hd').textContent=D.vill||CFG.TITLE;$('lg').classList.add('hid');$('app').classList.remove('hid');
  chips();run();stat();if(isFleet())fleetStart();else{document.querySelector('.sb').classList.remove('hid');$('stats').classList.remove('hid');$('res').classList.remove('hid');clearInterval(FTM)}LS.setItem('bh_boot','1')}
-var CH=[['','सब'],['P','⭐ ज़रूरी बचे'],['R','बचे हुए'],['L','🚗 लाए'],['V','🗳 वोट डाला']];
+var CH=[['','सब'],['P','⭐ ज़रूरी बचे'],['R','बचे हुए'],['L','🚗 लाए']];
 function chips(){var n=Object.keys(MYS).length,L=n?[['M','🙋 मेरे लोग ('+n+')']].concat(CH):CH;if(!n&&FIL==='M')FIL='';$('chips').innerHTML=L.map(function(c){return '<span class="chip'+(FIL===c[0]?' on':'')+'" data-f="'+c[0]+'">'+c[1]+'</span>'}).join('')}
 function key(v){return v[0]+'-'+v[1]}
 function setSc(s){SC=String(s||'');sv('bh_sc',SC);SCW=null;var m=SC.match(/^W:(.*)$/);if(m){SCW={};m[1].split(/[ ,]+/).forEach(function(x){if(x)SCW[+x]=1})}}
@@ -143,9 +143,9 @@ function row(v){var e=ST[key(v)],s=e?e[0]:'',b=(D.w[v[0]]||[])[0],sd=(D.s||{})[k
 var SHOWN=100;
 function run(keep){if(keep!==true)SHOWN=100;var r=find($('q').value);if($('hn').value.trim())r.sort(function(a,b){return a[0]-b[0]||a[1]-b[1]});
  if(!r.length){$('res').innerHTML=($('q').value.trim()||$('hn').value.trim())?'<p class="muted">कोई नहीं मिला</p>':'<div class="card"><p class="muted">ऊपर नाम, पिता/पति, EPIC, क्रम या मकान नंबर लिखें।<br>जैसे: <b>रामलाल</b> · <b>राम सिंह</b> · <b>मकान 58</b><br>वार्ड चुनें तो उसके सब मतदाता दिखेंगे।</p></div>';return}
- $('res').innerHTML='<p class="muted">'+r.length+' मिले'+(r.length>SHOWN?' (अभी '+SHOWN+' दिखाए)':'')+'</p>'+r.slice(0,SHOWN).map(row).join('')+(r.length>SHOWN?'<button class="btn" id="more" style="margin:8px 0 70px">⬇ और '+Math.min(100,r.length-SHOWN)+' दिखाएँ (बाकी '+(r.length-SHOWN)+')</button>':'')}
+ var stF=FIL==='R'||FIL==='L'||FIL==='P'||FIL==='V';$('res').innerHTML='<p class="muted">'+(stF?'सूची':r.length+' मिले')+(r.length>SHOWN?' (अभी '+SHOWN+' दिखाए)':'')+'</p>'+r.slice(0,SHOWN).map(row).join('')+(r.length>SHOWN?'<button class="btn" id="more" style="margin:8px 0 70px">⬇ और '+(stF?'':Math.min(100,r.length-SHOWN)+' ')+'दिखाएँ'+(stF?'':' (बाकी '+(r.length-SHOWN)+')')+'</button>':'')}
 function stat(){var a=0,l=0,vv=0;D.v.forEach(function(v){if(v[10]===2||!vis(v))return;a++;var s=stOf(v);if(s==='L')l++;if(s==='V')vv++});
- $('stats').innerHTML='<div><b>'+a+'</b>कुल मतदाता</div><div><b>'+l+'</b>लाए गए</div><div><b>'+vv+'</b>वोट डाला</div>';
+ $('stats').innerHTML='<div><b>'+a+'</b>कुल मतदाता</div>';   /* वोट / लाए की गिनती सिर्फ़ मास्टर में */
  $('hs').textContent=ID+' · '+NAME+(VIEW?' · सिर्फ़ देखने के लिए':'')+' · डेटा '+(D.gen||'');foot()}
 function pend(){return g('bh_q',[]).length+g('bh_pq',[]).length+g('bh_nq',[]).length+g('bh_sq',[]).length}
 function foot(){var p=pend(),ls=g('bh_sync',0);$('fs').textContent=(p?p+' एंट्री भेजनी बाकी · ':'सब भेजा जा चुका · ')+(ls?'आख़िरी सिंक '+new Date(ls).toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'}):'अभी सिंक नहीं हुआ');
@@ -218,8 +218,8 @@ function mgView(){var T=MGT,m={},w=$('w').value;D.v.forEach(function(v){if(v[10]
  var R=Object.keys(m).map(function(k){return m[k]}).sort(function(x,y){return y.a-x.a});
  var c=function(r,f,x){return x?'<a href="#" data-mg="'+esc(r.n)+'|'+f+'" style="font-weight:600">'+x+'</a>':'<span class="muted">0</span>'};
  $('res').innerHTML='<div class="card"><div class="two"><select id="mgt2"><option value="3"'+(T===3?' selected':'')+'>सब + मेन (दोनों)</option><option value="2"'+(T===2?' selected':'')+'>सिर्फ़ मेन (मुखिया)</option><option value="1"'+(T===1?' selected':'')+'>सिर्फ़ सब-मुखिया</option></select><input id="mgq2" placeholder="नाम खोजें" value="'+esc(MGQ)+'"></div>'+
-  '<div class="muted">संख्या दबाएँ तो नाम दिखेंगे'+(w?' · सिर्फ़ वार्ड '+w:'')+'</div><div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><tr style="background:#eef2f6"><th align="left">नाम</th><th>कुल</th><th>गाँव</th><th>ढाणी</th><th>बाहर</th><th>वोट डाला</th></tr>'+
-  R.map(function(r){return '<tr style="border-top:1px solid #e3e8ee"><td>'+esc(r.n)+'<div style="font-size:11px">'+Object.keys(r.w).sort(function(x,y){return r.w[y]-r.w[x]}).map(function(w){return '<a href="#" data-mg="'+esc(r.n)+'|w'+w+'">वार्ड '+w+'</a>('+r.w[w]+')'}).join(' ')+'</div></td><td align="center">'+c(r,'a',r.a)+'</td><td align="center">'+c(r,'G',r.G)+'</td><td align="center">'+c(r,'D',r.D)+'</td><td align="center">'+c(r,'B',r.B)+'</td><td align="center">'+c(r,'V',r.V)+'</td></tr>'}).join('')+'</table></div></div>';
+  '<div class="muted">संख्या दबाएँ तो नाम दिखेंगे'+(w?' · सिर्फ़ वार्ड '+w:'')+'</div><div style="overflow:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><tr style="background:#eef2f6"><th align="left">नाम</th><th>कुल</th><th>गाँव</th><th>ढाणी</th><th>बाहर</th></tr>'+
+  R.map(function(r){return '<tr style="border-top:1px solid #e3e8ee"><td>'+esc(r.n)+'<div style="font-size:11px">'+Object.keys(r.w).sort(function(x,y){return r.w[y]-r.w[x]}).map(function(w){return '<a href="#" data-mg="'+esc(r.n)+'|w'+w+'">वार्ड '+w+'</a>('+r.w[w]+')'}).join(' ')+'</div></td><td align="center">'+c(r,'a',r.a)+'</td><td align="center">'+c(r,'G',r.G)+'</td><td align="center">'+c(r,'D',r.D)+'</td><td align="center">'+c(r,'B',r.B)+'</td></tr>'}).join('')+'</table></div></div>';
  $('mgt2').onchange=function(){MGT=+this.value;mgView()};$('mgq2').oninput=function(){MGQ=this.value.trim().toLowerCase();var p=this.selectionStart;mgView();var e=$('mgq2');e.focus();try{e.setSelectionRange(p,p)}catch(x){}}}
 var FNM={a:'सारे वोट',G:'गाँव में',D:'ढाणी में',B:'बाहर',V:'वोट डाला'};
 function mgList(nm,f){var T=MGT,w=$('w').value,L=D.v.filter(function(v){if(v[10]===2||!vis(v))return false;if(w&&v[0]!=+w)return false;var sd=(D.s||{})[key(v)]||[];if(grp(sd,T)!==nm)return false;return f==='a'?true:f.charAt(0)==='w'?v[0]==+f.slice(1):f==='V'?stOf(v)==='V':locOf(sd)===f});
@@ -270,13 +270,12 @@ async function teamView(){$('res').innerHTML='<div class="card">⏳ टीम �
  var rtv={};Object.keys(V).forEach(function(k){var r=((D.s||{})[k]||[])[8];if(r){var x=rtv[r]=rtv[r]||{a:0,V:0,L:0};x.a++;var s=stOf(V[k]);if(s==='V')x.V++;if(s==='L')x.L++}});
  var vh=(T.veh||[]).filter(function(g2){return (g2.routes||[]).some(function(r){return rtv[r]})||(g2.vols||[]).some(function(x){return asg[x]})});
  var h='<div class="card"><button class="sm" id="tmback">← वापस</button> <button class="sm" id="tmre">🔄 ताज़ा करें</button><div style="margin-top:6px;font-size:16px"><b>👥 मेरी टीम — '+(w?'वार्ड '+w:'मेरे वार्ड')+'</b></div>'+
-  '<div class="stats" style="margin-top:6px"><div><b>'+tot.a+'</b>कुल</div><div><b>'+tot.V+'</b>वोट डाले</div><div><b>'+(tot.a-tot.V)+'</b>बाकी</div></div>'+
-  '<div class="muted">'+Object.keys(W).sort(function(a,b){return a-b}).map(function(x){return 'वार्ड '+x+': '+W[x].V+'/'+W[x].a+' ('+(W[x].a?Math.round(W[x].V*100/W[x].a):0)+'%)'}).join(' · ')+'</div></div>';
- h+='<div class="card"><b>🙋 वॉलंटियर ('+vols.length+')</b>'+(vols.length?vols.map(function(u){var a=asg[u[0]]||{n:0,V:0},b=by[u[0]]||{};return '<div style="border-top:1px solid #eee;padding:6px 0"><b>'+esc(u[1])+'</b> <span class="muted">'+u[0]+'</span>'+tel(u[3])+(u[5]?' · 🚗 खुद की गाड़ी':'')+'<br>सौंपे: <b>'+a.n+'</b> · उनमें वोट पड़े: <b>'+a.V+'</b> · बाकी: <b style="color:#c62828">'+(a.n-a.V)+'</b> · इसने "लाया": '+(b.L||0)+'<br>'+agoT(u[4])+'</div>'}).join(''):'<div class="muted">इन वार्डों में कोई वॉलंटियर नहीं</div>')+'</div>';
- h+='<div class="card"><b>🗳 बूथ एजेंट ('+bas.length+')</b>'+(bas.length?bas.map(function(u){var b=by[u[0]]||{};return '<div style="border-top:1px solid #eee;padding:6px 0"><b>'+esc(u[1])+'</b> <span class="muted">'+u[0]+'</span>'+tel(u[3])+'<br>"वोट डाला" दबाए: <b>'+(b.V||0)+'</b><br>'+agoT(u[4])+'</div>'}).join(''):'<div class="muted">कोई नहीं</div>')+'</div>';
+  '<div class="muted" style="margin-top:4px">कुल मतदाता: '+tot.a+' · वोट की गिनती सिर्फ़ मास्टर में दिखती है</div></div>';
+ h+='<div class="card"><b>🙋 वॉलंटियर ('+vols.length+')</b>'+(vols.length?vols.map(function(u){var a=asg[u[0]]||{n:0,V:0},b=by[u[0]]||{};return '<div style="border-top:1px solid #eee;padding:6px 0"><b>'+esc(u[1])+'</b> <span class="muted">'+u[0]+'</span>'+tel(u[3])+(u[5]?' · 🚗 खुद की गाड़ी':'')+'<br>सौंपे गए लोग: <b>'+a.n+'</b><br>'+agoT(u[4])+'</div>'}).join(''):'<div class="muted">इन वार्डों में कोई वॉलंटियर नहीं</div>')+'</div>';
+ h+='<div class="card"><b>🗳 बूथ एजेंट ('+bas.length+')</b>'+(bas.length?bas.map(function(u){var b=by[u[0]]||{};return '<div style="border-top:1px solid #eee;padding:6px 0"><b>'+esc(u[1])+'</b> <span class="muted">'+u[0]+'</span>'+tel(u[3])+'<br>'+agoT(u[4])+'</div>'}).join(''):'<div class="muted">कोई नहीं</div>')+'</div>';
  h+='<div class="card"><b>🚐 गाड़ियाँ / ड्राइवर ('+vh.length+')</b><div class="muted">लोकेशन सिर्फ़ मास्टर देखता है</div>'+(vh.length?vh.map(function(g2){var du=U[String(g2.did||'').toUpperCase()],j=(T.jobs||{})[g2.no]||{},b=by[String(g2.did||'').toUpperCase()]||{},rs=(g2.routes||[]).filter(function(r){return rtv[r]});
   return '<div style="border-top:1px solid #eee;padding:6px 0"><b>'+esc(g2.no)+'</b> '+esc(g2.type||'')+' · ड्राइवर: <b>'+esc(g2.dn||'')+'</b>'+tel(g2.dm)+(g2.hm?'<br>🤝 साथी: '+esc(g2.hn||'')+tel(g2.hm):'')+(g2.days&&g2.days.length?'<br>📅 '+g2.days.map(function(d){return +d.split('-')[2]}).join(', ')+' नवंबर':'')+
-  (rs.length?'<br>रूट: '+rs.map(function(r){var x=rtv[r];return esc(r)+' — वोट '+x.V+'/'+x.a+(x.L?' · लाए '+x.L:'')}).join('<br>'):'')+'<br>इसने "लाया": <b>'+(b.L||0)+'</b> · माँग पर गई: '+(j.done||0)+' पूरी'+(j.sent?' · '+j.sent+' चल रही':'')+'<br>'+(du?agoT(du[4]):'<span class="muted">ड्राइवर ID नहीं जुड़ी</span>')+'</div>'}).join(''):'<div class="muted">इन वार्डों के रूट पर कोई गाड़ी नहीं</div>')+'</div>';
+  (rs.length?'<br>रूट: '+rs.map(function(r){return esc(r)+' ('+rtv[r].a+' मतदाता)'}).join('<br>'):'')+'<br>माँग पर गई: '+(j.done||0)+' पूरी'+(j.sent?' · '+j.sent+' चल रही':'')+'<br>'+(du?agoT(du[4]):'<span class="muted">ड्राइवर ID नहीं जुड़ी</span>')+'</div>'}).join(''):'<div class="muted">इन वार्डों के रूट पर कोई गाड़ी नहीं</div>')+'</div>';
  $('res').innerHTML=h;$('tmback').onclick=function(){run()};$('tmre').onclick=teamView}
 
 /* ===== गाड़ी ट्रिप / तेल / खर्च — मास्टर और गाड़ी प्रभारी दोनों (पुरानी तारीख भी)। सर्वर की 'Trips' शीट में। ===== */
