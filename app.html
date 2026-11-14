@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=33;</script>
+<script>var UIV=34;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -150,7 +150,9 @@ function run(keep){if(keep!==true)SHOWN=100;var r=find($('q').value);if($('hn').
  if(!r.length){$('res').innerHTML=(qq||$('hn').value.trim())?'<p class="muted">कोई नहीं मिला</p>'+hh:'<div class="card"><p class="muted">ऊपर नाम, पिता/पति, EPIC, क्रम या मकान नंबर लिखें।<br>जैसे: <b>रामलाल</b> · <b>राम सिंह</b> · <b>मकान 58</b><br>वार्ड चुनें तो उसके सब मतदाता दिखेंगे।</p></div>';return}
  var stF=FIL==='R'||FIL==='L'||FIL==='P'||FIL==='V';$('res').innerHTML=hh+'<p class="muted">'+(stF?'सूची':r.length+' मिले')+(r.length>SHOWN?' (अभी '+SHOWN+' दिखाए)':'')+'</p>'+r.slice(0,SHOWN).map(row).join('')+(r.length>SHOWN?'<button class="btn" id="more" style="margin:8px 0 70px">⬇ और '+(stF?'':Math.min(100,r.length-SHOWN)+' ')+'दिखाएँ'+(stF?'':' (बाकी '+(r.length-SHOWN)+')')+'</button>':'')}
 function stat(){var a=0,l=0,vv=0;D.v.forEach(function(v){if(v[10]===2||!vis(v))return;a++;var s=stOf(v);if(s==='L')l++;if(s==='V')vv++});
- $('stats').innerHTML='<div><b>'+a+'</b>कुल मतदाता</div>';   /* वोट / लाए की गिनती सिर्फ़ मास्टर में */
+ var mk=Object.keys(MYS),mn=mk.length,md=0,ml=0;mk.forEach(function(k){var s=(ST[k]||[])[0];if(s==='V')md++;else if(s==='L')ml++});
+ $('stats').innerHTML='<div><b>'+a+'</b>कुल मतदाता</div>'+(mn?'<div id="myp" style="cursor:pointer" title="मेरे बचे लोग दिखाओ"><b style="color:#b71c1c">'+(mn-md)+'</b>🙋 मेरे बाकी (सौंपे '+mn+' · ✅ '+md+(ml?' · 🚗 '+ml:'')+')</div>':'');   /* कुल गिनती सिर्फ़ मास्टर में; वॉलंटियर को सिर्फ़ अपने सौंपे लोगों का हिसाब */
+ if($('myp'))$('myp').onclick=function(){FIL='M';try{chips()}catch(e){}try{run()}catch(e){}};
  $('hs').textContent=ID+' · '+NAME+(VIEW?' · सिर्फ़ देखने के लिए':'')+' · डेटा '+(D.gen||'');foot()}
 function pend(){return g('bh_q',[]).length+g('bh_pq',[]).length+g('bh_nq',[]).length+g('bh_sq',[]).length}
 function foot(){var p=pend(),ls=g('bh_sync',0);$('fs').textContent=(p?p+' एंट्री भेजनी बाकी · ':'सब भेजा जा चुका · ')+(ls?'आख़िरी सिंक '+new Date(ls).toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'}):'अभी सिंक नहीं हुआ');
