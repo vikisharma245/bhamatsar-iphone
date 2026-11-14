@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=37;</script>
+<script>var UIV=38;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -153,7 +153,9 @@ function setFlag(k,f){if(VIEW)return;var cur=flOf(k,f),tm=new Date().toTimeStrin
  if(f==='fh'){var c=cur.split('·')[0];v=c===''?'Y':c==='Y'?'N':'';v=v?v+'·'+ID+'·'+tm:''}
  else{if(cur){if(!confirm(FLG[f]+' — यह निशान हटाना है?'))return;v=''}else v='1·'+ID+'·'+tm}
  var a=k.split('-'),ts=Date.now()+(+g('bh_off',0)||0),q=g('bh_nq',[]),o={};o[f]=v;q.push([+a[0],+a[1],JSON.stringify(o),ts]);sv('bh_nq',q);
- var cu={};try{cu=NT[k]?JSON.parse(NT[k][0]):{}}catch(x){}cu[f]=v;NT[k]=[JSON.stringify(cu),ts];sv('bh_nt',NT);try{run(true)}catch(e){}try{drawRq()}catch(e){}schedule(1500)}
+ var cu={};try{cu=NT[k]?JSON.parse(NT[k][0]):{}}catch(x){}cu[f]=v;NT[k]=[JSON.stringify(cu),ts];sv('bh_nt',NT);
+ if(f==='fd'&&v&&((ST[k]||[])[0]!=='V')){var nm='';D.v.some(function(x){if(key(x)===k){nm=x[3];return true}});if(confirm('🗳 '+(nm||k)+' — क्या इनका वोट पड़ गया?\n\nOK = हाँ, ✅ "वोट डाला" लगा दो (बाद में सिर्फ़ मास्टर हटा सकता है)\nCancel = नहीं, वोट अभी बाकी है'))mark(k,'V',1);else alert('ठीक है — '+(nm||k)+' "बाकी" में रहेंगे। वोट नहीं डाला तो "❓ वोट क्यों बाकी?" में कारण भर दें।')}
+ try{run(true)}catch(e){}try{drawRq()}catch(e){}schedule(1500)}
 document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-fl]');if(!b)return;e.preventDefault();e.stopPropagation();setFlag(b.getAttribute('data-flk'),b.getAttribute('data-fl'))},true);
 /* बाकी वोटर — वोट क्यों नहीं डला (कारण चुनें): सर्वर पर notes में r / rt / rw */
 var RSN={G:'🚗 गाड़ी चाहिए',B:'⏰ बाद में आएगा',O:'🏙 बाहर गया',C:'📞 संपर्क नहीं / घर बंद',M:'🤔 मन नहीं बना',N:'❌ नहीं आएगा',D:'⚰️ मृत्यु / नाम दोहराया',X:'✏️ और कुछ'};
@@ -193,10 +195,10 @@ function setLoc(k){if(VIEW)return;var sd=(D.s||{})[k]||[],n=prompt('यह म�
  q.push([+a[0],+a[1],js,ts]);sv('bh_nq',q);var cur={};try{cur=NT[k]?JSON.parse(NT[k][0]):{}}catch(x){}cur.g=gl;NT[k]=[JSON.stringify(cur),ts];sv('bh_nt',NT);applyNT();run(true);schedule(1500)}
 function addPhone(k){if(VIEW)return;var sd=(D.s||{})[k]||[],pp=PH[k],cur=String((pp?pp[0]:sd[4])||'').replace(/[^0-9]/g,'');var n=prompt(cur?'सही मोबाइल नंबर लिखें (10 अंक)।\nअभी लिखा है: '+cur:'मोबाइल नंबर लिखें (10 अंक):',cur);if(n===null)return;n=String(n).replace(/[^0-9]/g,'');if(n.length===12&&n.indexOf('91')===0)n=n.slice(2);if(n.length!==10){alert('10 अंक का नंबर लिखें');return}
  var a=k.split('-'),ts=Date.now()+(+g('bh_off',0)||0),q=g('bh_pq',[]);PH[k]=[n,ts,ID];q.push([+a[0],+a[1],n,ts]);sv('bh_pq',q);sv('bh_ph',PH);run();schedule(1500)}
-function mark(k,s){if(VIEW)return;var a=k.split('-');var q=g('bh_q',[]),ts=Date.now()+(+g('bh_off',0)||0);
+function mark(k,s,nc){if(VIEW)return;var a=k.split('-');var q=g('bh_q',[]),ts=Date.now()+(+g('bh_off',0)||0);
  var cs=ST[k]&&ST[k][0];if(cs===s)return;
  if((cs==='V')||(cs==='L'&&s!=='V')){alert((cs==='V'?'इसका "वोट डाला"':'इस पर "लाया"')+' लग चुका है।\n\nहटाने / बदलने का अधिकार सिर्फ़ मास्टर के पास है — गलती हो तो मास्टर को बताएँ।');return}
- if((s==='V'||s==='L')&&!confirm(k+' — "'+LB[s]+'" लगाना है?\n\nलगने के बाद आप इसे हटा नहीं सकेंगे (सिर्फ़ मास्टर हटा सकता है)।'))return;
+ if((s==='V'||s==='L')&&!nc&&!confirm(k+' — "'+LB[s]+'" लगाना है?\n\nलगने के बाद आप इसे हटा नहीं सकेंगे (सिर्फ़ मास्टर हटा सकता है)।'))return;
  if(s==='C'){delete ST[k];s=''}else ST[k]=[s,ts,ID];
  q.push([+a[0],+a[1],s,ts]);sv('bh_q',q);sv('bh_st',ST);run();stat();schedule(1500)}
 function DEV(){var d=LS.getItem('bh_dev');if(!d){d=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now().toString(36)+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2));try{LS.setItem('bh_dev',d)}catch(e){}}return d}
