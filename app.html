@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=30;</script>
+<script>var UIV=31;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -139,7 +139,7 @@ function row(v){var e=ST[key(v)],s=e?e[0]:'',b=(D.w[v[0]]||[])[0],sd=(D.s||{})[k
  ((sd[6]||sd[8]||sd[5])?'<div class="m">'+(sd[6]?'पर्ची '+esc(sd[6]):'')+(sd[8]?' · '+esc(sd[8]):'')+((sd[7]||sd[5])?' · 📍 '+esc(sd[7]||sd[5]):'')+'</div>':'')+
  ((sd[3]||sd[2]||sd[1])?'<div class="m">'+(sd[3]?'जाति: '+esc(sd[3]):'')+(sd[1]?' · सब: '+esc(sd[1]):'')+(sd[2]?' · मेन: '+esc(sd[2]):'')+'</div>':'')+'<div class="m">'+(ph?'<a href="tel:'+ph+'">📞 '+esc(ph)+'</a> '+(VIEW?'':'<button class="sm" data-ph="1">✏️ नंबर बदलें</button> '):(VIEW?'':'<button class="sm" data-ph="1">📞 नंबर जोड़ें</button> '))+(VIEW?'':'<button class="sm" data-loc="1">📍 कहाँ है</button> ')+(fm>1?'<button class="sm" data-fam="'+v[0]+'|'+esc(String(v[2]).split(' ')[0])+'">👨‍👩‍👧 परिवार: '+fm+' सदस्य</button>':'')+'</div>'+(noteTxt(sd)?'<div class="m">📝 '+esc(noteTxt(sd))+'</div>':'')+
  (v[10]===2?'<span class="tag d">सूची से हटाया गया</span>':'')+(e&&e[0]?'<span class="tag">'+LB[e[0]]+(e[2]?' · '+esc(e[2]==='MASTER'?'मास्टर':e[2]):'')+(e[1]?' · '+new Date(e[1]).toTimeString().slice(0,5):'')+'</span>':'')+
- (VIEW?'':'<div class="bt">'+['L','N','V'].map(function(x){return '<button data-s="'+x+'" class="'+x+(s===x?' on':'')+'">'+LB[x]+'</button>'}).join('')+'<button data-s="C">↺ हटाएँ</button></div>')+'</div>'}
+ (VIEW?'':'<div class="bt">'+['L','N','V'].map(function(x){var lk=(s==='V'&&x!=='V')||(s==='L'&&x==='N');return '<button data-s="'+x+'" class="'+x+(s===x?' on':'')+'"'+(lk?' disabled style="opacity:.35"':'')+'>'+LB[x]+'</button>'}).join('')+(s==='V'||s==='L'?'<span class="muted" style="align-self:center;font-size:12px;padding:0 4px">🔒 सिर्फ़ मास्टर हटा सकता है</span>':'<button data-s="C">↺ हटाएँ</button>')+'</div>')+'</div>'}
 var SHOWN=100;
 function run(keep){if(keep!==true)SHOWN=100;var r=find($('q').value);if($('hn').value.trim())r.sort(function(a,b){return a[0]-b[0]||a[1]-b[1]});
  if(!r.length){$('res').innerHTML=($('q').value.trim()||$('hn').value.trim())?'<p class="muted">कोई नहीं मिला</p>':'<div class="card"><p class="muted">ऊपर नाम, पिता/पति, EPIC, क्रम या मकान नंबर लिखें।<br>जैसे: <b>रामलाल</b> · <b>राम सिंह</b> · <b>मकान 58</b><br>वार्ड चुनें तो उसके सब मतदाता दिखेंगे।</p></div>';return}
@@ -159,7 +159,9 @@ function setLoc(k){if(VIEW)return;var sd=(D.s||{})[k]||[],n=prompt('यह म�
 function addPhone(k){if(VIEW)return;var sd=(D.s||{})[k]||[],pp=PH[k],cur=String((pp?pp[0]:sd[4])||'').replace(/[^0-9]/g,'');var n=prompt(cur?'सही मोबाइल नंबर लिखें (10 अंक)।\nअभी लिखा है: '+cur:'मोबाइल नंबर लिखें (10 अंक):',cur);if(n===null)return;n=String(n).replace(/[^0-9]/g,'');if(n.length===12&&n.indexOf('91')===0)n=n.slice(2);if(n.length!==10){alert('10 अंक का नंबर लिखें');return}
  var a=k.split('-'),ts=Date.now()+(+g('bh_off',0)||0),q=g('bh_pq',[]);PH[k]=[n,ts,ID];q.push([+a[0],+a[1],n,ts]);sv('bh_pq',q);sv('bh_ph',PH);run();schedule(1500)}
 function mark(k,s){if(VIEW)return;var a=k.split('-');var q=g('bh_q',[]),ts=Date.now()+(+g('bh_off',0)||0);
- if(ST[k]&&ST[k][0]==='V'&&(s==='L'||s==='N')){alert('इसका वोट डाला जा चुका है — बदलने के लिए पहले ↺ हटाएँ दबाएँ');return}
+ var cs=ST[k]&&ST[k][0];if(cs===s)return;
+ if((cs==='V')||(cs==='L'&&s!=='V')){alert((cs==='V'?'इसका "वोट डाला"':'इस पर "लाया"')+' लग चुका है।\n\nहटाने / बदलने का अधिकार सिर्फ़ मास्टर के पास है — गलती हो तो मास्टर को बताएँ।');return}
+ if((s==='V'||s==='L')&&!confirm(k+' — "'+LB[s]+'" लगाना है?\n\nलगने के बाद आप इसे हटा नहीं सकेंगे (सिर्फ़ मास्टर हटा सकता है)।'))return;
  if(s==='C'){delete ST[k];s=''}else ST[k]=[s,ts,ID];
  q.push([+a[0],+a[1],s,ts]);sv('bh_q',q);sv('bh_st',ST);run();stat();schedule(1500)}
 function DEV(){var d=LS.getItem('bh_dev');if(!d){d=(window.crypto&&crypto.randomUUID)?crypto.randomUUID():(Date.now().toString(36)+Math.random().toString(36).slice(2)+Math.random().toString(36).slice(2));try{LS.setItem('bh_dev',d)}catch(e){}}return d}
@@ -180,7 +182,7 @@ async function sync(){if(syncing||!API||!D)return;if(navigator.onLine===false){f
   var ntc=0;(r.nts||[]).sort(function(x,y){return x[3]-y[3]}).forEach(function(e){var k=e[0]+'-'+e[1],o=NT[k];if(o&&e[3]<o[1])return;var cur={},nw={};try{cur=o?JSON.parse(o[0]):{}}catch(x){}try{nw=JSON.parse(e[2])}catch(x){}Object.keys(nw).forEach(function(z){cur[z]=nw[z]});NT[k]=[JSON.stringify(cur),e[3]];ntc++});if(ntc){sv('bh_nt',NT);init()}
   (r.phs||[]).sort(function(x,y){return x[3]-y[3]}).forEach(function(e){var k=e[0]+'-'+e[1],o=PH[k];if(o&&e[3]<o[1])return;PH[k]=[e[2]||'',e[3],e[4]]});sv('bh_ph',PH);
   if(r.now)sv('bh_off',r.now-Date.now());
-  (r.ents||[]).sort(function(x,y){return x[3]-y[3]}).forEach(function(e){var k=e[0]+'-'+e[1],o=ST[k];if(o&&e[3]<o[1])return;if(o&&o[0]==='V'&&(e[2]==='L'||e[2]==='N')&&e[4]!=='MASTER')return;if(e[2])ST[k]=[e[2],e[3],e[4]];else delete ST[k]});
+  (r.ents||[]).sort(function(x,y){return x[3]-y[3]}).forEach(function(e){var k=e[0]+'-'+e[1],o=ST[k];if(o&&e[3]<o[1])return;if(o&&e[4]!=='MASTER'&&((o[0]==='V'&&e[2]!=='V')||(o[0]==='L'&&e[2]!=='L'&&e[2]!=='V')))return;if(e[2])ST[k]=[e[2],e[3],e[4]];else delete ST[k]});
   sv('bh_st',ST);sv('bh_since',Math.max(0,(r.now||0)-3000));sv('bh_sync',Date.now());lastErr='';
   if(r.exp&&r.exp!==EXP)EXP=r.exp;
   if(r.dv&&r.dv!==DV)await getData();
