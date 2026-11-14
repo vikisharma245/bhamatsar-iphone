@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=34;</script>
+<script>var UIV=35;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -139,7 +139,21 @@ function row(v){var e=ST[key(v)],s=e?e[0]:'',b=(D.w[v[0]]||[])[0],sd=(D.s||{})[k
  ((sd[6]||sd[8]||sd[5])?'<div class="m">'+(sd[6]?'पर्ची '+esc(sd[6]):'')+(sd[8]?' · '+esc(sd[8]):'')+((sd[7]||sd[5])?' · 📍 '+esc(sd[7]||sd[5]):'')+'</div>':'')+
  ((sd[3]||sd[2]||sd[1])?'<div class="m">'+(sd[3]?'जाति: '+esc(sd[3]):'')+(sd[1]?' · सब: '+esc(sd[1]):'')+(sd[2]?' · मेन: '+esc(sd[2]):'')+'</div>':'')+'<div class="m">'+(ph?'<a href="tel:'+ph+'">📞 '+esc(ph)+'</a> '+(VIEW?'':'<button class="sm" data-ph="1">✏️ नंबर बदलें</button> '):(VIEW?'':'<button class="sm" data-ph="1">📞 नंबर जोड़ें</button> '))+(VIEW?'':'<button class="sm" data-loc="1">📍 कहाँ है</button> ')+(fm>1?'<button class="sm" data-fam="'+v[0]+'|'+esc(String(v[2]).split(' ')[0])+'">👨‍👩‍👧 परिवार: '+fm+' सदस्य</button>':'')+'</div>'+(noteTxt(sd)?'<div class="m">📝 '+esc(noteTxt(sd))+'</div>':'')+(/^(death|मृत्यु)$/i.test(catOf(sd).trim())||/(^|·)\s*(death|मृत्यु)\s*(·|$)/i.test(String(sd[9]||''))?'<span class="tag d">⚰️ मृत्यु</span>':'')+
  (v[10]===2?'<span class="tag d">सूची से हटाया गया</span>':'')+(e&&e[0]?'<span class="tag">'+LB[e[0]]+(e[2]?' · '+esc(e[2]==='MASTER'?'मास्टर':e[2]):'')+(e[1]?' · '+new Date(e[1]).toTimeString().slice(0,5):'')+'</span>':'')+
+ ((s!=='V'&&!(v[10]===2))?(function(){var x=rsnOf(key(v));return '<div class="m" style="margin-top:4px">'+(x?'<span class="tag" style="background:#fff3e0;color:#e65100">❓ '+esc(rsnTxt(x))+'</span> ':'')+(VIEW?'':'<button class="sm" data-rsn="1">'+(x?'✏️ कारण बदलें':'❓ वोट क्यों बाकी?')+'</button>')+'</div>'})():'')+
  (VIEW?'':'<div class="bt">'+['L','N','V'].map(function(x){var lk=(s==='V'&&x!=='V')||(s==='L'&&x==='N');return '<button data-s="'+x+'" class="'+x+(s===x?' on':'')+'"'+(lk?' disabled style="opacity:.35"':'')+'>'+LB[x]+'</button>'}).join('')+(s==='V'||s==='L'?'<span class="muted" style="align-self:center;font-size:12px;padding:0 4px">🔒 सिर्फ़ मास्टर हटा सकता है</span>':'<button data-s="C">↺ हटाएँ</button>')+'</div>')+'</div>'}
+/* बाकी वोटर — वोट क्यों नहीं डला (कारण चुनें): सर्वर पर notes में r / rt / rw */
+var RSN={G:'🚗 गाड़ी चाहिए',B:'⏰ बाद में आएगा',O:'🏙 बाहर गया',C:'📞 संपर्क नहीं / घर बंद',M:'🤔 मन नहीं बना',N:'❌ नहीं आएगा',D:'⚰️ मृत्यु / नाम दोहराया',X:'✏️ और कुछ'};
+function rsnOf(k){try{var o=NT[k]?JSON.parse(NT[k][0]):{};return o.r?{r:o.r,t:o.rt||'',w:o.rw||''}:null}catch(e){return null}}
+function rsnTxt(x){return x&&RSN[x.r]?RSN[x.r]+(x.w?' ('+x.w+' तक)':'')+(x.t?' · '+x.t:''):''}
+function rsnPick(c){var k=c.getAttribute('data-k'),el=c.querySelector('.rsp');if(el){el.remove();return}el=document.createElement('div');el.className='rsp';el.style.cssText='margin-top:6px;display:flex;flex-wrap:wrap;gap:5px';
+ el.innerHTML='<div class="muted" style="width:100%">वोट अभी तक क्यों नहीं डला? एक चुनें:</div>'+Object.keys(RSN).map(function(r){return '<button class="sm" data-rc="'+r+'">'+RSN[r]+'</button>'}).join('')+(rsnOf(k)?'<button class="sm" data-rc="-" style="background:#eee">✖ कारण हटाएँ</button>':'');c.appendChild(el)}
+function setRsn(k,r){if(VIEW)return;var t='',w='';if(r==='-')r='';
+ if(r==='B'){var n=prompt('कब तक आएगा? नंबर लिखें:\n1 = 10 बजे तक\n2 = 12 बजे तक\n3 = 2 बजे तक\n4 = 4 बजे तक\n5 = शाम तक','');if(n===null)return;w={'1':'10 बजे','2':'12 बजे','3':'2 बजे','4':'4 बजे','5':'शाम'}[String(n).trim()]||''}
+ if(r==='O'||r==='X'||r==='M'){t=prompt(r==='O'?'कहाँ है और आ पाएगा या नहीं? (जैसे: बीकानेर, शाम तक आएगा)':r==='M'?'किससे बात करवानी है? (वैकल्पिक)':'क्या बात है? छोटा सा लिखें','');if(t===null)return;t=String(t).trim().slice(0,120)}
+ var a=k.split('-'),ts=Date.now()+(+g('bh_off',0)||0),q=g('bh_nq',[]),o={r:r,rt:t,rw:w};q.push([+a[0],+a[1],JSON.stringify(o),ts]);sv('bh_nq',q);
+ var cur={};try{cur=NT[k]?JSON.parse(NT[k][0]):{}}catch(x){}cur.r=r;cur.rt=t;cur.rw=w;NT[k]=[JSON.stringify(cur),ts];sv('bh_nt',NT);run(true);schedule(1500);
+ if(r==='G'&&confirm('गाड़ी प्रभारी को गाड़ी की माँग भी भेज दें?\n(1 व्यक्ति, इनकी जगह के साथ)')){var v=null;D.v.some(function(x){if(key(x)===k){v=x;return true}});var sd=(D.s||{})[k]||[];
+  try{rqPush({rid:ID+'-'+Date.now().toString(36),t:'L',n:'1',rt:String(sd[8]||''),pl:(sd[8]?sd[8]+' · ':'')+(v?v[3]+' (वार्ड '+v[0]+' मकान '+v[2]+')':k)+((sd[7]||sd[5])?' · '+(sd[7]||sd[5]):''),nt:'बाकी वोटर — गाड़ी चाहिए',st:'new'});alert('गाड़ी की माँग भेज दी ✔')}catch(e){alert('माँग नहीं गई — "🚐 गाड़ी" टैब से भेजें')}}}
 var SHOWN=100;
 /* खोज में कोई छिपा हो (फ़िल्टर या ID के दायरे से) तो बताना */
 function hidHint(q){var f0=FIL,s0=SC,w0=SCW,a=0,b=0;try{var n0=find(q).length;FIL='';a=find(q).length-n0;SC='';SCW=null;b=find(q).length-n0-a}catch(e){}FIL=f0;SC=s0;SCW=w0;
@@ -150,8 +164,8 @@ function run(keep){if(keep!==true)SHOWN=100;var r=find($('q').value);if($('hn').
  if(!r.length){$('res').innerHTML=(qq||$('hn').value.trim())?'<p class="muted">कोई नहीं मिला</p>'+hh:'<div class="card"><p class="muted">ऊपर नाम, पिता/पति, EPIC, क्रम या मकान नंबर लिखें।<br>जैसे: <b>रामलाल</b> · <b>राम सिंह</b> · <b>मकान 58</b><br>वार्ड चुनें तो उसके सब मतदाता दिखेंगे।</p></div>';return}
  var stF=FIL==='R'||FIL==='L'||FIL==='P'||FIL==='V';$('res').innerHTML=hh+'<p class="muted">'+(stF?'सूची':r.length+' मिले')+(r.length>SHOWN?' (अभी '+SHOWN+' दिखाए)':'')+'</p>'+r.slice(0,SHOWN).map(row).join('')+(r.length>SHOWN?'<button class="btn" id="more" style="margin:8px 0 70px">⬇ और '+(stF?'':Math.min(100,r.length-SHOWN)+' ')+'दिखाएँ'+(stF?'':' (बाकी '+(r.length-SHOWN)+')')+'</button>':'')}
 function stat(){var a=0,l=0,vv=0;D.v.forEach(function(v){if(v[10]===2||!vis(v))return;a++;var s=stOf(v);if(s==='L')l++;if(s==='V')vv++});
- var mk=Object.keys(MYS),mn=mk.length,md=0,ml=0;mk.forEach(function(k){var s=(ST[k]||[])[0];if(s==='V')md++;else if(s==='L')ml++});
- $('stats').innerHTML='<div><b>'+a+'</b>कुल मतदाता</div>'+(mn?'<div id="myp" style="cursor:pointer" title="मेरे बचे लोग दिखाओ"><b style="color:#b71c1c">'+(mn-md)+'</b>🙋 मेरे बाकी (सौंपे '+mn+' · ✅ '+md+(ml?' · 🚗 '+ml:'')+')</div>':'');   /* कुल गिनती सिर्फ़ मास्टर में; वॉलंटियर को सिर्फ़ अपने सौंपे लोगों का हिसाब */
+ var mk=Object.keys(MYS),mn=mk.length,md=0,ml=0,mq=0;mk.forEach(function(k){var s=(ST[k]||[])[0];if(s==='V')md++;else{if(s==='L')ml++;try{if(!rsnOf(k))mq++}catch(e){}}});
+ $('stats').innerHTML='<div><b>'+a+'</b>कुल मतदाता</div>'+(mn?'<div id="myp" style="cursor:pointer" title="मेरे बचे लोग दिखाओ"><b style="color:#b71c1c">'+(mn-md)+'</b>🙋 मेरे बाकी (सौंपे '+mn+' · ✅ '+md+(ml?' · 🚗 '+ml:'')+(mq&&mq<mn-md?' · ❓ बिना कारण '+mq:'')+')</div>':'');   /* कुल गिनती सिर्फ़ मास्टर में; वॉलंटियर को सिर्फ़ अपने सौंपे लोगों का हिसाब */
  if($('myp'))$('myp').onclick=function(){FIL='M';try{chips()}catch(e){}try{run()}catch(e){}};
  $('hs').textContent=ID+' · '+NAME+(VIEW?' · सिर्फ़ देखने के लिए':'')+' · डेटा '+(D.gen||'');foot()}
 function pend(){return g('bh_q',[]).length+g('bh_pq',[]).length+g('bh_nq',[]).length+g('bh_sq',[]).length}
@@ -218,6 +232,8 @@ $('res').addEventListener('click',function(e){var b=e.target.closest('button');i
  if(b.getAttribute('data-fam')){var fp=b.getAttribute('data-fam').split('|');$('w').value=fp[0];$('rt').value='';$('fmn').value='';$('fsb').value='';FIL='';chips();$('q').value='';$('hn').value=fp[1];run();window.scrollTo(0,0);return}
  if(b.getAttribute('data-ph')){addPhone(c.getAttribute('data-k'));return}
  if(b.getAttribute('data-loc')){setLoc(c.getAttribute('data-k'));return}
+ if(b.getAttribute('data-rsn')){rsnPick(c);return}
+ if(b.getAttribute('data-rc')){setRsn(c.getAttribute('data-k'),b.getAttribute('data-rc'));return}
  if(b.getAttribute('data-sg')){suggest(c.getAttribute('data-k'));return}if(c&&c.getAttribute('data-k')&&b.getAttribute('data-s'))mark(c.getAttribute('data-k'),b.getAttribute('data-s'))});
 
 function locOf(sd){var g=String(sd[7]||''),c=String(sd[5]||'');if(/^गाँव/.test(g))return 'G';if(/^ढाणी/.test(g))return 'D';if(/^बाहर/.test(g))return 'B';if(c==='In village')return 'G';if(/Dhani/i.test(c))return 'D';if(/Outside/i.test(c))return 'B';return 'U'}
