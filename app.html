@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=32;</script>
+<script>var UIV=33;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -109,7 +109,7 @@ function init(){
  $('fmn').innerHTML='<option value="">सारे मेन (मुखिया)</option>'+Object.keys(mm).sort().map(function(x){return '<option>'+esc(x)+'</option>'}).join('');
  $('fsb').innerHTML='<option value="">सारे सब-मुखिया</option>'+Object.keys(sb).sort().map(function(x){return '<option>'+esc(x)+'</option>'}).join('');
  FX=null;IX=D.v.map(function(v){var sd=(D.s||{})[v[0]+'-'+v[1]];return norm([v[3],v[4],v[5],v[6],v[9],sd?sd[4]:''].join(' '))});
- setSc(SC);if(SC==='M'&&!FIL)FIL='M';else if(HIDE()&&!FIL)FIL='P';var ws=[],seen={};D.v.forEach(function(v){if(!seen[v[0]]&&vis(v)){seen[v[0]]=1;ws.push(v[0])}});ws.sort(function(a,b){return a-b});
+ setSc(SC);if(SC==='M'&&!FIL)FIL='M';   /* बाकी सबके लिए शुरू में "सब" */var ws=[],seen={};D.v.forEach(function(v){if(!seen[v[0]]&&vis(v)){seen[v[0]]=1;ws.push(v[0])}});ws.sort(function(a,b){return a-b});
  $('w').innerHTML='<option value="">सारे वार्ड</option>'+ws.map(function(w){var b=(D.w[w]||[])[0];return '<option value="'+w+'">वार्ड '+w+(b?' (बूथ '+esc(b)+')':'')+'</option>'}).join('');
  var rs={};Object.keys(D.s||{}).forEach(function(k){var r=D.s[k][8];if(r)rs[r]=1});$('rt').innerHTML='<option value="">सारे रूट / गाँव</option>'+Object.keys(rs).sort().map(function(r){return '<option>'+esc(r)+'</option>'}).join('');
  $('hd').textContent=D.vill||CFG.TITLE;$('lg').classList.add('hid');$('app').classList.remove('hid');
@@ -137,7 +137,7 @@ function row(v){var e=ST[key(v)],s=e?e[0]:'',b=(D.w[v[0]]||[])[0],sd=(D.s||{})[k
  return '<div class="card" data-k="'+key(v)+'"><div class="n">'+esc(v[3])+(v[4]&&v[4]!==v[3]?' <span class="muted">('+esc(v[4])+')</span>':'')+'</div>'+
  '<div class="m">पिता/पति: '+esc(v[5])+' · वार्ड '+v[0]+' · क्रम '+v[1]+' · मकान '+esc(v[2])+' · '+esc(v[8])+' '+esc(v[7])+(b?' · बूथ '+esc(b):'')+'</div>'+
  ((sd[6]||sd[8]||sd[5])?'<div class="m">'+(sd[6]?'पर्ची '+esc(sd[6]):'')+(sd[8]?' · '+esc(sd[8]):'')+((sd[7]||sd[5])?' · 📍 '+esc(sd[7]||sd[5]):'')+'</div>':'')+
- ((sd[3]||sd[2]||sd[1])?'<div class="m">'+(sd[3]?'जाति: '+esc(sd[3]):'')+(sd[1]?' · सब: '+esc(sd[1]):'')+(sd[2]?' · मेन: '+esc(sd[2]):'')+'</div>':'')+'<div class="m">'+(ph?'<a href="tel:'+ph+'">📞 '+esc(ph)+'</a> '+(VIEW?'':'<button class="sm" data-ph="1">✏️ नंबर बदलें</button> '):(VIEW?'':'<button class="sm" data-ph="1">📞 नंबर जोड़ें</button> '))+(VIEW?'':'<button class="sm" data-loc="1">📍 कहाँ है</button> ')+(fm>1?'<button class="sm" data-fam="'+v[0]+'|'+esc(String(v[2]).split(' ')[0])+'">👨‍👩‍👧 परिवार: '+fm+' सदस्य</button>':'')+'</div>'+(noteTxt(sd)?'<div class="m">📝 '+esc(noteTxt(sd))+'</div>':'')+
+ ((sd[3]||sd[2]||sd[1])?'<div class="m">'+(sd[3]?'जाति: '+esc(sd[3]):'')+(sd[1]?' · सब: '+esc(sd[1]):'')+(sd[2]?' · मेन: '+esc(sd[2]):'')+'</div>':'')+'<div class="m">'+(ph?'<a href="tel:'+ph+'">📞 '+esc(ph)+'</a> '+(VIEW?'':'<button class="sm" data-ph="1">✏️ नंबर बदलें</button> '):(VIEW?'':'<button class="sm" data-ph="1">📞 नंबर जोड़ें</button> '))+(VIEW?'':'<button class="sm" data-loc="1">📍 कहाँ है</button> ')+(fm>1?'<button class="sm" data-fam="'+v[0]+'|'+esc(String(v[2]).split(' ')[0])+'">👨‍👩‍👧 परिवार: '+fm+' सदस्य</button>':'')+'</div>'+(noteTxt(sd)?'<div class="m">📝 '+esc(noteTxt(sd))+'</div>':'')+(/^(death|मृत्यु)$/i.test(catOf(sd).trim())||/(^|·)\s*(death|मृत्यु)\s*(·|$)/i.test(String(sd[9]||''))?'<span class="tag d">⚰️ मृत्यु</span>':'')+
  (v[10]===2?'<span class="tag d">सूची से हटाया गया</span>':'')+(e&&e[0]?'<span class="tag">'+LB[e[0]]+(e[2]?' · '+esc(e[2]==='MASTER'?'मास्टर':e[2]):'')+(e[1]?' · '+new Date(e[1]).toTimeString().slice(0,5):'')+'</span>':'')+
  (VIEW?'':'<div class="bt">'+['L','N','V'].map(function(x){var lk=(s==='V'&&x!=='V')||(s==='L'&&x==='N');return '<button data-s="'+x+'" class="'+x+(s===x?' on':'')+'"'+(lk?' disabled style="opacity:.35"':'')+'>'+LB[x]+'</button>'}).join('')+(s==='V'||s==='L'?'<span class="muted" style="align-self:center;font-size:12px;padding:0 4px">🔒 सिर्फ़ मास्टर हटा सकता है</span>':'<button data-s="C">↺ हटाएँ</button>')+'</div>')+'</div>'}
 var SHOWN=100;
