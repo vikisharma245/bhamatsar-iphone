@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=56;</script>
+<script>var UIV=57;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -152,7 +152,7 @@ function ntcShow(force){var L=ntcUnread();if(!L.length&&!force)return;if($('ntco
  o.innerHTML='<div style="background:#fffde7;border:3px solid #f9a825;border-radius:12px;max-width:520px;width:100%;max-height:85vh;overflow:auto;padding:14px"><div style="font-size:20px;font-weight:700;margin-bottom:6px">📢 मास्टर की सूचना'+(L.length>1?' ('+L.length+')':'')+'</div>'+L.slice().reverse().map(function(n){return '<div style="border-top:1px solid #f0d78c;padding:8px 0;font-size:17px;line-height:1.45;white-space:pre-wrap">'+esc(n.x)+(n.a?my:'')+'<div class="muted" style="font-size:12px;margin-top:3px">'+new Date(n.id).toLocaleString('hi-IN',{day:'numeric',month:'numeric',hour:'2-digit',minute:'2-digit'})+'</div></div>'}).join('')+'<button class="btn" id="ntcok" style="background:#2e7d32;font-size:17px;padding:12px">✔ पढ़ लिया</button></div>';
  document.body.appendChild(o);beep();$('ntcok').onclick=function(){var mx=0;(g('bh_ntc',[])||[]).forEach(function(n){if(n.id>mx)mx=n.id});sv('bh_nread',mx);o.remove();try{stat()}catch(e){}schedule(1500)}}
 /* नमूना मत पत्र: GitHub Pages से एक बार लेकर फ़ोन में रख लेता है (बिना नेट भी दिखे) */
-var NMURL='https://vikisharma245.github.io/bhamatsar-iphone/namuna.jpg',NMV='2';
+var NMURL='https://vikisharma245.github.io/bhamatsar-iphone/namuna.jpg',NMV='3';
 function nmCache(){if(g('bh_nmv','')===NMV&&LS.getItem('bh_nm'))return;fetch(NMURL+'?v='+NMV,{cache:'no-cache'}).then(function(r){if(!r.ok)throw 0;return r.blob()}).then(function(b){var fr=new FileReader();fr.onload=function(){try{LS.setItem('bh_nm',fr.result);sv('bh_nmv',NMV)}catch(e){}};fr.readAsDataURL(b)}).catch(function(){})}
 var NMVID=[];   /* [['शीर्षक','https://youtube...']] — मास्टर के चुनने के बाद */
 function nmShow(k){var vv=null;if(k)D.v.some(function(x){if(key(x)===k){vv=x;return true}});var o=document.createElement('div');o.id='nmo';o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99999;overflow:auto;-webkit-overflow-scrolling:touch;text-align:center;padding:10px 6px 30px';
