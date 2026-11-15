@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=80;</script>
-<style>
+<script>var UIV=81;</script>
+<style>body.sahveh .sb,body.sahveh #stats,body.sahveh #res{display:none}
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:linear-gradient(90deg,#1b5e20,#2e7d32);color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
 header b{font-size:16px}header small{display:block;opacity:.85;font-size:12px}
@@ -163,8 +163,8 @@ if(vv){o.style.paddingBottom='150px';o.innerHTML+='<div style="position:fixed;le
  document.body.appendChild(o);$('nmx').onclick=function(){o.remove()};if(vv){NMPOS=null;var nb=$('nmok');nb.disabled=false;nb.style.background='#2e7d32';nb.textContent='✔ '+vv[3]+' को मोहर लगाना समझा दिया';nb.onclick=function(){if(nb.disabled)return;o.remove();setFlag(k,'fm',1)}}nmCache()}
 /* काम के निशान (वोट की स्थिति से अलग): पर्ची दी, मोहर समझाया, पर्ची पास है/नहीं, गाड़ी में बिठाया, वापस छोड़ा, लाइन में लगा */
 var FLG={fh:'🧾 पर्ची पास?',fp:'📄 पर्ची दी',fm:'🗳 मोहर समझाया',fb:'🚙 बिठाया',fx:'🏢 कार्यालय पर छोड़ा',fd:'🏠 वापस छोड़ा',fq:'🙋 लाइन में लगा',fo:'🚗 वॉलंटियर की अपनी गाड़ी से आएँगे',gl:'📍 घर/ढाणी की लोकेशन दी',gn:'🚶 गाड़ी नहीं चाहिए'};
-function myFlags(){if(VIEW)return [];if(isDrv())return ['fb','fx','fd'];if(/^B/i.test(RL||''))return [];return ['gv']}
-function canMark(k){if(VIEW)return false;if(/^[VP]/i.test(RL||ID)&&!isPR()&&!isDrv())return !!(MYS||{})[k];return true}
+function myFlags(){if(VIEW)return [];if(isDrv()||sahOn())return ['fb','fx','fd'];if(/^B/i.test(RL||''))return [];return ['gv']}
+function canMark(k){if(VIEW)return false;if(/^[VP]/i.test(RL||ID)&&!isPR()&&!isDrv()&&!sahOn())return !!(MYS||{})[k];return true}
 function flOf(k,f){try{var o=NT[k]?JSON.parse(NT[k][0]):{};return String(o[f]||'')}catch(e){return ''}}
 function flBtns(k){var F=myFlags();if(!F.length)return '';
  if(F.indexOf('gv')>=0){if((ST[k]||[])[0]==='V')return '';var gl0=flOf(k,'gl'),tg=gl0.split('·');return '<div style="margin-top:6px"><button data-gv="'+k+'" data-gvc="gl" style="border-radius:10px;padding:7px 12px;font-size:14px;font-weight:700;'+(gl0?'background:#e65100;color:#fff;border:2px solid #e65100':'background:#fff;color:#e65100;border:2px solid #ffb74d')+'">🚙 '+(gl0?'गाड़ी माँगी ✔'+(tg[2]?' '+esc(String(tg[2]).slice(0,5)):'')+(tg[3]?' 📍':''):'गाड़ी भेजो')+'</button></div>';var pb=function(f,ic,lb0,lb1,c){var v=flOf(k,f),on=!!v,t=v.split('·');return '<button data-fl="'+f+'" data-flk="'+k+'" style="flex:1;min-width:0;border-radius:12px;padding:10px 6px;font-size:14.5px;font-weight:700;line-height:1.2;border:2px solid '+c+';'+(on?'background:'+c+';color:#fff':'background:#fff;color:'+c)+'">'+ic+' '+(on?lb1+' ✔'+(t[0]==='S'?' (बताया)':'')+(t[2]?'<div style="font-size:10.5px;font-weight:400;opacity:.9">'+esc(String(t[2]).slice(0,5))+'</div>':''):lb0)+'</button>'};
@@ -194,7 +194,7 @@ function setFlag(k,f,ok){if(VIEW)return;var cur=flOf(k,f),tm=new Date().toTimeSt
  else{if(cur){if(!confirm(FLG[f]+' — यह निशान हटाना है?'))return;v=''}else v=(ok==='S'?'S':'1')+'·'+ID+'·'+tm}
  var a=k.split('-'),ts=Date.now()+(+g('bh_off',0)||0),q=g('bh_nq',[]),o={};o[f]=v;q.push([+a[0],+a[1],JSON.stringify(o),ts]);sv('bh_nq',q);
  var cu={};try{cu=NT[k]?JSON.parse(NT[k][0]):{}}catch(x){}cu[f]=v;NT[k]=[JSON.stringify(cu),ts];sv('bh_nt',NT);
- if(v&&isDrv()&&(f==='fb'||f==='fx'||f==='fd')){try{flLoc(k,f,v)}catch(e){}}   /* वॉलंटियर की लोकेशन नहीं — सिर्फ़ ढाणी-लोकेशन / गाड़ी चाहिए पर */
+ if(v&&(isDrv()||sahOn())&&(f==='fb'||f==='fx'||f==='fd')){try{flLoc(k,f,v)}catch(e){}}   /* वॉलंटियर की लोकेशन नहीं — सिर्फ़ ढाणी-लोकेशन / गाड़ी चाहिए पर */
  if(f==='fx'&&v&&!$('reto')){clearTimeout(window.RETT);window.RETT=setTimeout(function(){try{retPrompt()}catch(e){}},2500)}
  if(f==='fd'&&v&&((ST[k]||[])[0]!=='V')){var nm='';D.v.some(function(x){if(key(x)===k){nm=x[3];return true}});if(confirm('🗳 '+(nm||k)+' — क्या इनका वोट पड़ गया?\n\nOK = हाँ, ✅ "वोट दे दिया" लगा दो (बाद में सिर्फ़ मास्टर हटा सकता है)\nCancel = नहीं, वोट अभी बाकी है'))mark(k,'V',1);else alert('ठीक है — '+(nm||k)+' "बाकी" में रहेंगे। वोट नहीं डाला तो "❓ वोट क्यों बाकी?" में कारण भर दें।')}
  try{run(true)}catch(e){}try{drawRq()}catch(e){}schedule(1500)}
@@ -424,7 +424,7 @@ function trMoney(n){n=Math.round((+n||0)*100)/100;return '₹'+(n%1?n.toFixed(2)
 function trDate(d){var p=String(d||'').split('-');return p.length===3?(+p[2])+'/'+(+p[1])+'/'+p[0]:esc(d||'')}
 function trToday(){return new Date(Date.now()+5.5*3600000).toISOString().slice(0,10)}
 function trNum(x){var n=parseFloat(String(x||'').replace(/[^0-9.]/g,''));return isFinite(n)?n:0}
-function trFormHtml(){return '<style>.trf label{display:flex;flex-direction:column;font-size:12.5px;gap:2px;color:#4a5866}.trf input,.trf select{width:100%;box-sizing:border-box}#tr_s td,#tr_s th{padding:4px 6px}</style><div class="trf" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;align-items:end">'+
+function trFormHtml(){return '<style>body.sahveh .sb,body.sahveh #stats,body.sahveh #res{display:none}.trf label{display:flex;flex-direction:column;font-size:12.5px;gap:2px;color:#4a5866}.trf input,.trf select{width:100%;box-sizing:border-box}#tr_s td,#tr_s th{padding:4px 6px}</style><div class="trf" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:6px;align-items:end">'+
  '<label>गाड़ी<select id="tr_g"></select></label><label id="tr_nol" style="display:none">गाड़ी नंबर<input id="tr_no" placeholder="RJ07 AB 1234"></label>'+
  '<label>तारीख (पुरानी भी)<input id="tr_d" type="date"></label><label>कौन-सा गाँव / जगह<input id="tr_pl" placeholder="जैसे नोखा, सालुंडिया ढाणी"></label>'+
  '<label>काम<select id="tr_k"><option value="L">वोट / लोग लाने</option><option value="D">वापस छोड़ने</option><option value="O">दूसरा काम</option></select></label><label>कितने वोट / लोग<input id="tr_v" inputmode="numeric" placeholder="जैसे 8"></label>'+
@@ -584,6 +584,7 @@ document.addEventListener('click',function(e){if(!isFleet()||!e.target.closest)r
   var u=fUser(q.id)||[];vh.vn=u[1]||q.name||'';vh.vm=u[3]||'';if(!confirm(vh.no+' को '+(vh.vn||q.id)+' के पास भेजना है?'))return;fUpd({rid:rid,st:'sent',veh:vh},b);return}
  if((b=t.closest('[data-fd]'))){if(confirm('यह काम पूरा हो गया?'))fUpd({rid:b.getAttribute('data-fd'),st:'done'},b);return}
  if((b=t.closest('[data-fx]'))){if(confirm('यह माँग रद्द करनी है?'))fUpd({rid:b.getAttribute('data-fx'),st:'cancel'},b);return}});
+document.addEventListener('click',function(e){var b=e.target.closest&&e.target.closest('[data-sahm]');if(!b)return;sv('bh_sahm',b.getAttribute('data-sahm'));drawRq();try{run(true)}catch(x){}window.scrollTo(0,0)});
 var RQT={L:'लोगों को लाना',D:'वापस छोड़ना'},RQS={new:'⏳ माँग भेजी — मास्टर गाड़ी भेजेगा',sent:'🚐 गाड़ी भेजी गई',done:'✔ पूरा हुआ',cancel:'✖ रद्द'};
 function rqList(){var L=g('bh_rq',[]),Q=g('bh_rqq',[]);Q.forEach(function(q){var o=L.filter(function(x){return x.rid===q.rid})[0];if(!o){o={rid:q.rid,id:ID,name:NAME,at:q.ts,st:'new'};L.unshift(o)}Object.keys(q).forEach(function(f){if(f!=='ts')o[f]=q[f]});o.pend=1});return L}
 /* ड्राइवर: उसकी गाड़ी को अलॉट ढाणियाँ (गहरी) + उसी रूट की बाकी ढाणियाँ (हल्की — लाना ज़रूरी नहीं, कोई चढ़े तो मना नहीं) */
@@ -699,13 +700,18 @@ function opCard(){var L=rqList().filter(function(q){return q.st==='new'&&String(
 document.addEventListener('click',async function(e){var b=e.target.closest&&e.target.closest('[data-claim]');if(!b)return;if(navigator.onLine===false){alert('नेट नहीं है');return}b.disabled=true;b.textContent='⏳ …';var r=null;try{r=await post({a:'claim',id:ID,name:NAME,rid:b.getAttribute('data-claim')})}catch(x){}
  if(r&&r.ok){alert('✔ यह माँग आपकी गाड़ी को मिल गई — सबको पता चल गया। लोगों को छोड़कर "✔ काम पूरा हुआ" दबाएँ।');sv('bh_rqv','-');try{await sync()}catch(x){}}else{alert((r&&r.err)||'सर्वर से जवाब नहीं मिला — फिर दबाएँ');sv('bh_rqv','-');try{await sync()}catch(x){}}try{drawRq()}catch(x){}});
 function drawRq(){var el=$('rqs');if(!el)return;if(isFleet()){fleetDraw();return}var keep=($('rqf')&&$('rqf').innerHTML)?$('rqf'):null;if(VIEW){el.innerHTML='';return}var drv=/^D/i.test(RL||ID),pv=pdMe(),L=rqList().filter(function(q){return !/^PD-/.test(q.rid)}),cut=Date.now()-12*3600000,h='';
- if(!drv&&!pv&&DUTYW){dutyStop();sv('bh_duty',0)}
+ var SV=sahVeh();if(!drv&&!pv&&!SV.length&&DUTYW){dutyStop();sv('bh_duty',0)}
+ var sahTg='';if(SV.length){var vm=g('bh_sahm','my')==='veh',myN=Object.keys(MYS||{}).length,myP=Object.keys(MYS||{}).filter(function(k){return (ST[k]||[])[0]!=='V'}).length;
+  sahTg='<div class="card" style="border:2px solid #4527a0;background:#ede7f6;padding:8px"><div style="font-size:13px;margin-bottom:6px">आप <b>वॉलंटियर</b> भी हैं और <b>गाड़ी '+esc(SV.map(function(x){return x.no}).join(', '))+'</b> के '+(SV.some(function(x){return String(x.did||'').toUpperCase()===ID.toUpperCase()})?'ड्राइवर':'सहायक')+' भी — दोनों काम अलग-अलग यहाँ बदलें:</div><div style="display:flex;gap:6px"><button data-sahm="my" style="flex:1;border-radius:10px;padding:10px 6px;font-size:15px;font-weight:700;'+(vm?'background:#fff;color:#2e7d32;border:2px solid #2e7d32':'background:#2e7d32;color:#fff;border:2px solid #2e7d32')+'">👥 मेरे वोटर<br><span style="font-size:12px;font-weight:400">'+myN+' · बाकी '+myP+'</span></button><button data-sahm="veh" style="flex:1;border-radius:10px;padding:10px 6px;font-size:15px;font-weight:700;'+(vm?'background:#1565c0;color:#fff;border:2px solid #1565c0':'background:#fff;color:#1565c0;border:2px solid #1565c0')+'">🚐 गाड़ी के वोटर<br><span style="font-size:12px;font-weight:400">ढाणियाँ · बिठाया / छोड़ा</span></button></div></div>';
+  document.body.classList.toggle('sahveh',vm);}else document.body.classList.remove('sahveh');
  var act=L.filter(function(q){return q.st==='new'||q.st==='sent'||(q.at>cut&&q.st==='done')});
  var mine=function(q){return q.veh&&(String(q.veh.did||'').toUpperCase()===ID.toUpperCase()||String(q.veh.hid||'').toUpperCase()===ID.toUpperCase())&&q.st==='sent'&&String(q.id||'').toUpperCase()!==ID.toUpperCase()};
  var dj=function(A){return A.map(function(q){return '<div class="card" style="border:2px solid #2e7d32"><b>🚐 आपको भेजा गया: '+(RQT[q.t]||'')+'</b><div>वॉलंटियर: <b>'+esc(q.veh.vn||q.name||'')+'</b>'+(q.veh.vm?' · <a href="tel:'+esc(q.veh.vm)+'">📞 '+esc(q.veh.vm)+'</a>':'')+'</div><div>लोग: <b>'+esc(q.n||'')+'</b> · जगह: <b>'+esc(q.pl||'')+'</b>'+(q.nt?' · '+esc(q.nt):'')+'</div>'+(q.lat?'<div style="display:flex;gap:6px"><a class="btn" style="display:block;text-align:center;text-decoration:none;background:#1565c0" href="'+gdir(q.lat,q.lng)+'" target="_blank">🧭 रास्ता (Google Maps)</a><a class="btn" style="display:block;text-align:center;text-decoration:none;background:#555" href="'+gmap(q.lat,q.lng)+'" target="_blank">🛰 सैटेलाइट में जगह</a></div>':'')+'<button class="btn" data-rqdone="'+esc(q.rid)+'" style="background:#2e7d32">✔ काम पूरा हुआ</button></div>'}).join('')};
+ if(SV.length&&g('bh_sahm','my')==='veh'){el.innerHTML=sahTg+opCard()+dutyCard()+dj(act.filter(mine))+dhCard();return}
  if(drv){h=opCard()+dutyCard()+dj(act.filter(mine))+dhCard();el.innerHTML=h;return}
  var pdh=pv?'<div class="card" style="border:2px solid #6a1b9a;background:#f6efff"><b>🧑‍🤝‍🧑 आप वॉलंटियर + ड्राइवर हैं</b><div>आपकी गाड़ी: <b>'+esc(pv.no||'')+'</b>'+(pv.type?' · '+esc(pv.type):'')+'</div><div class="muted">मास्टर जब आपकी गाड़ी किसी माँग पर भेजेगा तो यहीं दिखेगा। चुनाव के दिन ड्यूटी चालू रखें — आपकी गाड़ी की जगह मास्टर को जाएगी। वॉलंटियर वाला काम (अपने लोग, टिक) नीचे पहले जैसा है।</div></div>'+dutyCard()+dj(act.filter(mine)):'';
  if(pv)pdh=opCard()+pdh+dhCard();
+ pdh=sahTg+pdh;
  act=act.filter(function(q){return !mine(q)&&(!q.id||String(q.id).toUpperCase()===ID.toUpperCase())});
  h=pdh+(isPR()?'<div style="display:flex;gap:6px;margin-bottom:6px"><button class="btn" id="tmv" style="margin:0;background:#1565c0">👥 टीम का काम</button><button class="btn" id="mgv" style="margin:0;background:#6a1b9a">👑 मेन / सब गिनती</button></div>':'')+(g('bh_mk',false)?'<button class="btn" id="mkbtn" style="background:#4527a0;margin:0 0 8px">🆔 ड्राइवर / सहायक की नई ID बनाओ</button>':'')+(/^[VP]/i.test(RL||ID)&&!isPR()?'<div id="rqf"></div>':'<div style="display:flex;gap:6px;margin:0 0 8px"><button class="btn" id="rqnew" style="background:#e65100;margin:0">🚐 गाड़ी चाहिए</button><button class="btn" id="myveh2" style="background:#1565c0;margin:0">🚗 '+((g('bh_myveh',{})||{}).vno?'मेरी गाड़ी: '+esc(g('bh_myveh',{}).vno):'मेरी खुद की गाड़ी है')+'</button></div>'+((g('bh_myveh',{})||{}).vno?'<button class="btn" id="fopick" style="background:#0d47a1;margin:0 0 8px">👥 मेरी गाड़ी से कौन-कौन आएगा ('+Object.keys(MYS||{}).filter(function(k){return flOf(k,'fo')}).length+' चुने)</button>':'')+'<button class="btn" id="glbtn" style="background:#00695c;margin:0 0 8px">📍 ढाणी / घर पर पहुँचकर लोकेशन दें ('+Object.keys(MYS||{}).filter(function(k){return flOf(k,'gl')}).length+'/'+Object.keys(MYS||{}).length+')</button><div id="rqf"></div>');
  h+=act.map(function(q){var vh=q.veh||{};return '<div class="card" style="border:2px solid '+(q.st==='sent'?'#2e7d32':q.st==='done'?'#999':'#e65100')+'"><b>'+(RQS[q.st]||q.st)+'</b>'+(q.pend?' <span class="muted">(नेट मिलते ही जाएगी)</span>':'')+
@@ -718,6 +724,9 @@ function dlocTxt(q){if(q.st!=='sent'||!q.veh||!(q.veh.did||q.veh.hid))return '';
 
 function pdMe(){if(VIEW||/^D/i.test(RL||ID))return null;var u=ID.toUpperCase(),m=(g('bh_rq',[])||[]).filter(function(q){return /^PD-/.test(q.rid)&&q.st==='pd'&&q.veh&&String(q.veh.did||'').toUpperCase()===u}).sort(function(a,b){return (b.up||b.at||0)-(a.up||a.at||0)})[0];return m?m.veh:null}
 function isDrv(){return /^D/i.test(RL||ID)||!!pdMe()}
+/* वॉलंटियर जो किसी गाड़ी का सहायक/ड्राइवर भी है: दो अलग हिस्से — 👥 मेरे वोटर / 🚐 गाड़ी के वोटर */
+function sahVeh(){if(VIEW||!ID||/^[DB]/i.test(RL||ID)||pdMe())return [];var me=ID.toUpperCase();return (g('bh_vdh',null)||[]).filter(function(x){return String(x.did||'').toUpperCase()===me||String(x.hid||'').toUpperCase()===me})}
+function sahOn(){return sahVeh().length>0&&g('bh_sahm','my')==='veh'}
 function istDay(){var d=new Date(Date.now()+(+g('bh_off',0)||0)+5.5*3600000);return d.toISOString().slice(0,10)}
 function locOK(){if((g('bh_locdays',['2026-11-14','2026-11-16'])||[]).indexOf(istDay())<0)return false;var pv=pdMe();if(pv&&pv.days&&pv.days.length&&pv.days.indexOf(istDay())<0)return false;return true}
 function locDaysTxt(){return (g('bh_locdays',['2026-11-14','2026-11-16'])||[]).map(function(d){var p=d.split('-');return +p[2]+'/'+(+p[1])}).join(' और ')}
