@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=59;</script>
+<script>var UIV=60;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -270,7 +270,7 @@ async function sync(){if(syncing||!API||!D)return;if(navigator.onLine===false){f
   sv('bh_st',ST);sv('bh_since',Math.max(0,(r.now||0)-3000));sv('bh_sync',Date.now());lastErr='';
   if(r.exp&&r.exp!==EXP)EXP=r.exp;
   if(r.dv&&r.dv!==DV)await getData();
-  if(r.uv&&r.uv>UIV&&r.uv!==g('bh_uiv',0))await getUi();
+  if(r.uv&&r.uv>UIV&&r.uv!==g('bh_uiv',0))await getUi();try{await ghUi()}catch(e){}
   try{prClean()}catch(e){}run();stat();$('upb').classList.toggle('hid',!newUi());try{autoUpd()}catch(e){}}catch(e){lastErr=String(e&&e.message||e)}
  syncing=false;foot();if(pend()&&!lastErr)schedule(2000)}
 async function getData(){try{var r=await post({a:'data',id:ID});if(!r||!r.ok||!r.blob)return;var b=typeof r.blob==='string'?JSON.parse(r.blob):r.blob;
@@ -323,6 +323,9 @@ $('fo').onclick=menu;$('mb3').onclick=function(){$('mn').classList.add('hid')};
 function newUi(){return (+LS.getItem('bh_uiv')||0)>UIV&&!!LS.getItem('bh_ui')}
 /* अपडेट ज़रूरी: नया अपडेट आते ही (जब फ़ोन पर कोई काम अधूरा न हो) 5 सेकंड बताकर अपने-आप लग जाता है; ऐप पर वापस आने पर तुरंत */
 function updBusy(){var e=document.activeElement;if(e&&/^(INPUT|TEXTAREA|SELECT)$/.test(e.tagName))return true;if($('nmo'))return true;if($('rqf')&&$('rqf').innerHTML)return true;if($('fvbox')&&$('fvbox').innerHTML)return true;return false}
+/* नया अपडेट सीधे GitHub से भी — मास्टर खुले या न खुले, सिंक के साथ आ जाए (हर 1 मिनट में एक बार जाँच) */
+var GHU='https://vikisharma245.github.io/bhamatsar-iphone/app.html';
+async function ghUi(force){var t=+LS.getItem('bh_ghchk')||0;if(!force&&Date.now()-t<60000)return;sv0('bh_ghchk',Date.now());var u=/github\.io$/.test(location.hostname)?'app.html':GHU;var r=await fetch(u+'?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;var h=await r.text(),m=h.match(/var UIV=(\d+)/);if(!m||h.length<50000||h.indexOf('function autoUpd')<0)return;var v=+m[1];if(v>UIV&&v>(+LS.getItem('bh_uiv')||0)){sv0('bh_ui',h);sv0('bh_uiv',v)}}
 var UPDT=null;function autoUpd(now){if(!newUi()||UPDT)return;if(!now&&updBusy())return;var o=document.createElement('div');o.style.cssText='position:fixed;inset:0;background:#1b5e20;color:#fff;z-index:100000;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:20px;font-size:18px';var n=now?1:5;
  o.innerHTML='<div style="font-size:44px">🔄</div><b>ऐप का नया अपडेट लग रहा है</b><div id="updc" style="margin-top:8px">'+n+' सेकंड…</div><div style="font-size:13px;margin-top:10px;opacity:.85">आपका सारा काम सेव है — ऐप एक बार फिर खुलेगा</div>';document.body.appendChild(o);
  UPDT=setInterval(function(){n--;if($('updc'))$('updc').textContent=n+' सेकंड…';if(n<=0){clearInterval(UPDT);applyUpd()}},1000)}
