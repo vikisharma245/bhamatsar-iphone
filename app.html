@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=39;</script>
+<script>var UIV=40;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -142,6 +142,15 @@ function row(v){var e=ST[key(v)],s=e?e[0]:'',b=(D.w[v[0]]||[])[0],sd=(D.s||{})[k
  (v[10]===2?'':flTags(key(v))+flBtns(key(v)))+
  ((s!=='V'&&!(v[10]===2))?(function(){var x=rsnOf(key(v));return '<div class="m" style="margin-top:4px">'+(x?'<span class="tag" style="background:#fff3e0;color:#e65100">❓ '+esc(rsnTxt(x))+'</span> ':'')+(VIEW?'':'<button class="sm" data-rsn="1">'+(x?'✏️ कारण बदलें':'❓ वोट क्यों बाकी?')+'</button>')+'</div>'})():'')+
  (VIEW?'':'<div class="bt">'+['L','N','V'].map(function(x){var lk=(s==='V'&&x!=='V')||(s==='L'&&x==='N');return '<button data-s="'+x+'" class="'+x+(s===x?' on':'')+'"'+(lk?' disabled style="opacity:.35"':'')+'>'+LB[x]+'</button>'}).join('')+(s==='V'||s==='L'?'<span class="muted" style="align-self:center;font-size:12px;padding:0 4px">🔒 सिर्फ़ मास्टर हटा सकता है</span>':'<button data-s="C">↺ हटाएँ</button>')+'</div>')+'</div>'}
+/* नमूना मत पत्र: GitHub Pages से एक बार लेकर फ़ोन में रख लेता है (बिना नेट भी दिखे) */
+var NMURL='https://vikisharma245.github.io/bhamatsar-iphone/namuna.jpg',NMV='1';
+function nmCache(){if(g('bh_nmv','')===NMV&&LS.getItem('bh_nm'))return;fetch(NMURL+'?v='+NMV,{cache:'no-cache'}).then(function(r){if(!r.ok)throw 0;return r.blob()}).then(function(b){var fr=new FileReader();fr.onload=function(){try{LS.setItem('bh_nm',fr.result);sv('bh_nmv',NMV)}catch(e){}};fr.readAsDataURL(b)}).catch(function(){})}
+var NMVID=[];   /* [['शीर्षक','https://youtube...']] — मास्टर के चुनने के बाद */
+function nmShow(){var o=document.createElement('div');o.id='nmo';o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99999;overflow:auto;-webkit-overflow-scrolling:touch;text-align:center;padding:10px 6px 30px';
+ o.innerHTML='<div style="position:sticky;top:0;display:flex;gap:6px;justify-content:center;margin-bottom:8px"><button class="btn" id="nmx" style="margin:0;background:#c62828;width:auto;padding:8px 18px">✖ बंद करें</button></div><img src="'+(LS.getItem('bh_nm')||NMURL)+'" alt="नमूना मत पत्र" style="width:100%;max-width:520px;background:#fff;border-radius:6px" onerror="this.outerHTML=\'<div style=&quot;color:#fff;padding:30px&quot;>नमूना मत पत्र नहीं खुला — नेट चालू करके एक बार फिर खोलें।</div>\'">'+
+  '<div style="color:#fff;font-size:15px;max-width:520px;margin:10px auto;text-align:left;line-height:1.5"><b>मतदाता को ऐसे समझाएँ:</b><br>1. बूथ पर सरपंच का सफ़ेद मत पत्र मिलेगा।<br>2. <b>1 नंबर — आरती — प्रेस (इस्त्री) का निशान</b> — उसी लाइन के "मोहर" वाले खाने में मोहर लगाएँ।<br>3. मोहर खाने के अंदर रहे, लाइन पर या दो खानों के बीच न लगे।<br>4. स्याही सूखने दें, फिर मत पत्र को बीच से मोड़कर पेटी में डालें।</div>'+
+  (NMVID.length?'<div style="max-width:520px;margin:0 auto">'+NMVID.map(function(x){return '<a class="btn" style="display:block;text-decoration:none;background:#c4302b;margin:6px 0" href="'+x[1]+'" target="_blank">▶ '+esc(x[0])+'</a>'}).join('')+'</div>':'')+'</div>';
+ document.body.appendChild(o);$('nmx').onclick=function(){o.remove()};nmCache()}
 /* काम के निशान (वोट की स्थिति से अलग): पर्ची दी, मोहर समझाया, पर्ची पास है/नहीं, गाड़ी में बिठाया, वापस छोड़ा, लाइन में लगा */
 var FLG={fh:'🧾 पर्ची पास?',fp:'📄 पर्ची दी',fm:'🗳 मोहर समझाया',fb:'🚐 बिठाया',fd:'🏠 वापस छोड़ा',fq:'🙋 लाइन में लगा'};
 function myFlags(){if(VIEW)return [];if(isDrv())return ['fh','fp','fm','fb','fd'];if(/^B/i.test(RL||''))return ['fh','fp','fq','fm'];return ['fp','fm']}
@@ -182,6 +191,7 @@ function run(keep){if(keep!==true)SHOWN=100;var r=find($('q').value);if($('hn').
 function stat(){var a=0,l=0,vv=0;D.v.forEach(function(v){if(v[10]===2||!vis(v))return;a++;var s=stOf(v);if(s==='L')l++;if(s==='V')vv++});
  var mk=Object.keys(MYS),mn=mk.length,md=0,ml=0,mq=0;mk.forEach(function(k){var s=(ST[k]||[])[0];if(s==='V')md++;else{if(s==='L')ml++;try{if(!rsnOf(k))mq++}catch(e){}}});
  $('stats').innerHTML='<div><b>'+a+'</b>कुल मतदाता</div>'+(mn?'<div id="myp" style="cursor:pointer" title="मेरे बचे लोग दिखाओ"><b style="color:#b71c1c">'+(mn-md)+'</b>🙋 मेरे बाकी (सौंपे '+mn+' · ✅ '+md+(ml?' · 🚗 '+ml:'')+(mq&&mq<mn-md?' · ❓ बिना कारण '+mq:'')+')</div>':'');   /* कुल गिनती सिर्फ़ मास्टर में; वॉलंटियर को सिर्फ़ अपने सौंपे लोगों का हिसाब */
+ $('stats').innerHTML+='<div id="nmb" style="cursor:pointer;background:#fff8e1;border:1px solid #f9a825"><b>🗳</b>नमूना मत पत्र</div>';$('nmb').onclick=nmShow;try{nmCache()}catch(e){}
  if($('myp'))$('myp').onclick=function(){FIL='M';try{chips()}catch(e){}try{run()}catch(e){}};
  $('hs').textContent=ID+' · '+NAME+(VIEW?' · सिर्फ़ देखने के लिए':'')+' · डेटा '+(D.gen||'');foot()}
 function pend(){return g('bh_q',[]).length+g('bh_pq',[]).length+g('bh_nq',[]).length+g('bh_sq',[]).length}
