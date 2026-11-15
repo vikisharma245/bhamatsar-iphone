@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=64;</script>
+<script>var UIV=65;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -34,7 +34,7 @@ input,select{width:100%;font:inherit;padding:11px 12px;border:1px solid #b9c5d1;
 <div id="mn" class="hid" style="position:fixed;inset:0;background:#0007;z-index:9;display:flex;align-items:flex-end"><div style="background:#fff;width:100%;padding:14px;border-radius:12px 12px 0 0"><div class="muted" id="mi" style="margin:0 0 8px"></div><button class="btn" id="mbu">🔄 अपडेट देखें</button><button class="btn g" id="mveh">🚗 मेरी खुद की गाड़ी</button><button class="btn g" id="mb1"></button><button class="btn g" id="mb2">लॉगआउट (फ़ोन से डेटा हटाएँ)</button><button class="btn" id="mb3">बंद करें</button></div></div>
 <div id="app" class="hid">
 <div id="upb" class="hid" style="background:#2e7d32;color:#fff;padding:9px 12px;text-align:center;font-weight:600">🔄 ऐप का नया अपडेट आ गया — यहाँ दबाएँ</div>
-<div id="crtop" style="background:linear-gradient(90deg,#1b5e20,#2e7d32);color:#fff;font-size:13px;padding:5px 10px;display:flex;align-items:center;gap:6px"><img id="crimg" style="width:20px;height:20px;border-radius:5px"><b>भामटसर सहायक</b><span style="opacity:.9">· बनाया — <b>दादा</b> (विकास शर्मा)</span></div><script>document.getElementById("crimg").src=window.LOGO||""</script><header><div><b id="hd"></b><small id="hs"></small></div><span id="badge">—</span></header>
+<header><div style="display:flex;align-items:center;gap:8px;min-width:0"><img id="crimg" style="width:34px;height:34px;border-radius:8px;flex:none"><div style="min-width:0;line-height:1.25"><div><b id="hd" style="font-size:17px"></b> <span style="font-size:11px;opacity:.85;white-space:nowrap">· बनाया — दादा (विकास शर्मा)</span></div><small id="hs" style="display:block"></small></div></div><span id="badge">—</span></header><script>document.getElementById("crimg").src=window.LOGO||""</script>
 <div class="sb"><div style="display:flex;gap:6px"><input id="q" autocomplete="off" placeholder="🔍 नाम / पिता-पति / EPIC / क्रम" style="flex:1;min-width:0"><button id="mic" type="button" title="बोलकर खोजें" style="padding:0 10px;font-size:20px;border-radius:10px;border:1px solid #cfd8e3;background:#fff">🎤</button><input id="hn" autocomplete="off" inputmode="numeric" placeholder="🏠 मकान नं." style="width:34%"></div>
 <div class="two"><select id="w"></select><select id="by"><option value="">सब</option><option value="M">सिर्फ़ पुरुष</option><option value="F">सिर्फ़ महिला</option></select></div>
 <select id="rt" style="margin-top:6px"></select>
@@ -112,7 +112,7 @@ function init(){
  setSc(SC);if(SC==='M'&&!FIL)FIL='M';   /* बाकी सबके लिए शुरू में "सब" */var ws=[],seen={};D.v.forEach(function(v){if(!seen[v[0]]&&vis(v)){seen[v[0]]=1;ws.push(v[0])}});ws.sort(function(a,b){return a-b});
  $('w').innerHTML='<option value="">सारे वार्ड</option>'+ws.map(function(w){var b=(D.w[w]||[])[0];return '<option value="'+w+'">वार्ड '+w+(b?' (बूथ '+esc(b)+')':'')+'</option>'}).join('');
  var rs={};Object.keys(D.s||{}).forEach(function(k){var r=D.s[k][8];if(r)rs[r]=1});$('rt').innerHTML='<option value="">सारे रूट / गाँव</option>'+Object.keys(rs).sort().map(function(r){return '<option>'+esc(r)+'</option>'}).join('');
- $('hd').textContent=D.vill||CFG.TITLE;$('lg').classList.add('hid');$('app').classList.remove('hid');
+ $('hd').textContent='भामटसर सहायक';$('lg').classList.add('hid');$('app').classList.remove('hid');
  chips();run();stat();if(isFleet())fleetStart();else{document.querySelector('.sb').classList.remove('hid');$('stats').classList.remove('hid');$('res').classList.remove('hid');clearInterval(FTM)}LS.setItem('bh_boot','1')}
 var CH=[['','सब'],['P','⭐ ज़रूरी बचे'],['R','बचे हुए'],['L','🚶 बूथ पहुँचे']];
 function chips(){var n=Object.keys(MYS).length,L=n?[['M','🙋 मेरे लोग ('+n+')']].concat(CH):CH;if(!n&&FIL==='M')FIL='';$('chips').innerHTML=L.map(function(c){return '<span class="chip'+(FIL===c[0]?' on':'')+'" data-f="'+c[0]+'">'+c[1]+'</span>'}).join('')}
@@ -223,7 +223,7 @@ function stat(){var a=0,l=0,vv=0;D.v.forEach(function(v){if(v[10]===2||!vis(v))r
  var nu=ntcUnread().length;$('stats').innerHTML+='<div id="ntb" style="cursor:pointer;'+(nu?'background:#fff59d;border:2px solid #f9a825':'')+'"><b>📢'+(nu?' '+nu:'')+'</b>'+(nu?'नई सूचना':'सूचनाएँ')+'</div>';
  $('stats').innerHTML+='<div id="nmb" style="cursor:pointer;background:#fff8e1;border:1px solid #f9a825"><b>🗳</b>नमूना मत पत्र</div>';$('nmb').onclick=nmShow;$('ntb').onclick=function(){ntcShow(true)};try{nmCache()}catch(e){}
  if($('myp'))$('myp').onclick=function(){FIL='M';try{chips()}catch(e){}try{run()}catch(e){}};
- $('hs').textContent=ID+' · '+NAME+(VIEW?' · सिर्फ़ देखने के लिए':'')+' · डेटा '+(D.gen||'');foot()}
+ $('hs').textContent='👤 '+NAME+' ('+ID+')'+(VIEW?' · सिर्फ़ देखने के लिए':'')+' · डेटा '+(D.gen||'');foot()}
 function pend(){return g('bh_q',[]).length+g('bh_pq',[]).length+g('bh_nq',[]).length+g('bh_sq',[]).length}
 function foot(){var p=pend(),ls=g('bh_sync',0);$('fs').textContent=(p?p+' एंट्री भेजनी बाकी · ':'सब भेजा जा चुका · ')+(ls?'आख़िरी सिंक '+new Date(ls).toLocaleTimeString('hi-IN',{hour:'2-digit',minute:'2-digit'}):'अभी सिंक नहीं हुआ');
  $('badge').textContent=syncing?'⏳ सिंक…':(!API?'⚪ सिर्फ़ फ़ोन':(navigator.onLine===false?'🔴 ऑफलाइन':(p?'🟡 '+p+' बाकी':(lastErr?'🟠 सर्वर नहीं मिला':'🟢 सिंक'))))}
