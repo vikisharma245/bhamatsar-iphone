@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=40;</script>
+<script>var UIV=41;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -143,7 +143,7 @@ function row(v){var e=ST[key(v)],s=e?e[0]:'',b=(D.w[v[0]]||[])[0],sd=(D.s||{})[k
  ((s!=='V'&&!(v[10]===2))?(function(){var x=rsnOf(key(v));return '<div class="m" style="margin-top:4px">'+(x?'<span class="tag" style="background:#fff3e0;color:#e65100">❓ '+esc(rsnTxt(x))+'</span> ':'')+(VIEW?'':'<button class="sm" data-rsn="1">'+(x?'✏️ कारण बदलें':'❓ वोट क्यों बाकी?')+'</button>')+'</div>'})():'')+
  (VIEW?'':'<div class="bt">'+['L','N','V'].map(function(x){var lk=(s==='V'&&x!=='V')||(s==='L'&&x==='N');return '<button data-s="'+x+'" class="'+x+(s===x?' on':'')+'"'+(lk?' disabled style="opacity:.35"':'')+'>'+LB[x]+'</button>'}).join('')+(s==='V'||s==='L'?'<span class="muted" style="align-self:center;font-size:12px;padding:0 4px">🔒 सिर्फ़ मास्टर हटा सकता है</span>':'<button data-s="C">↺ हटाएँ</button>')+'</div>')+'</div>'}
 /* नमूना मत पत्र: GitHub Pages से एक बार लेकर फ़ोन में रख लेता है (बिना नेट भी दिखे) */
-var NMURL='https://vikisharma245.github.io/bhamatsar-iphone/namuna.jpg',NMV='1';
+var NMURL='https://vikisharma245.github.io/bhamatsar-iphone/namuna.jpg',NMV='2';
 function nmCache(){if(g('bh_nmv','')===NMV&&LS.getItem('bh_nm'))return;fetch(NMURL+'?v='+NMV,{cache:'no-cache'}).then(function(r){if(!r.ok)throw 0;return r.blob()}).then(function(b){var fr=new FileReader();fr.onload=function(){try{LS.setItem('bh_nm',fr.result);sv('bh_nmv',NMV)}catch(e){}};fr.readAsDataURL(b)}).catch(function(){})}
 var NMVID=[];   /* [['शीर्षक','https://youtube...']] — मास्टर के चुनने के बाद */
 function nmShow(){var o=document.createElement('div');o.id='nmo';o.style.cssText='position:fixed;inset:0;background:rgba(0,0,0,.92);z-index:99999;overflow:auto;-webkit-overflow-scrolling:touch;text-align:center;padding:10px 6px 30px';
