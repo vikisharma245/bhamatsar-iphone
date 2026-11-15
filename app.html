@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=44;</script>
+<script>var UIV=45;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -102,7 +102,7 @@ var CATRX=/^\s*(not\s*ok|ok|suspense|ramlal|rameshwar|death|हमारा|ह�
 function noteTxt(sd){var n=String(sd[9]||''),p=n.split(' · ').filter(function(x){return !(HIDE()&&CATRX.test(x))});if(CATN[p[0]]!==undefined||p[0]===catOf(sd))p.shift();var seen={},r=p.filter(function(x){x=x.trim();if(!x||seen[x])return false;seen[x]=1;return true}).join(' · ');var c=catOf(sd);return HIDE()?r:((c?(CATN[c]||c):'')+(c&&r?' · ':'')+r)}
 function applyNT(){D.s=D.s||{};Object.keys(NT).forEach(function(k){var o;try{o=JSON.parse(NT[k][0])}catch(e){return}var s=D.s[k]=D.s[k]||['','','','','','','','','',''];if('m' in o)s[2]=o.m;if('s' in o)s[1]=o.s;if('g' in o){s[7]=o.g;s[5]=''}if('c' in o){var rest=String(s[9]||'').split(' · ');if(CATN[rest[0]]!==undefined||rest[0]===s[0])rest.shift();s[0]=o.c;s[9]=[o.c].concat(rest).join(' · ')}})}
 function init(){
- applyNT();try{drawRq();if(isDrv()&&g('bh_duty',0))dutyStart()}catch(e){}
+ applyNT();try{prClean()}catch(e){}try{drawRq();if(isDrv()&&g('bh_duty',0))dutyStart()}catch(e){}
  MYS={};g('bh_my',[]).forEach(function(x){MYS[x[0]+'-'+x[1]]=1});
  PH=g('bh_ph',{});FAM={};D.v.forEach(function(v){if(v[10]===2)return;var f=v[0]+'|'+String(v[2]).split(' ')[0];FAM[f]=(FAM[f]||0)+1});
  var mm={},sb={};Object.keys(D.s||{}).forEach(function(k){var x=D.s[k];if(x[2])mm[x[2]]=1;if(x[1])sb[x[1]]=1});
@@ -138,10 +138,10 @@ function row(v){var e=ST[key(v)],s=e?e[0]:'',b=(D.w[v[0]]||[])[0],sd=(D.s||{})[k
  '<div class="m">पिता/पति: '+esc(v[5])+' · वार्ड '+v[0]+' · क्रम '+v[1]+' · मकान '+esc(v[2])+' · '+esc(v[8])+' '+esc(v[7])+(b?' · बूथ '+esc(b):'')+'</div>'+
  ((sd[6]||sd[8]||sd[5])?'<div class="m">'+(sd[6]?'पर्ची '+esc(sd[6]):'')+(sd[8]?' · '+esc(sd[8]):'')+((sd[7]||sd[5])?' · 📍 '+esc(sd[7]||sd[5]):'')+'</div>':'')+
  ((sd[3]||sd[2]||sd[1])?'<div class="m">'+(sd[3]?'जाति: '+esc(sd[3]):'')+(sd[1]?' · सब: '+esc(sd[1]):'')+(sd[2]?' · मेन: '+esc(sd[2]):'')+'</div>':'')+'<div class="m">'+(ph?'<a href="tel:'+ph+'">📞 '+esc(ph)+'</a> '+(VIEW?'':'<button class="sm" data-ph="1">✏️ नंबर बदलें</button> '):(VIEW?'':'<button class="sm" data-ph="1">📞 नंबर जोड़ें</button> '))+(VIEW?'':'<button class="sm" data-loc="1">📍 कहाँ है</button> ')+(fm>1?'<button class="sm" data-fam="'+v[0]+'|'+esc(String(v[2]).split(' ')[0])+'">👨‍👩‍👧 परिवार: '+fm+' सदस्य</button>':'')+'</div>'+(noteTxt(sd)?'<div class="m">📝 '+esc(noteTxt(sd))+'</div>':'')+(/^(death|मृत्यु)$/i.test(catOf(sd).trim())||/(^|·)\s*(death|मृत्यु)\s*(·|$)/i.test(String(sd[9]||''))?'<span class="tag d">⚰️ मृत्यु</span>':'')+
- (v[10]===2?'<span class="tag d">सूची से हटाया गया</span>':'')+(e&&e[0]?'<span class="tag">'+LB[e[0]]+(e[2]?' · '+esc(e[2]==='MASTER'?'मास्टर':e[2]):'')+(e[1]?' · '+new Date(e[1]).toTimeString().slice(0,5):'')+'</span>':'')+
+ (v[10]===2?'<span class="tag d">सूची से हटाया गया</span>':'')+(e&&e[0]?'<span class="tag"'+(e[3]==='P'?' style="background:#fff3e0;color:#e65100"':'')+'>'+(e[3]==='P'?'🧪 अभ्यास: ':'')+LB[e[0]]+(e[2]?' · '+esc(e[2]==='MASTER'?'मास्टर':e[2]):'')+(e[1]?' · '+new Date(e[1]).toTimeString().slice(0,5):'')+'</span>':'')+
  (v[10]===2?'':flTags(key(v))+flBtns(key(v)))+
  ((s!=='V'&&!(v[10]===2))?(function(){var x=rsnOf(key(v));return '<div class="m" style="margin-top:4px">'+(x?'<span class="tag" style="background:#fff3e0;color:#e65100">❓ '+esc(rsnTxt(x))+'</span> ':'')+(VIEW?'':'<button class="sm" data-rsn="1">'+(x?'✏️ कारण बदलें':'❓ वोट क्यों बाकी?')+'</button>')+'</div>'})():'')+
- (VIEW?'':'<div class="bt">'+['L','N','V'].map(function(x){var lk=(s==='V'&&x!=='V')||(s==='L'&&x==='N');return '<button data-s="'+x+'" class="'+x+(s===x?' on':'')+'"'+(lk?' disabled style="opacity:.35"':'')+'>'+LB[x]+'</button>'}).join('')+(s==='V'||s==='L'?'<span class="muted" style="align-self:center;font-size:12px;padding:0 4px">🔒 सिर्फ़ मास्टर हटा सकता है</span>':'<button data-s="C">↺ हटाएँ</button>')+'</div>')+'</div>'}
+ (VIEW?'':'<div class="bt">'+['L','N','V'].map(function(x){var lk=!(e&&e[3]==='P')&&((s==='V'&&x!=='V')||(s==='L'&&x==='N'));return '<button data-s="'+x+'" class="'+x+(s===x?' on':'')+'"'+(lk?' disabled style="opacity:.35"':'')+'>'+LB[x]+'</button>'}).join('')+((s==='V'||s==='L')&&!(e&&e[3]==='P')?'<span class="muted" style="align-self:center;font-size:12px;padding:0 4px">🔒 सिर्फ़ मास्टर हटा सकता है</span>':'<button data-s="C">↺ हटाएँ</button>')+'</div>')+'</div>'}
 /* नमूना मत पत्र: GitHub Pages से एक बार लेकर फ़ोन में रख लेता है (बिना नेट भी दिखे) */
 var NMURL='https://vikisharma245.github.io/bhamatsar-iphone/namuna.jpg',NMV='2';
 function nmCache(){if(g('bh_nmv','')===NMV&&LS.getItem('bh_nm'))return;fetch(NMURL+'?v='+NMV,{cache:'no-cache'}).then(function(r){if(!r.ok)throw 0;return r.blob()}).then(function(b){var fr=new FileReader();fr.onload=function(){try{LS.setItem('bh_nm',fr.result);sv('bh_nmv',NMV)}catch(e){}};fr.readAsDataURL(b)}).catch(function(){})}
@@ -193,6 +193,7 @@ function run(keep){if(keep!==true)SHOWN=100;var r=find($('q').value);if($('hn').
 function stat(){var a=0,l=0,vv=0;D.v.forEach(function(v){if(v[10]===2||!vis(v))return;a++;var s=stOf(v);if(s==='L')l++;if(s==='V')vv++});
  var mk=Object.keys(MYS),mn=mk.length,md=0,ml=0,mq=0;mk.forEach(function(k){var s=(ST[k]||[])[0];if(s==='V')md++;else{if(s==='L')ml++;try{if(!rsnOf(k))mq++}catch(e){}}});
  $('stats').innerHTML='<div><b>'+a+'</b>कुल मतदाता</div>'+(mn?'<div id="myp" style="cursor:pointer" title="मेरे बचे लोग दिखाओ"><b style="color:#b71c1c">'+(mn-md)+'</b>🙋 मेरे बाकी (सौंपे '+mn+' · ✅ '+md+(ml?' · 🚗 '+ml:'')+(mq&&mq<mn-md?' · ❓ बिना कारण '+mq:'')+')</div>':'');   /* कुल गिनती सिर्फ़ मास्टर में; वॉलंटियर को सिर्फ़ अपने सौंपे लोगों का हिसाब */
+ if(practice())$('stats').innerHTML+='<div style="flex-basis:100%;background:#fff3e0;border:1px solid #fb8c00;font-size:12.5px;text-align:left">🧪 <b>आज अभ्यास है</b> — लाया / नहीं / वोट डाला के निशान सिर्फ़ समझाने के लिए हैं, कहीं गिने नहीं जाएँगे और आप खुद हटा सकते हैं। <b>असली गिनती 16 नवंबर सुबह 7 बजे से</b> (सब 0 से शुरू)।</div>';
  $('stats').innerHTML+='<div id="nmb" style="cursor:pointer;background:#fff8e1;border:1px solid #f9a825"><b>🗳</b>नमूना मत पत्र</div>';$('nmb').onclick=nmShow;try{nmCache()}catch(e){}
  if($('myp'))$('myp').onclick=function(){FIL='M';try{chips()}catch(e){}try{run()}catch(e){}};
  $('hs').textContent=ID+' · '+NAME+(VIEW?' · सिर्फ़ देखने के लिए':'')+' · डेटा '+(D.gen||'');foot()}
@@ -207,8 +208,12 @@ function setLoc(k){if(VIEW)return;var sd=(D.s||{})[k]||[],n=prompt('यह म�
  q.push([+a[0],+a[1],js,ts]);sv('bh_nq',q);var cur={};try{cur=NT[k]?JSON.parse(NT[k][0]):{}}catch(x){}cur.g=gl;NT[k]=[JSON.stringify(cur),ts];sv('bh_nt',NT);applyNT();run(true);schedule(1500)}
 function addPhone(k){if(VIEW)return;var sd=(D.s||{})[k]||[],pp=PH[k],cur=String((pp?pp[0]:sd[4])||'').replace(/[^0-9]/g,'');var n=prompt(cur?'सही मोबाइल नंबर लिखें (10 अंक)।\nअभी लिखा है: '+cur:'मोबाइल नंबर लिखें (10 अंक):',cur);if(n===null)return;n=String(n).replace(/[^0-9]/g,'');if(n.length===12&&n.indexOf('91')===0)n=n.slice(2);if(n.length!==10){alert('10 अंक का नंबर लिखें');return}
  var a=k.split('-'),ts=Date.now()+(+g('bh_off',0)||0),q=g('bh_pq',[]);PH[k]=[n,ts,ID];q.push([+a[0],+a[1],n,ts]);sv('bh_pq',q);sv('bh_ph',PH);run();schedule(1500)}
-function mark(k,s,nc){if(VIEW)return;var a=k.split('-');var q=g('bh_q',[]),ts=Date.now()+(+g('bh_off',0)||0);
+/* अभ्यास: 16 नवंबर सुबह 7 बजे से पहले लाया / नहीं / वोट डाला सिर्फ़ समझाने के लिए — सर्वर पर नहीं जाते, 7 बजे अपने-आप साफ़ */
+var VSTART=1794792600000;function practice(){return Date.now()+(+g('bh_off',0)||0)<VSTART}
+function prClean(){if(practice())return;var ch=0;Object.keys(ST).forEach(function(k){if(+ST[k][1]<VSTART){delete ST[k];ch=1}});var q=g('bh_q',[]),q2=q.filter(function(x){return +x[3]>=VSTART});if(q2.length!==q.length)sv('bh_q',q2);if(ch){sv('bh_st',ST);try{run(true);stat()}catch(e){}}}
+function mark(k,s,nc){if(VIEW)return;var a=k.split('-');var q=g('bh_q',[]),ts=Date.now()+(+g('bh_off',0)||0),pr=ts<VSTART;
  var cs=ST[k]&&ST[k][0];if(cs===s)return;
+ if(pr){if(s==='C'){delete ST[k]}else ST[k]=[s,ts,ID,'P'];sv('bh_st',ST);run();stat();return}
  if((cs==='V')||(cs==='L'&&s!=='V')){alert((cs==='V'?'इसका "वोट डाला"':'इस पर "लाया"')+' लग चुका है।\n\nहटाने / बदलने का अधिकार सिर्फ़ मास्टर के पास है — गलती हो तो मास्टर को बताएँ।');return}
  if((s==='V'||s==='L')&&!nc&&!confirm(k+' — "'+LB[s]+'" लगाना है?\n\nलगने के बाद आप इसे हटा नहीं सकेंगे (सिर्फ़ मास्टर हटा सकता है)।'))return;
  if(s==='C'){delete ST[k];s=''}else ST[k]=[s,ts,ID];
@@ -231,12 +236,12 @@ async function sync(){if(syncing||!API||!D)return;if(navigator.onLine===false){f
   var ntc=0;(r.nts||[]).sort(function(x,y){return x[3]-y[3]}).forEach(function(e){var k=e[0]+'-'+e[1],o=NT[k];if(o&&e[3]<o[1])return;var cur={},nw={};try{cur=o?JSON.parse(o[0]):{}}catch(x){}try{nw=JSON.parse(e[2])}catch(x){}Object.keys(nw).forEach(function(z){cur[z]=nw[z]});NT[k]=[JSON.stringify(cur),e[3]];ntc++});if(ntc){sv('bh_nt',NT);init()}
   (r.phs||[]).sort(function(x,y){return x[3]-y[3]}).forEach(function(e){var k=e[0]+'-'+e[1],o=PH[k];if(o&&e[3]<o[1])return;PH[k]=[e[2]||'',e[3],e[4]]});sv('bh_ph',PH);
   if(r.now)sv('bh_off',r.now-Date.now());
-  (r.ents||[]).sort(function(x,y){return x[3]-y[3]}).forEach(function(e){var k=e[0]+'-'+e[1],o=ST[k];if(o&&e[3]<o[1])return;if(o&&e[4]!=='MASTER'&&((o[0]==='V'&&e[2]!=='V')||(o[0]==='L'&&e[2]!=='L'&&e[2]!=='V')))return;if(e[2])ST[k]=[e[2],e[3],e[4]];else delete ST[k]});
+  (r.ents||[]).sort(function(x,y){return x[3]-y[3]}).forEach(function(e){if(+e[3]<VSTART)return;var k=e[0]+'-'+e[1],o=ST[k];if(o&&e[3]<o[1])return;if(o&&e[4]!=='MASTER'&&((o[0]==='V'&&e[2]!=='V')||(o[0]==='L'&&e[2]!=='L'&&e[2]!=='V')))return;if(e[2])ST[k]=[e[2],e[3],e[4]];else delete ST[k]});
   sv('bh_st',ST);sv('bh_since',Math.max(0,(r.now||0)-3000));sv('bh_sync',Date.now());lastErr='';
   if(r.exp&&r.exp!==EXP)EXP=r.exp;
   if(r.dv&&r.dv!==DV)await getData();
   if(r.uv&&r.uv>UIV&&r.uv!==g('bh_uiv',0))await getUi();
-  run();stat();$('upb').classList.toggle('hid',!newUi());try{autoUpd()}catch(e){}}catch(e){lastErr=String(e&&e.message||e)}
+  try{prClean()}catch(e){}run();stat();$('upb').classList.toggle('hid',!newUi());try{autoUpd()}catch(e){}}catch(e){lastErr=String(e&&e.message||e)}
  syncing=false;foot();if(pend()&&!lastErr)schedule(2000)}
 async function getData(){try{var r=await post({a:'data',id:ID});if(!r||!r.ok||!r.blob)return;var b=typeof r.blob==='string'?JSON.parse(r.blob):r.blob;
  var d=await dec(b,KEY);D=d;DV=b.ver;sv('bh_blob',b);init()}catch(e){lastErr='data '+e}}
