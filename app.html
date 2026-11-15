@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=65;</script>
+<script>var UIV=66;</script>
 <style>
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
-header{background:#1f4e78;color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
+header{background:linear-gradient(90deg,#1b5e20,#2e7d32);color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
 header b{font-size:16px}header small{display:block;opacity:.85;font-size:12px}
 #badge{background:#ffffff26;border-radius:12px;padding:3px 10px;font-size:12.5px;white-space:nowrap}
 .sb{position:sticky;top:50px;z-index:4;background:#eef2f6;padding:8px 10px 4px}
@@ -34,7 +34,7 @@ input,select{width:100%;font:inherit;padding:11px 12px;border:1px solid #b9c5d1;
 <div id="mn" class="hid" style="position:fixed;inset:0;background:#0007;z-index:9;display:flex;align-items:flex-end"><div style="background:#fff;width:100%;padding:14px;border-radius:12px 12px 0 0"><div class="muted" id="mi" style="margin:0 0 8px"></div><button class="btn" id="mbu">🔄 अपडेट देखें</button><button class="btn g" id="mveh">🚗 मेरी खुद की गाड़ी</button><button class="btn g" id="mb1"></button><button class="btn g" id="mb2">लॉगआउट (फ़ोन से डेटा हटाएँ)</button><button class="btn" id="mb3">बंद करें</button></div></div>
 <div id="app" class="hid">
 <div id="upb" class="hid" style="background:#2e7d32;color:#fff;padding:9px 12px;text-align:center;font-weight:600">🔄 ऐप का नया अपडेट आ गया — यहाँ दबाएँ</div>
-<header><div style="display:flex;align-items:center;gap:8px;min-width:0"><img id="crimg" style="width:34px;height:34px;border-radius:8px;flex:none"><div style="min-width:0;line-height:1.25"><div><b id="hd" style="font-size:17px"></b> <span style="font-size:11px;opacity:.85;white-space:nowrap">· बनाया — दादा (विकास शर्मा)</span></div><small id="hs" style="display:block"></small></div></div><span id="badge">—</span></header><script>document.getElementById("crimg").src=window.LOGO||""</script>
+<header><div style="display:flex;align-items:center;gap:8px;min-width:0"><img id="crimg" style="width:34px;height:34px;border-radius:9px;flex:none;border:2px solid rgba(255,255,255,.85);box-shadow:0 1px 4px rgba(0,0,0,.3)"><div style="min-width:0;line-height:1.25"><div><b id="hd" style="font-size:17px"></b> <span style="font-size:11px;opacity:.9;white-space:nowrap">· by दादा (विकास शर्मा)</span></div><small id="hs" style="display:block"></small></div></div><span id="badge">—</span></header><script>document.getElementById("crimg").src=window.LOGO||""</script>
 <div class="sb"><div style="display:flex;gap:6px"><input id="q" autocomplete="off" placeholder="🔍 नाम / पिता-पति / EPIC / क्रम" style="flex:1;min-width:0"><button id="mic" type="button" title="बोलकर खोजें" style="padding:0 10px;font-size:20px;border-radius:10px;border:1px solid #cfd8e3;background:#fff">🎤</button><input id="hn" autocomplete="off" inputmode="numeric" placeholder="🏠 मकान नं." style="width:34%"></div>
 <div class="two"><select id="w"></select><select id="by"><option value="">सब</option><option value="M">सिर्फ़ पुरुष</option><option value="F">सिर्फ़ महिला</option></select></div>
 <select id="rt" style="margin-top:6px"></select>
