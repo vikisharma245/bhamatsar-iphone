@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=90;</script>
+<script>var UIV=91;</script>
 <style>body.sahveh .sb,body.sahveh #stats,body.sahveh #res{display:none}
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:linear-gradient(90deg,#1b5e20,#2e7d32);color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -136,7 +136,7 @@ function find(q){q=q.trim();var o=[],m;
 var LB={L:'🚶 बूथ पहुँचे',N:'⚠ दिक्कत है',V:'✅ वोट दे दिया'};
 function todo(k){return '';if(VIEW||!MYS[k]||isDrv())return '';var p=flOf(k,'fp'),m=flOf(k,'fm');if(p&&m)return '';return (p?'':'📄 पर्ची')+(p||m?'':' / ')+(m?'':'🗳 मोहर')}
 var HXO={};
-function hxLine(v){var k=key(v),e=ST[k],st=e?e[0]:'',ok=st==='V',cm=!VIEW&&canMark(k);return '<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-top:1px dashed #ddd"><div style="flex:1;min-width:0">'+(ok?'✅ ':st==='N'?'⚠ ':'⬜ ')+'<b>'+esc(v[3])+'</b> <span class="muted" style="font-size:12px">('+esc(v[5])+' · '+esc(v[8])+' '+esc(v[7])+' · क्रम '+v[1]+')</span></div>'+(ok?'<span style="color:#2e7d32;font-weight:700;font-size:13px">वोट डला</span>':cm?'<button data-hv="'+k+'" style="border:2px solid #2e7d32;background:#fff;color:#2e7d32;border-radius:8px;padding:5px 8px;font-weight:700;font-size:13px">✅ वोट दे दिया</button>':'')+'</div>'}
+function hxLine(v){var k=key(v),e=ST[k],st=e?e[0]:'',ok=st==='V',cm=!VIEW&&canMark(k);return '<div style="display:flex;align-items:center;gap:6px;padding:5px 0;border-top:1px dashed #ddd"><div style="flex:1;min-width:0">'+(ok?'✅ ':st==='N'?'⚠ ':'⬜ ')+'<b style="font-size:15px">'+esc(v[3])+'</b> <span class="muted" style="font-size:12px">(पिता/पति '+esc(v[5])+' · '+esc(v[8])+' '+esc(v[7])+')</span><div style="font-size:13px;margin-top:2px;color:#0d47a1;font-weight:600">वार्ड '+v[0]+' · क्रम <b style="font-size:15px">'+v[1]+'</b>'+((D.w[v[0]]||[])[0]?' · बूथ '+esc((D.w[v[0]]||[])[0]):'')+' · मकान '+esc(v[2])+(v[9]?' · '+esc(v[9]):'')+(((D.s||{})[k]||[])[6]?' · पर्ची '+esc(((D.s||{})[k]||[])[6]):'')+'</div></div>'+(ok?'<span style="color:#2e7d32;font-weight:700;font-size:13px">वोट डला</span>':cm?'<button data-hv="'+k+'" style="border:2px solid #2e7d32;background:#fff;color:#2e7d32;border-radius:8px;padding:5px 8px;font-weight:700;font-size:13px">✅ वोट दे दिया</button>':'')+'</div>'}
 function hxPanel(v){var hk=function(x){return x[0]+'|'+String(x[2]||'').split(' ')[0]},me=hk(v),sd=(D.s||{})[key(v)]||[],mn=sd[2],sb=sd[1],same=[],oth={},oo=[];
  D.v.forEach(function(x){if(x[10]===2)return;var h=hk(x);if(h===me){same.push(x);return}var s2=(D.s||{})[key(x)]||[];if(!mn||s2[2]!==mn||(sb&&s2[1]!==sb))return;if(!oth[h]){oth[h]=[];oo.push(h)}oth[h].push(x)});
  var pend=function(L){return L.filter(function(x){return (ST[key(x)]||[])[0]!=='V'}).length};
