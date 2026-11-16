@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=88;</script>
+<script>var UIV=89;</script>
 <style>body.sahveh .sb,body.sahveh #stats,body.sahveh #res{display:none}
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:linear-gradient(90deg,#1b5e20,#2e7d32);color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -107,7 +107,7 @@ function init(){
  PH=g('bh_ph',{});FAM={};D.v.forEach(function(v){if(v[10]===2)return;var f=v[0]+'|'+String(v[2]).split(' ')[0];FAM[f]=(FAM[f]||0)+1});
  var mm={},sb={};Object.keys(D.s||{}).forEach(function(k){var x=D.s[k];if(x[2])mm[x[2]]=1;if(x[1])sb[x[1]]=1});
  var MS={};Object.keys(D.s||{}).forEach(function(k){var x=D.s[k];if(!x[2])return;MS[x[2]]=MS[x[2]]||{};if(x[1])MS[x[2]][x[1]]=1});var cpz=function(t){return String(t).replace(/\b\w/g,function(c){return c.toUpperCase()})};
- $('fmn').innerHTML='<option value="">👨‍👩‍👧 मेन / सब मुखिया — सब</option>'+Object.keys(MS).sort(function(a,b){return a.toLowerCase()<b.toLowerCase()?-1:1}).map(function(m){var sbs=Object.keys(MS[m]).sort();return '<optgroup label="'+esc(cpz(m))+'"><option value="'+esc(m)+'¦">'+esc(cpz(m))+' — पूरा परिवार</option>'+sbs.map(function(x){return '<option value="'+esc(m)+'¦'+esc(x)+'">'+esc(cpz(m))+' / '+esc(cpz(x))+'</option>'}).join('')+'</optgroup>'}).join('');
+ $('fmn').innerHTML='<option value="">👨‍👩‍👧 सब मुखिया / मेन मुखिया — सब</option>'+Object.keys(MS).sort(function(a,b){return a.toLowerCase()<b.toLowerCase()?-1:1}).map(function(m){var sbs=Object.keys(MS[m]).sort(function(a,b){return a.toLowerCase()<b.toLowerCase()?-1:1});return (sbs.length?'':'<option value="'+esc(m)+'¦">'+esc(cpz(m))+'</option>')+sbs.map(function(x){return '<option value="'+esc(m)+'¦'+esc(x)+'">'+esc(cpz(x))+' / '+esc(cpz(m))+'</option>'}).join('')}).join('');
  $('fsb').innerHTML='<option value="">सारे सब-मुखिया</option>'+Object.keys(sb).sort().map(function(x){return '<option>'+esc(x)+'</option>'}).join('');
  FX=null;IX=D.v.map(function(v){var sd=(D.s||{})[v[0]+'-'+v[1]];return norm([v[3],v[4],v[5],v[6],v[9],sd?sd[4]:''].join(' '))});
  setSc(SC);if(SC==='M'&&!FIL)FIL='M';   /* बाकी सबके लिए शुरू में "सब" */var ws=[],seen={};D.v.forEach(function(v){if(!seen[v[0]]&&vis(v)){seen[v[0]]=1;ws.push(v[0])}});ws.sort(function(a,b){return a-b});
