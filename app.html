@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="hi"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>भामटसर सहायक</title>
-<script>var UIV=86;</script>
+<script>var UIV=88;</script>
 <style>body.sahveh .sb,body.sahveh #stats,body.sahveh #res{display:none}
 *{box-sizing:border-box}html,body{margin:0;background:#eef2f6;color:#14202b;font-family:system-ui,-apple-system,"Noto Sans Devanagari",sans-serif;font-size:15px}
 header{background:linear-gradient(90deg,#1b5e20,#2e7d32);color:#fff;padding:9px 12px;position:sticky;top:0;z-index:5;display:flex;justify-content:space-between;align-items:center;gap:8px}
@@ -38,7 +38,7 @@ input,select{width:100%;font:inherit;padding:11px 12px;border:1px solid #b9c5d1;
 <div class="sb"><div style="display:flex;gap:6px"><input id="q" autocomplete="off" placeholder="🔍 नाम / पिता-पति / EPIC / क्रम" style="flex:1;min-width:0"><button id="mic" type="button" title="बोलकर खोजें" style="padding:0 10px;font-size:20px;border-radius:10px;border:1px solid #cfd8e3;background:#fff">🎤</button><input id="hn" autocomplete="off" inputmode="numeric" placeholder="🏠 मकान नं." style="width:34%"></div>
 <div class="two"><select id="w"></select><select id="by"><option value="">सब</option><option value="M">सिर्फ़ पुरुष</option><option value="F">सिर्फ़ महिला</option></select></div>
 <select id="rt" style="margin-top:6px"></select>
-<div class="two" style="margin-top:6px"><select id="fmn"></select><select id="fsb"></select></div>
+<select id="fmn" style="margin-top:6px"></select><select id="fsb" style="display:none"></select>
 <div class="chips" id="chips"></div></div>
 <main><div id="rqs"></div><div class="stats" id="stats"></div><div id="res"></div></main>
 <div id="foot"><span id="fs"></span><span><button id="fy">अभी सिंक</button> <button id="fo">⚙</button></span></div>
@@ -106,7 +106,8 @@ function init(){
  MYS={};g('bh_my',[]).forEach(function(x){MYS[x[0]+'-'+x[1]]=1});
  PH=g('bh_ph',{});FAM={};D.v.forEach(function(v){if(v[10]===2)return;var f=v[0]+'|'+String(v[2]).split(' ')[0];FAM[f]=(FAM[f]||0)+1});
  var mm={},sb={};Object.keys(D.s||{}).forEach(function(k){var x=D.s[k];if(x[2])mm[x[2]]=1;if(x[1])sb[x[1]]=1});
- $('fmn').innerHTML='<option value="">सारे मेन (मुखिया)</option>'+Object.keys(mm).sort().map(function(x){return '<option>'+esc(x)+'</option>'}).join('');
+ var MS={};Object.keys(D.s||{}).forEach(function(k){var x=D.s[k];if(!x[2])return;MS[x[2]]=MS[x[2]]||{};if(x[1])MS[x[2]][x[1]]=1});var cpz=function(t){return String(t).replace(/\b\w/g,function(c){return c.toUpperCase()})};
+ $('fmn').innerHTML='<option value="">👨‍👩‍👧 मेन / सब मुखिया — सब</option>'+Object.keys(MS).sort(function(a,b){return a.toLowerCase()<b.toLowerCase()?-1:1}).map(function(m){var sbs=Object.keys(MS[m]).sort();return '<optgroup label="'+esc(cpz(m))+'"><option value="'+esc(m)+'¦">'+esc(cpz(m))+' — पूरा परिवार</option>'+sbs.map(function(x){return '<option value="'+esc(m)+'¦'+esc(x)+'">'+esc(cpz(m))+' / '+esc(cpz(x))+'</option>'}).join('')+'</optgroup>'}).join('');
  $('fsb').innerHTML='<option value="">सारे सब-मुखिया</option>'+Object.keys(sb).sort().map(function(x){return '<option>'+esc(x)+'</option>'}).join('');
  FX=null;IX=D.v.map(function(v){var sd=(D.s||{})[v[0]+'-'+v[1]];return norm([v[3],v[4],v[5],v[6],v[9],sd?sd[4]:''].join(' '))});
  setSc(SC);if(SC==='M'&&!FIL)FIL='M';   /* बाकी सबके लिए शुरू में "सब" */var ws=[],seen={};D.v.forEach(function(v){if(!seen[v[0]]&&vis(v)){seen[v[0]]=1;ws.push(v[0])}});ws.sort(function(a,b){return a-b});
@@ -122,7 +123,7 @@ function vis(v){if(SC==='M')return !!MYS[key(v)];if(SCW)return !!SCW[v[0]];retur
 function stOf(v){var e=ST[key(v)];return e?e[0]:''}
 function fok(v){var s=stOf(v);if(FIL==='M')return !!MYS[key(v)];if(FIL==='MB')return !!MYS[key(v)]&&s!=='V'&&v[10]!==2;if(FIL==='P'){if(v[10]===2||s==='V')return false;var c=catOf((D.s||{})[key(v)]||[]);return c==='ok'||c==='suspense'||c===''}if(v[10]===2)return !FIL;return !FIL||(FIL==='R'?s!=='V':s===FIL)}
 function hno1(v){return String(v[2]).split(' ')[0].toLowerCase()}
-function wok(v){if(!vis(v))return false;var hn=$('hn').value.trim().toLowerCase();if(hn&&hno1(v)!==hn)return false;var w=$('w').value,r=$('rt').value,mn=$('fmn').value,sb=$('fsb').value,sd=(D.s||{})[key(v)]||[];return (!w||v[0]==+w)&&(!r||sd[8]===r)&&(!mn||sd[2]===mn)&&(!sb||sd[1]===sb)}
+function wok(v){if(!vis(v))return false;var hn=$('hn').value.trim().toLowerCase();if(hn&&hno1(v)!==hn)return false;var w=$('w').value,r=$('rt').value,mp=$('fmn').value.split('¦'),mn=mp[0],sb=mp[1]||$('fsb').value,sd=(D.s||{})[key(v)]||[];return (!w||v[0]==+w)&&(!r||sd[8]===r)&&(!mn||sd[2]===mn)&&(!sb||sd[1]===sb)}
 function gok(v){var x=$('by').value;return !x||(x==='M'?v[8]==='पुरुष':v[8]==='महिला')}
 function find(q){q=q.trim();var o=[],m;
  if(!q){if($('hn').value.trim()||$('w').value||FIL||$('rt').value||$('fmn').value||$('fsb').value){D.v.forEach(function(v){if(wok(v)&&gok(v)&&fok(v))o.push(v)})}return o}
